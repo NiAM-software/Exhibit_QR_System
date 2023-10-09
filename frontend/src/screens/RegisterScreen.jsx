@@ -8,8 +8,9 @@ import FormContainer from '../components/FormContainer';
 import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import toast, { Toaster } from "react-hot-toast";
-import '../assets/styles/index.css'
-import '../assets/styles/bootstrap.custom.css'
+import '../assets/styles/index.scss'
+// import '../assets/styles/index.css'
+// import '../assets/styles/bootstrap.custom.css'
 import styled from 'styled-components';
 
 const RegisterScreen = () => {

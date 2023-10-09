@@ -1,8 +1,58 @@
 import { useQuery } from "react-query";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import DataTable from "react-data-table-component";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+
+const customStyles = {
+  rows: {
+    style: {
+      minHeight: '50px', // override the row height
+      fontSize: '12px',
+      fontFamily: 'arial',
+    },
+  },
+  headCells: {
+    style: {
+      paddingLeft: '8px', // override the cell padding for head cells
+      paddingRight: '8px',
+    },
+  },
+  cells: {
+    style: {
+      paddingLeft: '8px', // override the cell padding for data cells
+      paddingRight: '8px',
+    },
+  },
+  headRow: {
+    style: {
+      minHeight: '52px',
+      borderBottomWidth: '1px',
+      borderBottomStyle: 'solid',
+      fontSize: '14px',
+      fontFamily: 'arial',
+    },
+    denseStyle: {
+      minHeight: '32px',
+    },
+  },
+  tableWrapper: {
+    style: {
+      fontSize: '18px',
+      fontFamily: 'arial',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)', // Add box shadow here
+      margin: 'auto',
+      marginBottom: '20px',
+    },
+  },
+};
+
 
 const HomeScreen = () => {
+  const [filterText, setFilterText] = useState("");
+  const [sortOption, setSortOption] = useState("Category"); 
   const { data, isLoading, isError, error } = useQuery(
     ["user-data"],
     async () => {
@@ -61,8 +111,18 @@ const HomeScreen = () => {
     },
   ];
 
+  const handleClear = () => {
+    if (filterText) {
+      setFilterText("");
+    }
+  };
 
-  const tableData = data?data.map((exhibit) => {;
+  const tableData = data?data
+  .filter(
+    (exhibit) =>
+      exhibit.title && exhibit.title.toLowerCase().includes(filterText.toLowerCase())
+  )
+  .map((exhibit) => {;
     const{ 
       title,
       room,
@@ -84,15 +144,45 @@ const HomeScreen = () => {
 
   return (
     <>
-      {/* <h1 className="text-xl">Data table</h1> */}
-      <DataTable
+      <div className="exhibits-list-wrapper">
+        <div className="header">
+          <div class="search">
+            <FontAwesomeIcon icon={faSearch} className='fa-search'/>
+            <input
+            type="input"
+            className="input"
+            placeholder="Search"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
+          </div>
+           <div className="header-end">
+            <Link to="/add-exhibit"> 
+              <button className="btn-primary"> Add exhibit </button>
+            </Link>
+            <div className="sort">
+              <label for="sort-by">Sort by</label>
+
+              <select name="sort-by" id="sort-by" className="dropdown">
+                <option value="Category">Category</option>
+                <option value="Title">Title</option>
+              </select>
+            </div>
+           </div>
+        
+        </div>
+        <DataTable
         columns={columns}
         data={tableData}
         progressPending={isLoading}
-        progressComponent={<h1>My Custom Component</h1>}
+        progressComponent={<h1>Loading..</h1>}
         pagination
         selectableRows
+        customStyles={customStyles}
       />
+      </div>
+      {/* <h1 className="text-xl">Data table</h1> */}
+      
     </>
   );
 

@@ -62,7 +62,7 @@ const Header = () => {
                
                 </Navbar.Collapse>
             </Container>
-        </Navbar> i
+        </Navbar> 
     </header>
   )
 }

@@ -21,7 +21,7 @@ import AdminRoute from './components/AdminRoute.jsx'
 
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 import AddExhibitScreen from './screens/AddExhibitsScreen.jsx';
-
+import './assets/styles/index.css'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App/>}>
