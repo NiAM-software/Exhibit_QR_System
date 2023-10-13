@@ -1,6 +1,5 @@
 import React from 'react'
 import {Navbar, Nav, Container, Badge, NavDropdown} from 'react-bootstrap'
-import {FaShoppingCart, FaUser} from 'react-icons/fa'
 import logo from '../assets/logo.png'
 
 // import user from '../assets/us.jpg'
@@ -23,7 +22,7 @@ const Header = () => {
 
 
 
-  const logoutHadler = async()=>{
+  const logoutHandler = async () => {
     try{
       await logoutApiCall().unwrap();
       dispatch(logout());
@@ -31,39 +30,49 @@ const Header = () => {
     } catch(err){
       console.error(err);
     }
-  }
+  };
 
 
   return (
-    <header style={{maxHeight:'100px'}}>
-       <Navbar expand='md' collapseOnSelect>
-            <Container>
-                <LinkContainer to='/'>
-                  <Navbar.Brand> 
-                    <img src={logo} alt='logo' width="120" height="50"/>
-                  </Navbar.Brand>
-                </LinkContainer>
-                
-
-                <LinkContainer to='/'>
-                  <Navbar.Brand> 
-                    <body>Home</body>
-                  </Navbar.Brand>
-                </LinkContainer>
-
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                  { 
-                    userInfo && 
-                    <NavDropdown title={userInfo.name} id='username'>
-                              <NavDropdown.Item onClick={logoutHadler}> Log out</NavDropdown.Item>
-                        </NavDropdown>
-                  }
-               
-                </Navbar.Collapse>
-            </Container>
-        </Navbar> 
+    <header className='__header'>
+    
+      <Navbar expand='sm' collapseOnSelect>
+        <Container>
+          <LinkContainer to='/'>
+            <Navbar.Brand>
+              <img src={logo} alt='Museum' />
+              
+            </Navbar.Brand>
+          </LinkContainer>
+          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <Navbar.Collapse id='basic-navbar-nav'>
+            <Nav className='ms-auto'>
+             
+              {userInfo ? (
+                <>
+                  <LinkContainer to='/' className='home'>
+                    <Navbar.Brand>
+                      Home
+                    </Navbar.Brand>
+                  </LinkContainer>
+                  <NavDropdown title={userInfo.name} id='username'>
+                    <NavDropdown.Item onClick={logoutHandler}>
+                      Logout
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </>
+              ) : (
+               <></>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     </header>
+
+
+
+
   )
 }
 

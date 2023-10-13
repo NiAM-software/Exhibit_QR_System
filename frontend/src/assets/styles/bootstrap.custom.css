@@ -2108,8 +2108,7 @@ progress {
   }
 }
 .form-label {
-  margin-bottom: 0.2rem;
-  color: #626365;
+  margin-bottom: 0.5rem;
 }
 
 .col-form-label {
@@ -2693,7 +2692,7 @@ textarea.form-control-lg {
   border-width: var(--bs-border-width) 0;
 }
 .form-floating > .form-control:disabled ~ label {
-  color: #626365;
+  color: #7b8a8b;
 }
 
 .input-group {
@@ -3060,7 +3059,7 @@ textarea.form-control.is-invalid {
 }
 .btn:hover {
   color: var(--bs-btn-hover-color);
-  background-color: #183495;
+  background-color: var(--bs-btn-hover-bg);
   border-color: var(--bs-btn-hover-border-color);
 }
 .btn-check + .btn:hover {
@@ -7107,7 +7106,6 @@ fieldset:disabled .btn {
 }
 
 .placeholder {
-  font-size: 13px;
   display: inline-block;
   min-height: 1em;
   vertical-align: middle;
@@ -7129,9 +7127,12 @@ fieldset:disabled .btn {
 }
 
 .placeholder-lg {
-  min-height: 14px;
+  min-height: 1.2em;
 }
 
+.placeholder-glow .placeholder {
+  animation: placeholder-glow 2s ease-in-out infinite;
+}
 
 @keyframes placeholder-glow {
   50% {
@@ -7153,6 +7154,7 @@ fieldset:disabled .btn {
   );
   -webkit-mask-size: 200% 100%;
   mask-size: 200% 100%;
+  animation: placeholder-wave 2s linear infinite;
 }
 
 @keyframes placeholder-wave {
@@ -12124,25 +12126,25 @@ button{
   width:300px;
   border-radius: 8px;
   border: none;
-}
-
-.heading{
+  }
+  
+  .heading{
   font-size: 30px !important;
     color: #71797E!important;
     font-weight: 200 !important;
     font-family: arial;
-}
-
-/* input{
+  }
+  
+  /* input{
   width : 300px !important;
   height:35px !important;
-} */
-
-form{
+  } */
+  
+  form{
   font-size: 12px !important;
-}
-
-.card {
+  }
+  
+  .card {
   font-family: sans-serif;
   width: 300px;
   margin-left: auto;
@@ -12153,42 +12155,40 @@ form{
   background-color: #ffff;
   padding: 1.8rem;
   box-shadow: 2px 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-p{
+  }
+  
+  p{
   margin:0;
   font-size:14px;
-}
-
-h1{
+  }
+  
+  h1{
   color:#626365;
   font-size:32px;
   font-weight: 400;
   font-family: 'Poppins', sans-serif;
-}
-
-button{
+  }
+  
+  button{
   margin-top: 16px;
   background-color: #1F41BB;
   display: flex;
   align-items:center;
   justify-content:center;
-}
-
-button:hover{
+  }
+  
+  button:hover{
   background-color: #183495;
-}
-
-a {
+  }
+  
+  a {
   text-decoration: none;
-}
-table{
+  }
+  table{
   font-size: 13px;
-}
-tr{
+  }
+  tr{
   border-bottom: 1px #EAEAEA;
   height:50px;
-}
-
-
+  }
 

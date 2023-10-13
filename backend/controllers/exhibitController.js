@@ -1,11 +1,10 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import {iventoryDBConnection as db} from '../config/db.js'
-import  S3Client from '@aws-sdk/client-s3'
-import express from 'express';
-import  multer from 'multer'
-import multerS3 from 'multer-s3'
-import upload from '../utils/uploadFile.js';
-
+import AWS from 'aws-sdk';
+import { getPresignedUrl } from '../utils/uploadFile.js'; // Import utility function
+import s3 from '../config/s3_config.js'
+import dotenv from 'dotenv';
+dotenv.config();
 // @desc    Fetch all exhibits
 // @route   GET /api/exhibits
 // @access  Private/Admin
@@ -76,13 +75,16 @@ const createExhibit = asyncHandler(async (req, res) => {
     era, 
     exhibit_desc
   } = req.body;
-
+  console.log(req.files);
   try {
     const query = 'INSERT INTO exhibits (title, category, subcategory, room, location_type, location, asset_number, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const [results, fields] = await db.promise().query(query, [title, category, subcategory, room, location_type, location, asset_number, era, exhibit_desc,'Y']);
 
     if (results && results.affectedRows > 0) {
-      res.status(201).json({ message: 'Exhibit created successfully' });
+      const newExhibitId = results.insertId;
+
+      console.log(newExhibitId);
+      res.status(201).json({ message: 'Exhibit created successfully' , id : newExhibitId});
     } else {
       return res.status(401).json({ message: "Failed to create exhibit" });
     }
@@ -140,28 +142,21 @@ const updateExhibit = asyncHandler(async (req, res) => {
 });
 
 
-
 // @desc    Delete exhibit
 // @route   DELETE /api/exhibits/:id
 // @access  Private/Admin
-const deleteExhibit = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+const deleteExhibits = asyncHandler(async (req, res) => {
+  const { ids } = req.body; // Assuming you send an array of IDs in the request body
 
   try {
-    const selectQuery = "SELECT * FROM exhibits WHERE exhibit_id=? AND active_ind='Y'";
-    const [selectResults, selectFields] = await db.promise().query(selectQuery, [id]);
+    // Use a single SQL query to delete multiple exhibits based on IDs
+    const deleteQuery = "UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?) AND active_ind='Y'";
+    const [deleteResults, deleteFields] = await db.promise().query(deleteQuery, [ids]);
 
-    if (selectResults && selectResults.length > 0) {
-      const updateQuery = "UPDATE exhibits SET active_ind='N' WHERE exhibit_id=?";
-      const [updateResults, updateFields] = await db.promise().query(updateQuery, [id]);
-
-      if (updateResults.affectedRows > 0) {
-        return res.status(200).json({ message: "Successfully deleted exhibit" }); // wrong status code for dev env
-      } else {
-        return res.status(500).json({ message: "Couldn't delete exhibit" });
-      }
+    if (deleteResults.affectedRows > 0) {
+      return res.status(200).json({ message: "Successfully deleted exhibits" });
     } else {
-      return res.status(404).json({ message: "Exhibit doesn't exist" });
+      return res.status(404).json({ message: "No exhibits were deleted" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -198,16 +193,57 @@ const undoDeleteExhibit = asyncHandler(async (req, res) => {
 
 //folder structure
 const uploadFilestoS3 = asyncHandler(async (req, res) => {
-  try {
-    if (!req.files) res.status(400).json({ error: 'No files were uploaded.' })
-    res.status(201).json({
-      message: 'Successfully uploaded ' + req.files.length + ' files!',
-      files: req.files
-    })
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
+  // try {
+  //   console.log(req.files)
+  //   if (!req.files) {
+  //     return res.status(400).json({ error: 'No files were uploaded.' });
+  //   }
+
+  //   const query = 'INSERT INTO attachments (exhibit_id, file_name, file_location) VALUES (?, ?, ?)';
+  //   const [results, fields] = await db.promise().query(query, [id, name,  location]);
+
+  //   if (results && results.affectedRows > 0) {
+  //     res.status(201).json({ message: 'Exhibit attachment created successfully' });
+  //   } else {
+  //     return res.status(401).json({ message: "Failed to create exhibit" });
+  //   }
+  //   // const {exhibit_id} = req.params;
+  //   // const s3 = new AWS.S3();
+  //   // const bucketName = process.env.S3_BUCKET; 
+  //   // const folderName = `exhibit_id_${exhibit_id}`; 
+
+  // }catch (err) {
+  //   return res.status(500).json({ message: err.message });
+  // }
 });
+
+const generatePreSignedUrl = async (req, res) => {
+
+  try {
+    const { objectKeys } = req.body;
+    
+    const bucketName = process.env.S3_BUCKET; 
+    //console.log(objectKeys);
+    if (!Array.isArray(objectKeys)) {
+      return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
+    }
+
+    const urls = await Promise.all(objectKeys.map(async (objectKey) => {
+      try {
+        const url = await getPresignedUrl(s3, bucketName, objectKey);
+        return { objectKey, url };
+      } catch (error) {
+        console.error(`Error generating presigned URL for ${objectKey}:`, error.message);
+        return { objectKey, error: error.message };
+      }
+    }));
+
+    res.json({ urls });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
 export {
@@ -215,7 +251,8 @@ export {
    getExhibitById,
    createExhibit,
    updateExhibit,
-   deleteExhibit,
+   deleteExhibits,
    undoDeleteExhibit, 
-   uploadFilestoS3
+   uploadFilestoS3, 
+   generatePreSignedUrl
 };
