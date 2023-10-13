@@ -21,11 +21,13 @@ const authUser = asyncHandler(async (req, res) => {
     if (results && results.length > 0) {
       const { _id, user_name, email, password_hash } = results[0];
       const user = { _id, user_name, email };
-      
+      //console.log(results[0]);
       //Password match check
       const passwordMatch = await bcrypt.compare(password, password_hash);
-
+      
       if (passwordMatch) { // valid user
+        
+        generateToken(res, _id);
         return res.status(200).json({
           _id: user._id,
           name: user.user_name,

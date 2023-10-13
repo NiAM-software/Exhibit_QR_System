@@ -5,6 +5,9 @@ import { getPresignedUrl } from '../utils/uploadFile.js'; // Import utility func
 import s3 from '../config/s3_config.js'
 import dotenv from 'dotenv';
 dotenv.config();
+
+
+
 // @desc    Fetch all exhibits
 // @route   GET /api/exhibits
 // @access  Private/Admin
@@ -29,7 +32,7 @@ const getExhibits = asyncHandler(async (req, res) => {
     // Fetch exhibits
     const [exhibitsResults] = await db.promise().query(exhibitsQuery);
     const exhibits = exhibitsResults;
-    console.log(exhibits.length);
+    //console.log(exhibits.length);
     res.json({ exhibits, page, pages: Math.ceil(count / pageSize) }); 
   } catch (err) {
     console.error('Error fetching exhibits:', err);
@@ -47,7 +50,7 @@ const getExhibitById = asyncHandler(async (req, res) => {
   try {
     const query = "SELECT * FROM exhibits WHERE exhibit_id=? and active_ind='Y'";
     const [results, fields] = await db.promise().query(query, [id]);
-    console.log(results);
+    //console.log(results);
     if (results && results.length > 0) {
       res.status(200).json(results[0])
       
@@ -76,9 +79,10 @@ const createExhibit = asyncHandler(async (req, res) => {
     exhibit_desc
   } = req.body;
   console.log(req.files);
+  const era_int = era === '' ? null : parseInt(era, 10);
   try {
     const query = 'INSERT INTO exhibits (title, category, subcategory, room, location_type, location, asset_number, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const [results, fields] = await db.promise().query(query, [title, category, subcategory, room, location_type, location, asset_number, era, exhibit_desc,'Y']);
+    const [results, fields] = await db.promise().query(query, [title, category, subcategory, room, location_type, location, asset_number, era_int, exhibit_desc,'Y']);
 
     if (results && results.affectedRows > 0) {
       const newExhibitId = results.insertId;
@@ -145,18 +149,26 @@ const updateExhibit = asyncHandler(async (req, res) => {
 // @desc    Delete exhibit
 // @route   DELETE /api/exhibits/:id
 // @access  Private/Admin
+
+
 const deleteExhibits = asyncHandler(async (req, res) => {
-  const { ids } = req.body; // Assuming you send an array of IDs in the request body
+  const { ids } = req.body;
 
-  try {
-    // Use a single SQL query to delete multiple exhibits based on IDs
-    const deleteQuery = "UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?) AND active_ind='Y'";
-    const [deleteResults, deleteFields] = await db.promise().query(deleteQuery, [ids]);
+  try { // UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)
+    const selectQuery = "SELECT * FROM exhibits WHERE exhibit_id IN (?) AND active_ind='Y'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
 
-    if (deleteResults.affectedRows > 0) {
-      return res.status(200).json({ message: "Successfully deleted exhibits" });
+    if (selectResults && selectResults.length > 0) {
+      const updateQuery = "UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+
+      if (updateResults.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully deleted exhibits" }); // Successfully deleted, no content to send
+      } else {
+        return res.status(500).json({ message: "No exhibits were deleted" });
+      }
     } else {
-      return res.status(404).json({ message: "No exhibits were deleted" });
+      return res.status(404).json({ message: "Exhibit doesn't exist" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -167,21 +179,24 @@ const deleteExhibits = asyncHandler(async (req, res) => {
 // @desc    undo Delete exhibit
 // @route   PUT /api/exhibits/:id
 // @access  Private/Admin
-const undoDeleteExhibit = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const selectQuery = "SELECT * FROM exhibits WHERE exhibit_id=? AND active_ind='N'";
-    const [selectResults, selectFields] = await db.promise().query(selectQuery, [id]);
+const undoDeleteExhibits = asyncHandler(async (req, res) => {
+  console.log("UNDO");
+  const { ids } = req.body.data;
+  
+  try { // UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)
+    const selectQuery = "SELECT * FROM exhibits WHERE exhibit_id IN (?) AND active_ind='N'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
 
     if (selectResults && selectResults.length > 0) {
-      const updateQuery = "UPDATE exhibits SET active_ind='Y' WHERE exhibit_id=?";
-      const [updateResults, updateFields] = await db.promise().query(updateQuery, [id]);
+      console.log('undo delete rows');
+      const updateQuery = "UPDATE exhibits SET active_ind='Y' WHERE exhibit_id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
 
       if (updateResults.affectedRows > 0) {
-        return res.status(200).json({ message: "Successfully restored exhibit" }); // Successfully deleted, no content to send
+        console.log('successful');
+        return res.status(200).json({ message: "Successfully restored exhibits" }); // Successfully deleted, no content to send
       } else {
-        return res.status(500).json({ message: "Couldn't restore exhibit" });
+        return res.status(500).json({ message: "Couldn't restore exhibits" });
       }
     } else {
       return res.status(404).json({ message: "Exhibit doesn't exist" });
@@ -252,7 +267,7 @@ export {
    createExhibit,
    updateExhibit,
    deleteExhibits,
-   undoDeleteExhibit, 
+   undoDeleteExhibits, 
    uploadFilestoS3, 
    generatePreSignedUrl
 };

@@ -29,8 +29,8 @@ const upload = multer({
     s3: s3,
     bucket: (req, file, cb) => {
       folderName = req.params?.exhibit_id? `exhibit_${req.params.exhibit_id}` : 'default-folder';
-      console.log("FOLDERNAME" + folderName);
-      console.log(file)
+      // console.log("FOLDERNAME" + folderName);
+      // console.log(file)
       cb(null, bucketName);
     },
     metadata: function (req, file, cb) {
@@ -39,7 +39,7 @@ const upload = multer({
     key: async function (req, file, cb) {
       try {
         const folderExists = objectExists(bucketName, folderName)
-        console.log(folderName);
+        // console.log(folderName);
         if (!folderExists) {
           console.log('folder doesnt exist');
 

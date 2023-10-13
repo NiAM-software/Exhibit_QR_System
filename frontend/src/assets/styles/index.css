@@ -25,6 +25,14 @@
   font-size: 13px;
 }
 
+.btn-close:hover {
+  background-color: #aaa;
+}
+
+.btn-primary-md {
+  width: 200px;
+}
+
 .btn-primary:hover {
   transition: all 0.3s ease-out;
   background-color: #183495;
@@ -50,6 +58,14 @@
   height: 28px;
   border-radius: 8px;
   font-size: 13px;
+}
+
+.btn-close:hover {
+  background-color: #aaa;
+}
+
+.btn-primary-md {
+  width: 200px;
 }
 
 .__header {
@@ -99,6 +115,15 @@
   display: "flex" !important;
   justify-content: "center" !important;
   align-items: "center" !important;
+}
+
+.modal-footer {
+  padding: 19.2px !important;
+  padding-top: 15.2px;
+}
+
+.modal-body {
+  border-bottom: "none";
 }
 
 .exhibits-list-wrapper {

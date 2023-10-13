@@ -6,6 +6,7 @@ import {
     getExhibits, 
     createExhibit,
     deleteExhibits,
+    undoDeleteExhibits,
     updateExhibit,
     uploadFilestoS3, 
     generatePreSignedUrl
@@ -14,16 +15,17 @@ import { protect, admin } from '../middleware/authMiddleware.js';
 
 
 const router = express.Router();
+router.put('/undo-delete', protect, undoDeleteExhibits)
+router.put('/:id', protect, updateExhibit)
+router.get('/', protect, getExhibits)
+router.post('/', protect, createExhibit)
+router.get('/:id', protect, getExhibitById); // when ure redirected to edit product screen
+router.delete('/', protect, deleteExhibits)
 
+router.post('/generate-presigned-url', protect, generatePreSignedUrl)
 
-router.get('/', getExhibits)
-router.post('/', upload.array('photos', 25), createExhibit)
-router.get('/:id', getExhibitById); // when ure redirected to edit product screen
-router.delete('/', deleteExhibits)
-router.put('/:id', updateExhibit)
-router.post('/generate-presigned-url', generatePreSignedUrl)
-
-router.post('/upload/:exhibit_id', upload.array('photos', 25), async function (req, res, next) {
+//upload images to s3
+router.post('/upload/:exhibit_id', protect, upload.array('photos', 25), async function (req, res, next) {
     const {exhibit_id} = req.params
     for (const file of req.files) {
         const name = file.key;

@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient, useQuery } from "react-query";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 
-
-import {Navbar,  Nav, Container, Badge, NavDropdown, InputGroup, Form, Row, Col} from 'react-bootstrap'
+import {Navbar,  Nav, Container, Badge, NavDropdown, InputGroup, Form, Row, Col, Modal} from 'react-bootstrap'
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import DataTable from "react-data-table-component";
@@ -10,6 +10,7 @@ import { FaSearch,  FaFilter } from 'react-icons/fa';
 import styled from 'styled-components';
 import CustomModal from '../components/CustomModal'
 import Notification from "../components/Notification";
+
 
 const customStyles = {
   rows: {
@@ -56,22 +57,38 @@ const customStyles = {
 
 
 const HomeScreen = () => { 
+  const navigate = useNavigate();
   const [toggleCleared, setToggleCleared] = React.useState(false);
 	//const [tableData, setTableData] = React.useState([]);
   const [filterText, setFilterText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const [show, setShow] = useState(false);
-  const [showNotification, setShowNotification] = useState();
+  const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState();
-
+  
   const handleClose = () => {
     setShow(false);
     console.log('click');
   }
+
   
+
+ useEffect(() => {
+    const timeout = setTimeout(() => {
+      // Call the closeNotification function to hide the notification
+      closeNotification();
+      setNotificationMessage()
+    }, 5000);
+
+    // Clear the timeout when the component unmounts
+    return () => clearTimeout(timeout);
+  }, [showNotification]); // Ensure the effect runs when showNotification changes
+
+
   const queryClient = useQueryClient(); 
 
-  const deleteMutation = useMutation(
+  const deleteMutation =
+   useMutation(
     async (selectedKeys) => {
       const response = await axios.delete("/api/exhibits", {
         data: { ids: selectedKeys },
@@ -81,9 +98,43 @@ const HomeScreen = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("user-data");
+        setSelectedRows([])
       },
     }
   );
+
+
+
+  const undoDeleteMutation =
+   useMutation(
+    async (ids) => {
+      const response = await axios.put("/api/exhibits/undo-delete", {
+        data: { ids: ids },
+      });
+      return response.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("user-data");
+      },
+    }
+  );
+
+  const handleUndoDelete=async()=>{
+    const ids = notificationMessage
+    console.log(typeof ids);
+    console.log(ids);
+    try {
+      await undoDeleteMutation.mutateAsync(ids);
+      setToggleCleared(!toggleCleared); // Toggle the clear state
+
+    } catch (error) {
+      console.log(error.message);
+      console.error("Error performing undo op:", error);
+      // Handle error if needed
+    }
+    
+  }
 
   const deleteExhibits = async () => {
     const selectedKeys = selectedRows.map(row => row.exhibit_id);
@@ -97,6 +148,8 @@ const HomeScreen = () => {
       setSelectedRows(currentSelectedRows => currentSelectedRows.filter(row => !selectedKeys.includes(row.exhibit_id)));
       setShowNotification(true);
       setNotificationMessage(selectedKeys);
+      setToggleCleared(!toggleCleared); // Toggle the clear state
+
     } catch (error) {
       console.error("Error deleting exhibits:", error);
       // Handle error if needed
@@ -133,7 +186,44 @@ const HomeScreen = () => {
     console.log(state.selectedRows); 
   }, []);
 
-  
+  const editExhibits = () => {
+    const selectedRowId = selectedRows.map(row => row.exhibit_id);
+    if(selectedRows.length>1){
+      toast.error("Multiple exhibits can't be selected");
+    }
+    else if(selectedRows.length==0){
+      toast.error("You need to select at least 1 exhibit");
+    }
+    else if (selectedRowId) {
+      const editUrl = `/EditExhibitScreen/${selectedRowId}`;
+      console.log(selectedRowId)
+       navigate(editUrl);
+    } else {
+      console.error('No valid ID provided for editing.');
+    }
+  }
+
+
+
+  const showPreview = () => {
+    const selectedRowId = selectedRows.map(row => row.exhibit_id);
+
+    if(selectedRows.length>1){
+      toast.error("Multiple exhibits can't be selected");
+    }
+
+    else if(selectedRows.length==0){
+      toast.error("You need to select at least 1 exhibit");
+    }
+
+    else if (selectedRowId) {
+      const editUrl = `/ProductScreen/${selectedRowId}`;
+       navigate(editUrl);
+    } 
+    else {
+      console.error('No valid ID provided for editing.');
+    }
+  }
 
   
   const showQRHandler = () => {
@@ -242,13 +332,16 @@ const HomeScreen = () => {
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto'>
-            <button className="btn-primary-sm add-exhibit-btn">add exhibit </button>      
+            <Link to="/AddExhibitScreen"> 
+            <button className="btn-primary-sm add-exhibit-btn">add exhibit </button>   
+            </Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
         
         <DataTable
+         
         columns={columns}
         data={tableData}
         keyField="exhibit_id"
@@ -266,15 +359,16 @@ const HomeScreen = () => {
 
         {selectedRows.length > 0 &&  (
           <Container className="btn-menu d-flex justify-content-end">
+            
           <Row>
             <Col xs={2} md={3}>
-              <button>Preview</button>
+              <button onClick={showPreview}>Preview</button>
             </Col>
             <Col xs={2} md={3}>
               <button onClick={showQRHandler}>Show QR</button>
             </Col>
             <Col xs={2} md={3}>
-              <button>Edit</button>
+              <button onClick={editExhibits }>Edit</button>
             </Col>
             <Col xs={2} md={3}>
               <button onClick={deleteExhibits}>Delete</button>
@@ -282,13 +376,12 @@ const HomeScreen = () => {
           </Row>
           </Container>
         )}
-        {
-          showNotification && (
-            <div> helllo</div>
-          )
-        }
+        {/* {console.log(notificationMessage)} */}
        {showNotification && (
-        <Notification message={notificationMessage} onClose={closeNotification} />
+          <Modal show={showNotification} onHide={closeNotification}>
+          <Modal.Body>{`Exhibits ${notificationMessage.join(', ')} have been deleted` }</Modal.Body>
+          <StyledModalFooter onClick={handleUndoDelete}> Undo </StyledModalFooter>
+        </Modal>
       )}
         
       </div>
@@ -302,8 +395,16 @@ const StyledFormControl = styled(Form.Control)`
   width:80px;
   font-size : 13px;
 `;
+const StyledModalFooter= styled(Modal.Footer)`
+  text-decoration:underline;
+  color:#ADD8E6; 
+  cursor:pointer;
+  font-size : 13px;
+`;
+
 export default HomeScreen;
 
 
-
+// undo -> once successful , display toast msg 
+// register button on login screen
 
