@@ -9,7 +9,8 @@ import {
     undoDeleteExhibits,
     updateExhibit,
     uploadFilestoS3, 
-    generatePreSignedUrl
+    generatePreSignedUrl, 
+    addRelatedExhibits
 } from '../controllers/exhibitController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -51,5 +52,5 @@ router.post('/upload/:exhibit_id', protect, upload.array('photos', 25), async fu
     
 });
 
-
+router.post('/add-related-exhibits/:id', addRelatedExhibits)
 export default router;

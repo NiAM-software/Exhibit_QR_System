@@ -261,6 +261,52 @@ const generatePreSignedUrl = async (req, res) => {
 };
 
 
+// @desc    Add a related exhibit
+// @route   POST /api/exhibits/add-related-exhibit
+// @access  Private/Admin
+const addRelatedExhibits = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { related_exhibits_ids } = req.body;
+  const insertedRelationships = [];
+
+  try {
+    if (!Array.isArray(related_exhibits_ids)) {
+      return res.status(400).json({ error: 'invalid input. exhibit_ids should be an array.' });
+    }
+    for (const relatedIdInfo of related_exhibits_ids) {
+      const {
+        related_exhibit_id, related_exhibit_title
+      } = relatedIdInfo
+      // console.log(relatedIdInfo);
+      // console.log(related_exhibit_id + " " + related_exhibit_title);
+      const checkExistenceQuery =
+        "SELECT * FROM related_exhibits WHERE exhibit_id = ? AND related_exhibit_id = ?";
+      const [existenceResults, existenceFields] = await db
+        .promise()
+        .query(checkExistenceQuery, [id, related_exhibit_id]);
+
+      if (existenceResults && existenceResults.length === 0) {
+        // insert a row if it doesn't already exist
+        const insertRelationshipQuery =
+          "INSERT INTO related_exhibits (exhibit_id, related_exhibit_id, related_exhibit_title) VALUES (?, ?, ?)";
+        const [insertResult] = await db
+          .promise()
+          .query(insertRelationshipQuery, [id, related_exhibit_id, related_exhibit_title]);
+
+        insertedRelationships.push(insertResult.insertId);
+      }
+    }
+
+    return res.status(200).json({
+      message: "Successfully inserted relationships",
+      insertedRelationships,
+    });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+
 export {
    getExhibits,
    getExhibitById,
@@ -269,5 +315,6 @@ export {
    deleteExhibits,
    undoDeleteExhibits, 
    uploadFilestoS3, 
-   generatePreSignedUrl
+   generatePreSignedUrl, 
+   addRelatedExhibits
 };
