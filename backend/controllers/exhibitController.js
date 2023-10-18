@@ -238,18 +238,22 @@ const generatePreSignedUrl = async (req, res) => {
     const { objectKeys } = req.body;
     
     const bucketName = process.env.S3_BUCKET; 
-    //console.log(objectKeys);
+   
     if (!Array.isArray(objectKeys)) {
       return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
     }
 
     const urls = await Promise.all(objectKeys.map(async (objectKey) => {
+      const { folderName, fileName } = objectKey
+      const path = `${folderName}/${fileName}`;
       try {
-        const url = await getPresignedUrl(s3, bucketName, objectKey);
-        return { objectKey, url };
+        
+        //console.log(path);
+        const url = await getPresignedUrl(s3, bucketName, path);
+        return { folderName, fileName, url };
       } catch (error) {
-        console.error(`Error generating presigned URL for ${objectKey}:`, error.message);
-        return { objectKey, error: error.message };
+        console.error(`Error generating presigned URL for ${path}`, error.message);
+        return { folderName, fileName, error: error.message };
       }
     }));
 
@@ -307,6 +311,32 @@ const addRelatedExhibits = asyncHandler(async (req, res) => {
 });
 
 
+// @desc    preview image of an exhibit
+// @route   GET /api/exhibits/preview-image/:id
+// @access  Private/Admin
+const previewImage = asyncHandler(async (req, res) => {
+  const {id} = req.params // exhibit_id
+  
+  try {
+    const query = "SELECT * FROM attachments WHERE exhibit_id=? limit 1"; 
+    const [results, fields] = await db.promise().query(query, [id]);
+    
+    if (results && results.length > 0) {
+      const {file_location:folderName, file_name} = results[0]
+      const path = `${folderName}/${file_name}`;
+      const bucketName = process.env.S3_BUCKET; 
+      const url = await getPresignedUrl(s3, bucketName, path);
+      return res.status(200).json({ folderName, file_name, url });
+      
+    } else {
+      return res.status(404).json({ message: "Exhibit doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+})
+
+
 export {
    getExhibits,
    getExhibitById,
@@ -316,5 +346,6 @@ export {
    undoDeleteExhibits, 
    uploadFilestoS3, 
    generatePreSignedUrl, 
-   addRelatedExhibits
+   addRelatedExhibits, 
+   previewImage
 };

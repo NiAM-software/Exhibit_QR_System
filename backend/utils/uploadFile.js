@@ -14,6 +14,7 @@ const objectExists = async (bucket, key) => {
     }).promise(); 
     return true; 
   } catch (err) {
+    console.log(err);
     if (err.code === 'NotFound') {
       return false; 
     }
@@ -38,7 +39,7 @@ const upload = multer({
     },
     key: async function (req, file, cb) {
       try {
-        const folderExists = objectExists(bucketName, folderName)
+        const folderExists = await objectExists(bucketName, folderName)
         // console.log(folderName);
         if (!folderExists) {
           console.log('folder doesnt exist');
@@ -62,7 +63,7 @@ const upload = multer({
 });
 
 
-const getPresignedUrl = async (s3, bucket, key) => {
+const getPresignedUrl = async (s3, bucket, key) => { // key - entire path 
   try {
     const params = {
       Bucket: bucket,
@@ -72,9 +73,9 @@ const getPresignedUrl = async (s3, bucket, key) => {
 
     // Check if the key exists
     const folderExists = await objectExists(bucket, key);
-
+    
     if (!folderExists) {
-      throw new Error('ID doesnt exist');
+      throw new Error('File doesnt exist');
     }
 
     const url = await s3.getSignedUrlPromise('getObject', params);
