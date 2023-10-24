@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import s3 from '../config/s3_config.js'
 
+//check if object exists
 const objectExists = async (bucket, key) => {
   try {
     await s3.headObject({
@@ -22,6 +23,26 @@ const objectExists = async (bucket, key) => {
   }
 };
 
+//delete object from s3
+const deleteObjectFromS3 = async (bucket, key) => {
+  try {
+    const params = {
+      Bucket: bucket,
+      Key: key,
+    };
+
+    // Delete the object
+    await s3.deleteObject(params).promise();
+
+    console.log(`Object deleted: ${key}`);
+  } catch (error) {
+    console.error(`Error deleting object: ${key}`, error.message);
+    throw error;
+  }
+};
+
+
+// Add object to s3
 let folderName = 'default-folder'
 const bucketName = process.env.S3_BUCKET; 
 
@@ -62,7 +83,7 @@ const upload = multer({
   }),
 });
 
-
+//fetch presignedl url 
 const getPresignedUrl = async (s3, bucket, key) => { // key - entire path 
   try {
     const params = {
@@ -94,5 +115,6 @@ const getPresignedUrl = async (s3, bucket, key) => { // key - entire path
 
 export{
   upload,
-  getPresignedUrl
+  getPresignedUrl, 
+  deleteObjectFromS3
 }

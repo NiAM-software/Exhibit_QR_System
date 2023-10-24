@@ -11,12 +11,19 @@ import {
     uploadFilestoS3, 
     generatePreSignedUrl, 
     addRelatedExhibits, 
-    previewImage
+    previewImage,
+    rollbackAttachment,
+    deleteObjectsFromS3,
+    getAttachments,
+    getNextAssetNumber,
+    getCategoriesAndLocationTypes
 } from '../controllers/exhibitController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 
 const router = express.Router();
+router.get('/categories-and-location-types', getCategoriesAndLocationTypes);
+router.post('/generate-presigned-url', protect, generatePreSignedUrl)
 router.put('/undo-delete', protect, undoDeleteExhibits)
 router.put('/:id', protect, updateExhibit)
 router.get('/', protect, getExhibits)
@@ -24,7 +31,7 @@ router.post('/', protect, createExhibit)
 router.get('/:id', protect, getExhibitById); // when ure redirected to edit product screen
 router.delete('/', protect, deleteExhibits)
 
-router.post('/generate-presigned-url', protect, generatePreSignedUrl)
+router.get('/next-asset-number', getNextAssetNumber); 
 
 //upload images to s3
 router.post('/upload/:exhibit_id', protect, upload.array('photos', 25), async function (req, res, next) {
@@ -55,4 +62,11 @@ router.post('/upload/:exhibit_id', protect, upload.array('photos', 25), async fu
 
 router.post('/add-related-exhibits/:id', addRelatedExhibits)
 router.get('/preview-image/:id', previewImage);
+
+
+router.post('/rollback-attachment', rollbackAttachment);
+router.post('/rollback-s3', deleteObjectsFromS3);
+router.get('/get-attachments/:exhibit_id', getAttachments);
+
+//router.use('/user', )
 export default router;

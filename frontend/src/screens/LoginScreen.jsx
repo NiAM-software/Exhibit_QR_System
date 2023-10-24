@@ -6,7 +6,7 @@ import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
 import { useLoginMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import '../assets/styles/index.css'
 import '../assets/styles/bootstrap.custom.css'
 import styled from 'styled-components';

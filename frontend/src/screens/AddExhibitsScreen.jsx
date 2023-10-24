@@ -4,24 +4,43 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
-import { Modal} from 'antd';
+import { Modal,Input} from 'antd';
 import Addfiles from './AddFiles';
-
-
-  
+import AddLinks from './AddLinks';
 
 
 const AddExhibitScreen = () => {
 
   //const [AddFileList, setAddFileList] = useState([]);
 
-
+  const [links, setLinks] = useState([]); // Add this state for links
+  const [isLinksModalVisible, setIsLinksModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [linkList, setLinkList] = useState([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [parsedLinkList, setParsedLinkList] = useState([]);
 
   
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
+  };
+
+  const handleupdatedlinks =(newList) => {
+    setLinkList(newList);
+  }
+  
+  const showLinksModal = () => {
+    setIsLinksModalVisible(true);
+  };
+  
+  const handleLinksOk = () => {
+    setIsLinksModalVisible(false);
+  };
+  
+  const handleLinksCancel = () => {
+    console.log("Cancel button clicked");
+    setIsLinksModalVisible(false);
   };
   
 
@@ -59,14 +78,29 @@ const handleCancel = () => {
   };
 
 
+  const handleLinkSubmit = (updatedLinkList) => {
+    // You can use the updatedLinkList received from AddLinks here
+    console.log('linkList after submitting the modal:', updatedLinkList);
+    const parsedLinkList = updatedLinkList.map(link => ({
+      related_exhibit_id: link.uid,
+      related_exhibit_title: link.name,
+    }));
+    
+    console.log('Parsed Link List:', parsedLinkList);
+    setIsLinksModalVisible(false);
+
+    // Set the submitted link list
+    setParsedLinkList(parsedLinkList);
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
   
     try {
     
-      if (!formData.title || !formData.asset_number || !formData.location) {
-        toast.error('Please fill in all mandatory fields', { duration: 2000 });
+      if (!formData.title || !formData.asset_number) {
+        toast.error('Please fill in mandatory fields title and asset number', { duration: 2000 });
         return;
       }
   
@@ -84,14 +118,6 @@ const handleCancel = () => {
         console.log('First API Call Successful:', data.message);
 
         const new_exhibit_id=data.id
-        
-        // const fileObjects = fileList.map(fileList => ({
-        //   name: fileList.name,
-        //   type: fileList.type,
-        //   size: fileList.size,
-        //   uid: fileList.uid,
-        // }));
-
         const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
         fileList.forEach((file) => {
           formDataForFiles.append('photos', file.originFileObj);
@@ -107,10 +133,31 @@ const handleCancel = () => {
         if (s3Response.ok) {
           const s3Data = await s3Response.json();
           console.log('Second API Call to S3 Successful:', s3Data);
-          toast.success('Form data submitted successfully');
-          setTimeout(() => {
-            navigate('/');
-          }, 2000);
+
+           // Third API call to DB
+          //console.log('herheheherhehehe')
+          // console.log(linkList)
+
+          const dbResponse = await fetch(`/api/exhibits/add-related-exhibits/${new_exhibit_id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(parsedLinkList),
+          });
+
+          if (dbResponse.ok){
+            toast.success('Form data submitted successfully');
+            setFormSubmitted(true);
+            setTimeout(() => {
+              navigate('/');
+            }, 2000);
+          }
+          else {
+            const data = await dbResponse.json();
+            console.error('Third API Call to DB Failed:', data.message);
+            toast.error('Failed to insert related exhibits');
+          }
         } 
         
         else {
@@ -123,7 +170,7 @@ const handleCancel = () => {
         const data = await response.json();
         console.error('First API Call Failed:', data.message);
         if (data.message.includes('Duplicate entry')) {
-          toast.error('Duplicate entries not allowed.');
+          toast.error('Duplicate entries in Asset Number not allowed.');
         } 
         
         else {
@@ -139,54 +186,6 @@ const handleCancel = () => {
     }
   };
   
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  
-  //   try {
-
-  //     if (!formData.title || !formData.asset_number || !formData.location) {
-  //       toast.error('Please fill in all mandatory fields.',{duration: 2000,}); // Show error modal
-  //       return;
-  //     }
-
-
-  //     const response = await fetch('/api/exhibits', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     console.log(response)
-  
-  //     if (response.ok) {
-  //       const data = await response.json(); // Parse the JSON response
-  //       console.log(data.message); 
-  //       toast.success('Form data submitted successfully');
-  //       // You can handle success, redirect, or update the UI here
-  //       setTimeout(() => {
-  //         navigate('/'); // Redirect to the main page after a delay (adjust as needed)
-  //       }, 2000);
-
-  //     } 
-  //     else{
-  //       const data = await response.json();
-  //       if (data.message.includes('Duplicate entry')) {
-  //         toast.error('Duplicate entries not allowed.');
-  //       }
-  //       else {
-  //         toast.error('Failed to submit form data.');
-  //       }
-  //     }
-
-  //   } catch (error) {
-  //     console.log('Failed to submit form data')
-  //     toast.error('An error occurred while submitting form data.');
-  //     // Handle network or other errors here
-  //   }
-  // };
-
   const h1Style = {
     fontWeight: 'bold',
     fontSize: '22px',
@@ -292,7 +291,7 @@ const handleCancel = () => {
           <Col md={4} className="mb-3">
               <Form style={formElementSpacing}>
                 <Form.Group controlId="Location" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Location<span style={{ color: 'red' }}>*</span></Form.Label>
+                  <Form.Label style={formLabelStyle}>Location</Form.Label>
                   <Form.Control  
                   type="text"
                   name="location"
@@ -422,14 +421,29 @@ const handleCancel = () => {
 
                   >
                   {isModalVisible &&
-                <Addfiles files={fileList} setFiles={handleupdatedfiles} nOK={handleOk} nCancel={handleCancel} />}  
+                <Addfiles 
+                files={fileList} 
+                setFiles={handleupdatedfiles} 
+                formSubmitted={formSubmitted}
+                resetFormSubmitted={() => setFormSubmitted(false)}
+                nOK={handleOk} 
+                nCancel={handleCancel} />}  
                 </Modal>
                 
               </div>
 
               <div className="float-start" style={buttonContainerStyle}>
                 <label style={labelStyle}>Related Exhibits</label>
-                <button type="button" style={buttonStyle}>Add Links</button>
+                <button type="button" style={buttonStyle} onClick={showLinksModal}>
+                  Add Links
+                </button>
+                <AddLinks
+                  links={linkList}
+                  setLinks={handleupdatedlinks}
+                  visible={isLinksModalVisible}
+                  onSubmit={handleLinkSubmit}
+                  onCancel={handleLinksCancel}
+                />
               </div>
              </Col>
 
@@ -452,29 +466,8 @@ const handleCancel = () => {
           </Row>
       </Form>
 
-      {/* <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
-      <Modal.Header closeButton>
-        <Modal.Title>Success</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Your form was submitted successfully.</Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={handleCloseSuccessModal}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
 
-    <Modal show={showErrorModal} onHide={handleCloseErrorModal}>
-      <Modal.Header closeButton>
-        <Modal.Title>Error</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{errorMessage}</Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={handleCloseErrorModal}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal> */}
+
 
 <Toaster />
 

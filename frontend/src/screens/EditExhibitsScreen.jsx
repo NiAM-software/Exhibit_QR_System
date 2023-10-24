@@ -1,27 +1,38 @@
-import { Container, Row, Col, Form, Modal, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import React, { useState,useEffect } from 'react';
 import { useNavigate,useParams,useHistory } from 'react-router-dom';
 import Axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
+import { Modal} from 'antd';
+import Modifyfiles from './Modifyfiles';
 
 
 const EditExhibitScreen = () => {
 
-// const [showSuccessModal, setShowSuccessModal] = useState(false);
-// const [showErrorModal, setShowErrorModal] = useState(false);
-// const [errorMessage, setErrorMessage] = useState('');
-// const handleShowSuccessModal = () => setShowSuccessModal(true);
-// const handleCloseSuccessModal = () => setShowSuccessModal(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
-// const handleShowErrorModal = (message) => {
-//   setErrorMessage(message);
-//   setShowErrorModal(true);
-// };
-// const handleCloseErrorModal = () => setShowErrorModal(false);
-// const formRef = useRef(null);
+  
+  const handleupdatedfiles = (newList) => {
+    setFileList(newList);
+  };
+  
+
+const showModal = () => {
+  setIsModalVisible(true);
+};
+
+const handleOk = () => {
+  setIsModalVisible(false);
+};
+
+const handleCancel = () => {
+  setIsModalVisible(false);
+};
 
 
-  const navigate = useNavigate();
+const navigate = useNavigate();
   const { id } = useParams();
 
   const [formData, setFormData] = useState({
@@ -77,27 +88,52 @@ const EditExhibitScreen = () => {
         body: JSON.stringify(formData),
       });
 
-      console.log(response)
+      //console.log(response)
   
       if (response.ok) {
         const data = await response.json(); // Parse the JSON response
-        console.log(data.message); 
-        toast.success('Form data submitted successfully');
-        // You can handle success, redirect, or update the UI here
+        console.log('First API call is successful',data.message); 
+
+        // const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
+        // fileList.forEach((file) => {
+        //   formDataForFiles.append('photos', file.originFileObj);
+        // });
+
+        // console.log(formDataForFiles)
+
+        // const s3Response = await fetch(`api/exhibits/upload/${id}`, {
+        //   method: 'POST', // or 'PUT' or 'whatever is necessary'
+        //   body: formDataForFiles,
+        // });
+
+        // if (s3Response.ok) {
+        //   const s3Data = await s3Response.json();
+        //   console.log('Second API Call to S3 Successful:', s3Data);
+          toast.success('Form data submitted successfully');
+
+        setFormSubmitted(true);
+
         setTimeout(() => {
           navigate('/'); // Redirect to the main page after a delay (adjust as needed)
         }, 2000);
 
       } 
-      else{
-        const data = await response.json();
-        if (data.message.includes('Duplicate entry')) {
-          toast.error('Duplicate entries not allowed.');
-        }
-        else {
-          toast.error(data.message);
-        }
-      }
+      // else {
+      //   console.error('Second API Call to S3 Failed:', s3Response.statusText);
+      //   toast.error('Failed to upload to S3');
+      // }
+    // }
+    //   else{
+    //     const data = await response.json();
+    //     console.error('First API Call Failed:', data.message);
+    //     if (data.message.includes('Duplicate entry')) {
+    //       toast.error('Duplicate entries not allowed.');
+    //     } 
+        
+    //     else {
+    //       toast.error('Failed to submit form data.');
+    //     }
+    //   }
 
     } catch (error) {
       console.log('Failed to submit form data')
@@ -211,7 +247,7 @@ const EditExhibitScreen = () => {
           <Col md={4} className="mb-3">
               <Form style={formElementSpacing}>
                 <Form.Group controlId="Location" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Location<span style={{ color: 'red' }}>*</span></Form.Label>
+                  <Form.Label style={formLabelStyle}>Location</Form.Label>
                   <Form.Control  
                   type="text"
                   name="location"
@@ -326,12 +362,35 @@ const EditExhibitScreen = () => {
             <Col md={6}>
               <div className="float-start" style={buttonContainerStyle}>
                 <label style={labelStyle}>Images/Videos</label>
-                <button style={buttonStyle}>Modify Files</button>
+                <button type="button"  style={buttonStyle} onClick={showModal}>Modify Files</button>
+                <Modal
+                    title="MODIFYFILES"
+                    visible={isModalVisible}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    closable={false}
+                    footer={null}
+                    style={{ height: '1200px',width:'1200px' }}
+  
+                    // okButtonProps={{ style: { background: 'blue', borderColor: 'black',width:'80px' } }}
+                    // cancelButtonProps={{ style: { background: 'white', borderColor: 'black',width:'80px' } }}
+
+                  >
+                  {isModalVisible &&
+                <Modifyfiles 
+                files={fileList} 
+                setFiles={handleupdatedfiles} 
+                formSubmitted={formSubmitted}
+                id={id}
+                resetFormSubmitted={() => setFormSubmitted(false)}
+                nOK={handleOk} 
+                nCancel={handleCancel} />}  
+                </Modal>
               </div>
 
               <div className="float-start" style={buttonContainerStyle}>
                 <label style={labelStyle}>Related Exhibits</label>
-                <button style={buttonStyle}>Modify Links</button>
+                <button type="button" style={buttonStyle}>Modify Links</button>
               </div>
              </Col>
 
@@ -354,30 +413,6 @@ const EditExhibitScreen = () => {
             </Col>
           </Row>
       </Form>
-
-      {/* <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
-      <Modal.Header closeButton>
-        <Modal.Title>Success</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Your form was submitted successfully.</Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={handleCloseSuccessModal}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-
-    <Modal show={showErrorModal} onHide={handleCloseErrorModal}>
-      <Modal.Header closeButton>
-        <Modal.Title>Error</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{errorMessage}</Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={handleCloseErrorModal}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal> */}
 
 <Toaster />
 

@@ -1,8 +1,12 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import {iventoryDBConnection as db} from '../config/db.js'
 import AWS from 'aws-sdk';
-import { getPresignedUrl } from '../utils/uploadFile.js'; // Import utility function
+import { 
+  getPresignedUrl, 
+  deleteObjectFromS3
+} from '../utils/uploadFile.js'; // Import utility function
 import s3 from '../config/s3_config.js'
+
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -12,6 +16,7 @@ dotenv.config();
 // @route   GET /api/exhibits
 // @access  Private/Admin
 const getExhibits = asyncHandler(async (req, res) => {
+  console.log('exhibits info');
   const limit = Number(req.query.pageNumber);
   const pageSize = limit ? (limit < 100 ? limit : 100) : 20;
   const page = Number(req.query.page) || 1;
@@ -46,7 +51,7 @@ const getExhibits = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getExhibitById = asyncHandler(async (req, res) => {
   const {id} = req.params
-  
+ 
   try {
     const query = "SELECT * FROM exhibits WHERE exhibit_id=? and active_ind='Y'";
     const [results, fields] = await db.promise().query(query, [id]);
@@ -316,7 +321,7 @@ const addRelatedExhibits = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const previewImage = asyncHandler(async (req, res) => {
   const {id} = req.params // exhibit_id
-  
+  console.log(id)
   try {
     const query = "SELECT * FROM attachments WHERE exhibit_id=? limit 1"; 
     const [results, fields] = await db.promise().query(query, [id]);
@@ -336,6 +341,116 @@ const previewImage = asyncHandler(async (req, res) => {
   }
 })
 
+const rollbackAttachment = asyncHandler(async (req, res) => {
+  const { fileName, folderName } = req.body;
+
+  try {
+    const query = "DELETE FROM attachments WHERE file_name=? AND file_location=?";
+    const [results, fields] = await db.promise().query(query, [fileName, folderName]);
+    console.log(results);
+    if (results && results.affectedRows > 0) {
+      return res.status(200).json({ folderName });
+    } else {
+      return res.status(404).json({ message: "Resource doesn;t exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+const deleteObjectsFromS3 = async (req, res) => {
+  try {
+    const { objectKeys } = req.body;
+
+    if (!Array.isArray(objectKeys)) {
+      return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
+    }
+
+    const bucket = process.env.S3_BUCKET;
+
+    // Delete each object in parallel
+    await Promise.all(objectKeys.map(async (objectKey) => {
+      const { folderName, fileName } = objectKey;
+      const key = fileName.length > 0 ? `${folderName}/${fileName}` : folderName;
+      console.log(key);
+      await deleteObjectFromS3(bucket, key);
+    }));
+
+    return res.status(200).json('All objects deleted successfully.');
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
+// @desc    Fetch all attachments file locations
+// @route   GET /api/exhibits/:id
+// @access  Private/Admin
+const getAttachments = asyncHandler(async (req, res) => {
+  const {exhibit_id} = req.params
+  
+  try {
+    const query = "SELECT * FROM attachments WHERE exhibit_id=?";
+    const [results, fields] = await db.promise().query(query, [exhibit_id]);
+    //console.log(results);
+    if (results && results.length > 0) {
+      res.status(200).json(results)
+      
+    } else {
+      return res.status(404).json({ message: "Exhibit doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+})
+
+
+const getNextAssetNumber = asyncHandler(async (req, res) => {
+  res.send('asset numner ')
+  const {exhibit_id} = req.params
+  
+  try {
+    const query = "SELECT MAX(asset_number) FROM exhibits";
+    const [results, fields] = await db.promise().query(query, [exhibit_id]);
+    console.log(results);
+    if (results && results.length > 0) {
+      res.status(200).json(results)
+      
+    } else {
+      return res.status(404).json({ message: "Exhibit doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+})
+
+// @desc    Fetch all unique and non empty categories
+// @route   GET /api/admin/exhibits/categories
+// @access  Private/Admin
+const getCategoriesAndLocationTypes = async (req, res) => {
+  try {
+    const categoriesQuery = 'SELECT DISTINCT category FROM exhibits';
+    const locationTypesQuery = 'SELECT DISTINCT location_type FROM exhibits';
+
+    const [categoriesResults, locationTypesResults] = await Promise.all([
+      db.promise().query(categoriesQuery),
+      db.promise().query(locationTypesQuery),
+    ]);
+
+    if (categoriesResults[0] && categoriesResults[0].length > 0 && locationTypesResults[0] && locationTypesResults[0].length > 0) {
+      const categories = categoriesResults[0].map((row) => row.category).filter((category) => category !== null && category !== '');
+      const locationTypes = locationTypesResults[0].map((row) => row.location_type).filter((location_type) => location_type !== null && location_type !== '');
+
+      res.status(200).json({ categories, locationTypes });
+    } else {
+      return res.status(404).json({ message: 'No categories or location types found' });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+
 
 export {
    getExhibits,
@@ -347,5 +462,10 @@ export {
    uploadFilestoS3, 
    generatePreSignedUrl, 
    addRelatedExhibits, 
-   previewImage
+   previewImage, 
+   rollbackAttachment, 
+   deleteObjectsFromS3, 
+   getAttachments, 
+   getNextAssetNumber,
+   getCategoriesAndLocationTypes
 };

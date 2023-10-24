@@ -9,7 +9,7 @@ import DataTable from "react-data-table-component";
 import { FaSearch,  FaFilter } from 'react-icons/fa';
 import styled from 'styled-components';
 import CustomModal from '../components/CustomModal'
-import Notification from "../components/Notification";
+
 
 
 const customStyles = {
@@ -65,6 +65,7 @@ const HomeScreen = () => {
   const [show, setShow] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState();
+  const [notificationMessage2, setNotificationMessage2] = useState();
   
   const handleClose = () => {
     setShow(false);
@@ -90,7 +91,7 @@ const HomeScreen = () => {
   const deleteMutation =
    useMutation(
     async (selectedKeys) => {
-      const response = await axios.delete("/api/exhibits", {
+      const response = await axios.delete("/api/admin/exhibits", {
         data: { ids: selectedKeys },
       });
       return response.data;
@@ -108,7 +109,7 @@ const HomeScreen = () => {
   const undoDeleteMutation =
    useMutation(
     async (ids) => {
-      const response = await axios.put("/api/exhibits/undo-delete", {
+      const response = await axios.put("/api/admin/exhibits/undo-delete", {
         data: { ids: ids },
       });
       return response.data;
@@ -138,6 +139,7 @@ const HomeScreen = () => {
 
   const deleteExhibits = async () => {
     const selectedKeys = selectedRows.map(row => row.exhibit_id);
+    const selectedTitles = selectedRows.map(row => row.title);
     if (selectedKeys.length === 0) {
       toast.error("You need to select at least 1 exhibit");
       return;
@@ -148,6 +150,7 @@ const HomeScreen = () => {
       setSelectedRows(currentSelectedRows => currentSelectedRows.filter(row => !selectedKeys.includes(row.exhibit_id)));
       setShowNotification(true);
       setNotificationMessage(selectedKeys);
+      setNotificationMessage2(selectedTitles);
       setToggleCleared(!toggleCleared); // Toggle the clear state
 
     } catch (error) {
@@ -165,7 +168,7 @@ const HomeScreen = () => {
     ["user-data"],
     async () => {
       try {
-        const response = await axios.get("/api/exhibits");
+        const response = await axios.get("/api/admin/exhibits");
         console.log("Data fetched successfully:", response.data);
         return response.data;
       } catch (error) {
@@ -379,7 +382,7 @@ const HomeScreen = () => {
         {/* {console.log(notificationMessage)} */}
        {showNotification && (
           <Modal show={showNotification} onHide={closeNotification}>
-          <Modal.Body>{`Exhibits ${notificationMessage.join(', ')} have been deleted` }</Modal.Body>
+          <Modal.Body>{`Exhibits ${notificationMessage2.join(', ')} have been deleted` }</Modal.Body>
           <StyledModalFooter onClick={handleUndoDelete}> Undo </StyledModalFooter>
         </Modal>
       )}
