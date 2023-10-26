@@ -124,7 +124,7 @@ const handleCancel = () => {
       }
   
       // First API call to your server
-      const response = await fetch('/api/exhibits', {
+      const response = await fetch('/api/admin/exhibits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ const handleCancel = () => {
 
   
         // Second API call to Amazon S3
-        const s3Response = await fetch(`api/exhibits/upload/${new_exhibit_id}`, {
+        const s3Response = await fetch(`api/admin/exhibits/upload/${new_exhibit_id}`, {
           method: 'POST', // or 'PUT' or 'whatever is necessary'
           body: formDataForFiles,
         });
@@ -157,7 +157,7 @@ const handleCancel = () => {
           //console.log('herheheherhehehe')
           // console.log(linkList)
 
-          const dbResponse = await fetch(`/api/exhibits/add-related-exhibits/${new_exhibit_id}`, {
+          const dbResponse = await fetch(`/api/admin/exhibits/add-related-exhibits/${new_exhibit_id}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

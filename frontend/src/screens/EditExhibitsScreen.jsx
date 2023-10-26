@@ -50,7 +50,7 @@ const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch data for the specified ID from the backend
-    Axios.get(`/api/exhibits/${id}`)
+    Axios.get(`/api/admin/exhibits/${id}`)
       .then(response => {
         setFormData(response.data); // Store data in state for prepopulation
       })
@@ -80,7 +80,7 @@ const navigate = useNavigate();
       }
 
 
-      const response = await fetch(`/api/exhibits/${id}`, {
+      const response = await fetch(`/api/admin/exhibits/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
