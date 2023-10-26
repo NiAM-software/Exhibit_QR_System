@@ -360,11 +360,6 @@ const rollbackAttachment = asyncHandler(async (req, res) => {
 
 
 
-
-
-
-
-
 // @desc    Fetch all attachments file locations
 // @route   GET /api/exhibits/:id
 // @access  Private/Admin
