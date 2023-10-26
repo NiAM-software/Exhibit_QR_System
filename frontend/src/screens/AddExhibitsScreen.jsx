@@ -1,5 +1,5 @@
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
@@ -20,7 +20,24 @@ const AddExhibitScreen = () => {
   const [linkList, setLinkList] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [parsedLinkList, setParsedLinkList] = useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
 
+
+  useEffect(() => {
+    Axios.get('api/exhibits/next-asset-number')
+      .then((response) => {
+        const maxAssetNumber = response.data.asset_number; 
+        console.log(maxAssetNumber)
+        const nextAssetNumber = maxAssetNumber + 1;
+        setNextAvailableAssetNumber(nextAssetNumber.toString());
+      })
+      .catch((error) => {
+        console.error('Error fetching next asset number:', error);
+        toast.error('Error fetching next asset number')
+      });
+  }, []);
+  
   
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
@@ -55,7 +72,9 @@ const handleOk = () => {
 const handleCancel = () => {
   setIsModalVisible(false);
 };
+
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -93,97 +112,123 @@ const handleCancel = () => {
     setParsedLinkList(parsedLinkList);
   };
 
-
+  const validateForm = () => {
+    const errors = {};
+  
+    if (!formData.title) {
+      errors.title = 'Title is required';
+    }
+  
+    if (!formData.asset_number) {
+      errors.asset_number = 'Asset number is required';
+    } else if (isNaN(formData.asset_number)) {
+      errors.asset_number = 'Asset number must be an integer';
+    }
+  
+    if (formData.era !== '' && isNaN(formData.era)) {
+      errors.era = 'Era must be an integer';
+    }
+  
+    return errors;
+  };
+  
+    
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-    
-      if (!formData.title || !formData.asset_number) {
-        toast.error('Please fill in mandatory fields title and asset number', { duration: 2000 });
-        return;
-      }
-  
-      // First API call to your server
-      const response = await fetch('/api/admin/exhibits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('First API Call Successful:', data.message);
+    setFormErrors({});
+    const errors = validateForm();
 
-        const new_exhibit_id=data.id
-        const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
-        fileList.forEach((file) => {
-          formDataForFiles.append('photos', file.originFileObj);
-        });
+    if (Object.keys(errors).length === 0) {
 
-  
-        // Second API call to Amazon S3
-        const s3Response = await fetch(`api/admin/exhibits/upload/${new_exhibit_id}`, {
-          method: 'POST', // or 'PUT' or 'whatever is necessary'
-          body: formDataForFiles,
-        });
-  
-        if (s3Response.ok) {
-          const s3Data = await s3Response.json();
-          console.log('Second API Call to S3 Successful:', s3Data);
-
-           // Third API call to DB
-          //console.log('herheheherhehehe')
-          // console.log(linkList)
-
-          const dbResponse = await fetch(`/api/admin/exhibits/add-related-exhibits/${new_exhibit_id}`, {
+      try {
+        // First API call to your server
+          const response = await fetch('/api/admin/exhibits', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(parsedLinkList),
+            body: JSON.stringify(formData),
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log('First API Call Successful:', data.message);
+  
+          const new_exhibit_id=data.id
+          const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
+          fileList.forEach((file) => {
+            formDataForFiles.append('photos', file.originFileObj);
           });
-
-          if (dbResponse.ok){
-            toast.success('Form data submitted successfully');
-            setFormSubmitted(true);
-            setTimeout(() => {
-              navigate('/');
-            }, 2000);
-          }
+  
+    
+          // Second API call to Amazon S3
+          const s3Response = await fetch(`api/admin/exhibits/upload/${new_exhibit_id}`, {
+            method: 'POST', // or 'PUT' or 'whatever is necessary'
+            body: formDataForFiles,
+          });
+    
+          if (s3Response.ok) {
+            const s3Data = await s3Response.json();
+            console.log('Second API Call to S3 Successful:', s3Data);
+  
+             // Third API call to DB  
+            const dbResponse = await fetch(`/api/admin/exhibits/add-related-exhibits/${new_exhibit_id}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(parsedLinkList),
+            });
+  
+            if (dbResponse.ok){
+              toast.success('Form data submitted successfully');
+              setFormSubmitted(true);
+              setTimeout(() => {
+                navigate('/');
+              }, 2000);
+            }
+            else {
+              const data = await dbResponse.json();
+              console.error('Third API Call to DB Failed:', data.message);
+              toast.error('Failed to insert related exhibits');
+            }
+          } 
+          
           else {
-            const data = await dbResponse.json();
-            console.error('Third API Call to DB Failed:', data.message);
-            toast.error('Failed to insert related exhibits');
+            console.error('Second API Call to S3 Failed:', s3Response.statusText);
+            toast.error('Failed to upload to S3');
           }
         } 
         
         else {
-          console.error('Second API Call to S3 Failed:', s3Response.statusText);
-          toast.error('Failed to upload to S3');
+          const data = await response.json();
+          console.error('First API Call Failed:', data.message);
+
+          if (data.message.includes('Duplicate entry')) {
+            const errors = {};
+            errors.asset_number = 'Duplicate entries not allowed.';
+            setFormErrors(errors);
+            toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
+          } 
+          else {
+            toast.error('Failed to submit form data.');
+          }
         }
       } 
       
-      else {
-        const data = await response.json();
-        console.error('First API Call Failed:', data.message);
-        if (data.message.includes('Duplicate entry')) {
-          toast.error('Duplicate entries in Asset Number not allowed.');
-        } 
-        
-        else {
-          toast.error('Failed to submit form data.');
-        }
+      catch (error) {
+        console.error('Failed to submit form data', error);
+        toast.error('An error occurred while submitting form data.');
+        // Handle network or other errors here
       }
-    } 
-    
-    catch (error) {
-      console.error('Failed to submit form data', error);
-      toast.error('An error occurred while submitting form data.');
-      // Handle network or other errors here
+
+
     }
+
+    else {
+      setFormErrors(errors);
+    }
+
   };
   
   const h1Style = {
@@ -241,7 +286,15 @@ const handleCancel = () => {
     height: '45px', // Adjust the height as needed
   };
 
-
+  const errorStyle = {
+    borderColor: 'red',
+  };
+    
+  const errorMessage = {
+    color: 'red',
+  };
+  
+  
   return (
     <Container className="AddExhibit">
       <Row>
@@ -255,33 +308,47 @@ const handleCancel = () => {
       <Form onSubmit={handleSubmit}>
           <Row>
 
-            <Col md={4} className="mb-3">
-              <Form style={formElementSpacing}>
-
-                <Form.Group controlId="Title" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    placeholder="Enter Title"
-                    style={TextInputStyle}/>
-                </Form.Group>
-              </Form>
-            </Col>
+          <Col md={4} className="mb-3">
+            <Form style={formElementSpacing}>
+              <Form.Group controlId="Title" className="mb-3">
+                <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
+                <Form.Control
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Enter Title"
+                  style={formErrors.title ? { ...TextInputStyle,...errorStyle } : TextInputStyle}
+                />
+                {formErrors.title && <div style={errorMessage}>{formErrors.title}</div>}
+              </Form.Group>
+            </Form>
+          </Col>
 
             <Col md={4} className="offset-md-3 mb-3">
               <Form style={formElementSpacing}>
                 <Form.Group controlId="Asset Number" className="mb-3">
                   <Form.Label style={formLabelStyle}>Asset Number<span style={{ color: 'red' }}>*</span></Form.Label>
+                  {nextAvailableAssetNumber && (
+          <span style={{ color: 'green', fontSize: '14px', marginLeft: '130px' }}>
+            Suggested: {nextAvailableAssetNumber}
+          </span>
+        )}
                 <Form.Control 
                 type="text"
                 name="asset_number"
                 value={formData.asset_number}
                 onChange={handleChange} 
                 placeholder="Enter Asset number"
-                style={TextInputStyle} />
+                style={formErrors.asset_number ? { ...TextInputStyle,...errorStyle } : TextInputStyle}
+                />
+                {/* {1000 && (
+                    <div style={{ color: 'green',fontSize: '14px' }}>
+                      Suggested: {1000}
+                    </div>
+                  )} */}
+                {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
+
                 </Form.Group>
               </Form>
             </Col>
@@ -342,13 +409,14 @@ const handleCancel = () => {
               <Form style={formElementSpacing}>
                 <Form.Group controlId="Era" className="mb-3">
                   <Form.Label style={formLabelStyle}>Era</Form.Label>
-                  <Form.Control 
-                    type="text" 
+                  <Form.Control
+                    type="text"
                     name="era"
                     value={formData.era}
                     onChange={handleChange}
-                    style={TextInputStyle}
-                    />
+                    style={formErrors.era ? { ...TextInputStyle,...errorStyle } : TextInputStyle}
+                  />
+                  {formErrors.era && <div style={errorMessage}>{formErrors.era}</div>}
                 </Form.Group>
               </Form>
             </Col>
