@@ -25,7 +25,7 @@ const AddExhibitScreen = () => {
 
 
   useEffect(() => {
-    Axios.get('api/exhibits/next-asset-number')
+    Axios.get('/api/admin/exhibits/next-asset-number')
       .then((response) => {
         const maxAssetNumber = response.data.asset_number; 
         console.log(maxAssetNumber)
@@ -83,6 +83,7 @@ const handleCancel = () => {
     location_type:'',
     location:'',
     asset_number:'',
+    manufacturer:'',
     era:'',
     exhibit_desc:''
   });
@@ -273,7 +274,7 @@ const handleCancel = () => {
 
   // Define a custom style for the space between form elements
   const formElementSpacing = {
-    marginBottom: '-5px', // Adjust the margin-bottom as needed
+    marginBottom: '-15px', // Adjust the margin-bottom as needed
   };
 
   const descriptionInputStyle = {
@@ -325,33 +326,30 @@ const handleCancel = () => {
             </Form>
           </Col>
 
-            <Col md={4} className="offset-md-3 mb-3">
-              <Form style={formElementSpacing}>
-                <Form.Group controlId="Asset Number" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Asset Number<span style={{ color: 'red' }}>*</span></Form.Label>
-                  {nextAvailableAssetNumber && (
-          <span style={{ color: 'green', fontSize: '14px', marginLeft: '130px' }}>
-            Suggested: {nextAvailableAssetNumber}
-          </span>
-        )}
+          <Col md={4} className="offset-md-3 mb-3">
+            <Form style={formElementSpacing}>
+              <Form.Group controlId="Asset Number" className="mb-3" style={{ position: 'relative' }}>
+                <Form.Label style={formLabelStyle}>
+                  Asset Number<span style={{ color: 'red' }}>*</span>
+                </Form.Label>
                 <Form.Control 
-                type="text"
-                name="asset_number"
-                value={formData.asset_number}
-                onChange={handleChange} 
-                placeholder="Enter Asset number"
-                style={formErrors.asset_number ? { ...TextInputStyle,...errorStyle } : TextInputStyle}
+                  type="text"
+                  name="asset_number"
+                  value={formData.asset_number}
+                  onChange={handleChange} 
+                  placeholder="Enter Asset number"
+                  style={formErrors.asset_number ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
                 />
-                {/* {1000 && (
-                    <div style={{ color: 'green',fontSize: '14px' }}>
-                      Suggested: {1000}
-                    </div>
-                  )} */}
+                {nextAvailableAssetNumber && (
+                  <div style={{ position: 'absolute', top: '0', right: '0', color: 'green', fontSize: '14px' }}>
+                    Suggested: {nextAvailableAssetNumber}
+                  </div>
+                )}
                 {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
+              </Form.Group>
+            </Form>
+          </Col>
 
-                </Form.Group>
-              </Form>
-            </Col>
           </Row>
 
           <Row>
@@ -455,7 +453,41 @@ const handleCancel = () => {
             </Col>
           </Row>
 
-          <Col md={6} className="mb-4"> {/* Add custom class for margin-bottom */}
+          <Row>
+            <Col md={4} className="mb-3">
+              <Form style={formElementSpacing}>
+                <Form.Group controlId="Manufacturer" className="mb-3">
+                  <Form.Label style={formLabelStyle}>Manufacturer</Form.Label>
+                  <Form.Control 
+                    type="text"
+                    name="manufacturer"
+                    value={formData.manufacturer}
+                    onChange={handleChange} 
+                    style={TextInputStyle}
+                     />
+                </Form.Group>
+              </Form>
+            </Col>
+
+            <Col md={4} className="offset-md-3 mb-3">
+              <Form style={formElementSpacing}>
+                <Form.Group controlId="Description" className="mb-3">
+                    <Form.Label style={formLabelStyle}>Description</Form.Label>
+                    <Form.Control 
+                      type="text" as="textarea" 
+                      placeholder="Enter Description"
+                      name="exhibit_desc"
+                      value={formData.exhibit_desc}
+                      onChange={handleChange}
+                      style={descriptionInputStyle}/>
+                </Form.Group>
+            </Form>
+            </Col>
+          </Row>
+
+
+
+          {/* <Col md={6} className="mb-4">
             <Form style={formElementSpacing}>
                 <Form.Group controlId="Description" className="mb-3">
                     <Form.Label style={formLabelStyle}>Description</Form.Label>
@@ -468,8 +500,9 @@ const handleCancel = () => {
                       style={descriptionInputStyle}/>
                 </Form.Group>
             </Form>
-          </Col>
-      
+          </Col> */}
+
+
           <Row>
             <Col md={6}>
             <div className="float-start" style={buttonContainerStyle}>

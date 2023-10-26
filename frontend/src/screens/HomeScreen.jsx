@@ -336,7 +336,7 @@ const HomeScreen = () => {
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto'>
             <Link to="/AddExhibitScreen"> 
-            <button className="btn-primary-sm add-exhibit-btn">add exhibit </button>   
+            <button className="btn-primary-sm add-exhibit-btn">Add New Exhibit </button>   
             </Link>
             </Nav>
           </Navbar.Collapse>

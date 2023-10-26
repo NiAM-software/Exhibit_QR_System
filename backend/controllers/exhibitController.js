@@ -80,14 +80,15 @@ const createExhibit = asyncHandler(async (req, res) => {
     location_type, 
     location, 
     asset_number,
+    manufacturer,
     era, 
     exhibit_desc
   } = req.body;
   console.log(req.files);
   const era_int = era === '' ? null : parseInt(era, 10);
   try {
-    const query = 'INSERT INTO exhibits (title, category, subcategory, room, location_type, location, asset_number, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const [results, fields] = await db.promise().query(query, [title, category, subcategory, room, location_type, location, asset_number, era_int, exhibit_desc,'Y']);
+    const query = 'INSERT INTO exhibits (title, category, subcategory, room, location_type, location, asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
+    const [results, fields] = await db.promise().query(query, [title, category, subcategory, room, location_type, location, asset_number, manufacturer, era_int, exhibit_desc,'Y']);
 
     if (results && results.affectedRows > 0) {
       const newExhibitId = results.insertId;
@@ -118,9 +119,12 @@ const updateExhibit = asyncHandler(async (req, res) => {
         location_type,
         location,
         asset_number,
+        manufacturer,
         era,
         exhibit_desc,
       } = req.body;
+
+      const era_int = era === '' ? null : parseInt(era, 10);
       
       const values = [
         title,
@@ -130,11 +134,12 @@ const updateExhibit = asyncHandler(async (req, res) => {
         location_type,
         location,
         asset_number,
-        era,
+        manufacturer,
+        era_int,
         exhibit_desc,
         id
       ];
-      const updateQuery ="UPDATE exhibits SET title=?, category=?, subcategory=?, room=?, location_type=?, location=?, asset_number=?, era=?, exhibit_desc=? WHERE exhibit_id=? and active_ind='Y'";
+      const updateQuery ="UPDATE exhibits SET title=?, category=?, subcategory=?, room=?, location_type=?, location=?, asset_number=?,manufacturer=?, era=?, exhibit_desc=? WHERE exhibit_id=? and active_ind='Y'";
       const [updateResults, updateFields] = await db.promise().query(updateQuery, values);
 
       if (updateResults.affectedRows > 0) {
@@ -406,23 +411,19 @@ const getAttachments = asyncHandler(async (req, res) => {
 
 
 const getNextAssetNumber = asyncHandler(async (req, res) => {
-  res.send('asset numner ')
-  const {exhibit_id} = req.params
-  
   try {
-    const query = "SELECT MAX(asset_number) FROM exhibits";
-    const [results, fields] = await db.promise().query(query, [exhibit_id]);
-    console.log(results);
+    const query = "SELECT MAX(asset_number) AS max_asset_number FROM exhibits";
+    const [results, fields] = await db.promise().query(query);    
     if (results && results.length > 0) {
-      res.status(200).json(results)
-      
+      const maxAssetNumber = results[0].max_asset_number || 0;
+      return res.status(200).json({ message: "max asset number retrieved", asset_number: maxAssetNumber });
     } else {
       return res.status(404).json({ message: "Exhibit doesn't exist" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
-})
+});
 
 // @desc    Fetch all unique and non empty categories
 // @route   GET /api/admin/exhibits/categories

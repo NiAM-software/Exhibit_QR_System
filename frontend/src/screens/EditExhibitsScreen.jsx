@@ -12,6 +12,8 @@ const EditExhibitScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
 
   
   const handleupdatedfiles = (newList) => {
@@ -43,6 +45,7 @@ const navigate = useNavigate();
     location_type:'',
     location:'',
     asset_number:'',
+    manufacturer:'',
     era:'',
     exhibit_desc:''
   });
@@ -57,6 +60,19 @@ const navigate = useNavigate();
       .catch(error => {
         console.error('Error fetching data:', error);
       });
+  
+    // Fetch the next available asset number
+    Axios.get('/api/admin/exhibits/next-asset-number')
+      .then((response) => {
+        const maxAssetNumber = response.data.asset_number; 
+        const nextAssetNumber = maxAssetNumber + 1;
+        setNextAvailableAssetNumber(nextAssetNumber.toString());
+      })
+      .catch((error) => {
+        // console.log(response)
+        console.error('Error fetching next asset number:', error);
+        toast.error('Error fetching next asset number');
+      });
   }, [id]);
 
   const handleChange = (e) => {
@@ -69,16 +85,34 @@ const navigate = useNavigate();
   };
 
 
+  const validateForm = () => {
+    const errors = {};
+  
+    if (!formData.title) {
+      errors.title = 'Title is required';
+    }
+  
+    if (!formData.asset_number) {
+      errors.asset_number = 'Asset number is required';
+    } else if (isNaN(formData.asset_number)) {
+      errors.asset_number = 'Asset number must be an integer';
+    }
+  
+    if (formData.era !== '' && isNaN(formData.era)) {
+      errors.era = 'Era must be an integer';
+    }
+  
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormErrors({});
+    const errors = validateForm();
+
+    if (Object.keys(errors).length === 0) {
   
     try {
-
-      if (!formData.title || !formData.asset_number || !formData.location) {
-        toast.error('Please fill in all mandatory fields.',{duration: 2000,}); // Show error modal
-        return;
-      }
-
 
       const response = await fetch(`/api/admin/exhibits/${id}`, {
         method: 'PUT',
@@ -123,23 +157,32 @@ const navigate = useNavigate();
       //   toast.error('Failed to upload to S3');
       // }
     // }
-    //   else{
-    //     const data = await response.json();
-    //     console.error('First API Call Failed:', data.message);
-    //     if (data.message.includes('Duplicate entry')) {
-    //       toast.error('Duplicate entries not allowed.');
-    //     } 
-        
-    //     else {
-    //       toast.error('Failed to submit form data.');
-    //     }
-    //   }
+    else {
+      const data = await response.json();
+      console.error('First API Call Failed:', data.message);
+
+      if (data.message.includes('Duplicate entry')) {
+        const errors = {};
+        errors.asset_number = 'Duplicate entries not allowed.';
+        setFormErrors(errors);
+        toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
+      } 
+      else {
+        toast.error('Failed to submit form data.');
+      }
+    }
 
     } catch (error) {
       console.log('Failed to submit form data')
       toast.error('An error occurred while submitting form data.');
       // Handle network or other errors here
     }
+
+  }
+    else {
+      setFormErrors(errors);
+    }
+
   };
 
   const h1Style = {
@@ -197,6 +240,14 @@ const navigate = useNavigate();
     height: '45px', // Adjust the height as needed
   };
 
+  const errorStyle = {
+    borderColor: 'red',
+  };
+    
+  const errorMessage = {
+    color: 'red',
+  };
+
 
   return (
     <Container className="EditExhibit">
@@ -209,39 +260,50 @@ const navigate = useNavigate();
       </Row>
 
       <Form onSubmit={handleSubmit}>
-          <Row>
+      <Row>
 
-            <Col md={4} className="mb-3">
-              <Form style={formElementSpacing}>
+        <Col md={4} className="mb-3">
+          <Form style={formElementSpacing}>
+            <Form.Group controlId="Title" className="mb-3">
+              <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter Title"
+                style={formErrors.title ? { ...TextInputStyle,...errorStyle } : TextInputStyle}
+              />
+              {formErrors.title && <div style={errorMessage}>{formErrors.title}</div>}
+            </Form.Group>
+          </Form>
+        </Col>
 
-                <Form.Group controlId="Title" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    // placeholder="Enter Title"
-                    style={TextInputStyle}/>
-                </Form.Group>
-              </Form>
-            </Col>
-
-            <Col md={4} className="offset-md-3 mb-3">
-              <Form style={formElementSpacing}>
-                <Form.Group controlId="Asset Number" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Asset Number<span style={{ color: 'red' }}>*</span></Form.Label>
-                <Form.Control 
+        <Col md={4} className="offset-md-3 mb-3">
+          <Form style={formElementSpacing}>
+            <Form.Group controlId="Asset Number" className="mb-3" style={{ position: 'relative' }}>
+              <Form.Label style={formLabelStyle}>
+                Asset Number<span style={{ color: 'red' }}>*</span>
+              </Form.Label>
+              <Form.Control 
                 type="text"
                 name="asset_number"
                 value={formData.asset_number}
                 onChange={handleChange} 
-                // placeholder="Enter Asset number"
-                style={TextInputStyle} />
-                </Form.Group>
-              </Form>
-            </Col>
-          </Row>
+                placeholder="Enter Asset number"
+                style={formErrors.asset_number ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+              />
+              {nextAvailableAssetNumber && (
+                <div style={{ position: 'absolute', top: '0', right: '0', color: 'green', fontSize: '14px' }}>
+                  Suggested: {nextAvailableAssetNumber}
+                </div>
+              )}
+              {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
+            </Form.Group>
+          </Form>
+        </Col>
+
+        </Row>
 
           <Row>
           <Col md={4} className="mb-3">
@@ -298,13 +360,14 @@ const navigate = useNavigate();
               <Form style={formElementSpacing}>
                 <Form.Group controlId="Era" className="mb-3">
                   <Form.Label style={formLabelStyle}>Era</Form.Label>
-                  <Form.Control 
-                    type="text" 
+                  <Form.Control
+                    type="text"
                     name="era"
                     value={formData.era}
                     onChange={handleChange}
-                    style={TextInputStyle}
-                    />
+                    style={formErrors.era ? { ...TextInputStyle,...errorStyle } : TextInputStyle}
+                  />
+                  {formErrors.era && <div style={errorMessage}>{formErrors.era}</div>}
                 </Form.Group>
               </Form>
             </Col>
@@ -343,7 +406,41 @@ const navigate = useNavigate();
             </Col>
           </Row>
 
-          <Col md={6} className="mb-4"> {/* Add custom class for margin-bottom */}
+          <Row>
+            <Col md={4} className="mb-3">
+              <Form style={formElementSpacing}>
+                <Form.Group controlId="Manufacturer" className="mb-3">
+                  <Form.Label style={formLabelStyle}>Manufacturer</Form.Label>
+                  <Form.Control 
+                    type="text"
+                    name="manufacturer"
+                    value={formData.manufacturer}
+                    onChange={handleChange} 
+                    style={TextInputStyle}
+                     />
+                </Form.Group>
+              </Form>
+            </Col>
+
+            <Col md={4} className="offset-md-3 mb-3">
+              <Form style={formElementSpacing}>
+                <Form.Group controlId="Description" className="mb-3">
+                    <Form.Label style={formLabelStyle}>Description</Form.Label>
+                    <Form.Control 
+                      type="text" as="textarea" 
+                      placeholder="Enter Description"
+                      name="exhibit_desc"
+                      value={formData.exhibit_desc}
+                      onChange={handleChange}
+                      style={descriptionInputStyle}/>
+                </Form.Group>
+            </Form>
+            </Col>
+          </Row>
+
+
+
+          {/* <Col md={6} className="mb-4"> 
             <Form style={formElementSpacing}>
                 <Form.Group controlId="Description" className="mb-3">
                     <Form.Label style={formLabelStyle}>Description</Form.Label>
@@ -356,7 +453,7 @@ const navigate = useNavigate();
                       style={descriptionInputStyle}/>
                 </Form.Group>
             </Form>
-          </Col>
+          </Col> */}
       
           <Row>
             <Col md={6}>
