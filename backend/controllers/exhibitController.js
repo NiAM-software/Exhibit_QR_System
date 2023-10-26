@@ -1,44 +1,36 @@
 import asyncHandler from '../middleware/asyncHandler.js';
 import {iventoryDBConnection as db} from '../config/db.js'
-import AWS from 'aws-sdk';
+import s3 from '../config/s3_config.js'
+import {upload} from '../utils/uploadFile.js';
 import { 
   getPresignedUrl, 
-  deleteObjectFromS3
+  deleteObjectFromS3, 
+  deleteObjectsFromS3, 
 } from '../utils/uploadFile.js'; // Import utility function
-import s3 from '../config/s3_config.js'
 
-import dotenv from 'dotenv';
-dotenv.config();
-
-
+import { 
+  deleteAttachmentsUtils,
+  getAttachmentsUtils,
+  getPresignedUrlsUtils, 
+  addRelatedExhibitsUtils, 
+  deleteRelatedExhibitsUtils
+} from '../utils/attachmentUtils.js';
 
 // @desc    Fetch all exhibits
 // @route   GET /api/exhibits
 // @access  Private/Admin
 const getExhibits = asyncHandler(async (req, res) => {
-  console.log('exhibits info');
-  const limit = Number(req.query.pageNumber);
-  const pageSize = limit ? (limit < 100 ? limit : 100) : 20;
-  const page = Number(req.query.page) || 1;
-  //search func
   const keyword = req.query.keyword
   ? `WHERE title LIKE '%${req.query.keyword}%' AND active_ind='Y'`
   : 'WHERE active_ind="Y"';
 
-  
-  const countQuery = `SELECT COUNT(*) AS total FROM exhibits ${keyword}`;
   const exhibitsQuery = `SELECT * FROM exhibits ${keyword}`;
 
   try {
-    const [countResults] = await db.promise().query(countQuery);
-    const count = countResults[0].total; // total no of records 
-    //console.log(count);
-
-    // Fetch exhibits
     const [exhibitsResults] = await db.promise().query(exhibitsQuery);
     const exhibits = exhibitsResults;
     //console.log(exhibits.length);
-    res.json({ exhibits, page, pages: Math.ceil(count / pageSize) }); 
+    res.json({ exhibits }); 
   } catch (err) {
     console.error('Error fetching exhibits:', err);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -84,7 +76,7 @@ const createExhibit = asyncHandler(async (req, res) => {
     era, 
     exhibit_desc
   } = req.body;
-  console.log(req.files);
+  
   const era_int = era === '' ? null : parseInt(era, 10);
   try {
     const query = 'INSERT INTO exhibits (title, category, subcategory, room, location_type, location, asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
@@ -92,8 +84,6 @@ const createExhibit = asyncHandler(async (req, res) => {
 
     if (results && results.affectedRows > 0) {
       const newExhibitId = results.insertId;
-
-      console.log(newExhibitId);
       res.status(201).json({ message: 'Exhibit created successfully' , id : newExhibitId});
     } else {
       return res.status(401).json({ message: "Failed to create exhibit" });
@@ -159,8 +149,6 @@ const updateExhibit = asyncHandler(async (req, res) => {
 // @desc    Delete exhibit
 // @route   DELETE /api/exhibits/:id
 // @access  Private/Admin
-
-
 const deleteExhibits = asyncHandler(async (req, res) => {
   const { ids } = req.body;
 
@@ -190,7 +178,7 @@ const deleteExhibits = asyncHandler(async (req, res) => {
 // @route   PUT /api/exhibits/:id
 // @access  Private/Admin
 const undoDeleteExhibits = asyncHandler(async (req, res) => {
-  console.log("UNDO");
+
   const { ids } = req.body.data;
   
   try { // UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)
@@ -198,12 +186,11 @@ const undoDeleteExhibits = asyncHandler(async (req, res) => {
     const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
 
     if (selectResults && selectResults.length > 0) {
-      console.log('undo delete rows');
       const updateQuery = "UPDATE exhibits SET active_ind='Y' WHERE exhibit_id IN (?)";
       const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
 
       if (updateResults.affectedRows > 0) {
-        console.log('successful');
+     
         return res.status(200).json({ message: "Successfully restored exhibits" }); // Successfully deleted, no content to send
       } else {
         return res.status(500).json({ message: "Couldn't restore exhibits" });
@@ -218,105 +205,93 @@ const undoDeleteExhibits = asyncHandler(async (req, res) => {
 
 //folder structure
 const uploadFilestoS3 = asyncHandler(async (req, res) => {
-  // try {
-  //   console.log(req.files)
-  //   if (!req.files) {
-  //     return res.status(400).json({ error: 'No files were uploaded.' });
-  //   }
-
-  //   const query = 'INSERT INTO attachments (exhibit_id, file_name, file_location) VALUES (?, ?, ?)';
-  //   const [results, fields] = await db.promise().query(query, [id, name,  location]);
-
-  //   if (results && results.affectedRows > 0) {
-  //     res.status(201).json({ message: 'Exhibit attachment created successfully' });
-  //   } else {
-  //     return res.status(401).json({ message: "Failed to create exhibit" });
-  //   }
-  //   // const {exhibit_id} = req.params;
-  //   // const s3 = new AWS.S3();
-  //   // const bucketName = process.env.S3_BUCKET; 
-  //   // const folderName = `exhibit_id_${exhibit_id}`; 
-
-  // }catch (err) {
-  //   return res.status(500).json({ message: err.message });
-  // }
+ 
 });
 
 const generatePreSignedUrl = async (req, res) => {
-
   try {
     const { objectKeys } = req.body;
-    
-    const bucketName = process.env.S3_BUCKET; 
-   
-    if (!Array.isArray(objectKeys)) {
-      return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
-    }
-
-    const urls = await Promise.all(objectKeys.map(async (objectKey) => {
-      const { folderName, fileName } = objectKey
-      const path = `${folderName}/${fileName}`;
-      try {
-        
-        //console.log(path);
-        const url = await getPresignedUrl(s3, bucketName, path);
-        return { folderName, fileName, url };
-      } catch (error) {
-        console.error(`Error generating presigned URL for ${path}`, error.message);
-        return { folderName, fileName, error: error.message };
-      }
-    }));
-
-    res.json({ urls });
+    const presignedURLS = await getPresignedUrlsUtils(objectKeys); 
+    res.status(200).json(presignedURLS);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
 };
 
-
 // @desc    Add a related exhibit
 // @route   POST /api/exhibits/add-related-exhibit
 // @access  Private/Admin
 const addRelatedExhibits = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const related_exhibits_ids = req.body;
-  const insertedRelationships = [];
-
+  const { id:exhibit_id } = req.params;
+  const { related_exhibits_ids } = req.body;
   try {
-    if (!Array.isArray(related_exhibits_ids)) {
-      return res.status(400).json({ error: 'invalid input. exhibit_ids should be an array.' });
-    }
-    for (const relatedIdInfo of related_exhibits_ids) {
-      const {
-        related_exhibit_id, related_exhibit_title
-      } = relatedIdInfo
-      // console.log(relatedIdInfo);
-      // console.log(related_exhibit_id + " " + related_exhibit_title);
-      const checkExistenceQuery =
-        "SELECT * FROM related_exhibits WHERE exhibit_id = ? AND related_exhibit_id = ?";
-      const [existenceResults, existenceFields] = await db
-        .promise()
-        .query(checkExistenceQuery, [id, related_exhibit_id]);
-
-      if (existenceResults && existenceResults.length === 0) {
-        // insert a row if it doesn't already exist
-        const insertRelationshipQuery =
-          "INSERT INTO related_exhibits (exhibit_id, related_exhibit_id, related_exhibit_title) VALUES (?, ?, ?)";
-        const [insertResult] = await db
-          .promise()
-          .query(insertRelationshipQuery, [id, related_exhibit_id, related_exhibit_title]);
-
-        insertedRelationships.push(insertResult.insertId);
-      }
-    }
+    const insertResult = await addRelatedExhibitsUtils(exhibit_id, related_exhibits_ids);
 
     return res.status(200).json({
       message: "Successfully inserted relationships",
-      insertedRelationships,
+      insertedRelationships: insertResult,
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });
+  }
+});
+
+
+// @desc    get related exhibits -> images, urls 
+// @route   POST /api/exhibits/get-related-exhibit
+// @access  Private/Admin
+const getRelatedExhibits = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+
+  try {
+    const selectQuery = `
+    select related_exhibit_id, related_exhibit_title, file_name, file_location 
+    from (
+      select img.related_exhibit_id, img.related_exhibit_title, atch.file_name, atch.file_location,
+      row_number() over (partition by img.related_exhibit_id order by atch.file_name) as rn
+      FROM  attachments atch
+      right join (
+        select distinct related_exhibit_id, related_exhibit_title
+        from related_exhibits re
+        inner join exhibits e on re.related_exhibit_id = e.exhibit_id and e.active_ind = 'Y'
+        where re.exhibit_id = 195
+      ) img
+      on atch.exhibit_id = img.related_exhibit_id
+    ) images 
+    where rn = 1`;
+
+    const [existenceResults, existenceFields] = await db.promise().query(selectQuery, [id]);
+  
+    if (!existenceResults || existenceResults.length === 0) {
+      return res.status(404).json({ message: "Related Exhibit doesn't exist" });
+    }
+
+    res.status(200).json({ message: "Related Exhibits retrieved successfully", data: existenceResults });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+// @desc    get related exhibits -> images, urls 
+// @route   POST /api/exhibits/get-related-exhibit
+// @access  Private/Admin
+const modifiedRelatedExhibits = asyncHandler(async (req, res) => {
+  const { id:exhibit_id } = req.params;
+  const { exhibitsToBeDeleted, exhibitsToBeAdded } = req.body;
+  try {
+   
+    const insertResult = await addRelatedExhibitsUtils(exhibit_id, exhibitsToBeAdded);
+    const deletionResult = await deleteRelatedExhibitsUtils(exhibit_id, exhibitsToBeDeleted);
+    
+    return res.status(200).json({
+      message: 'Exhibits modified successfully',
+      insertedRelationships: insertResult,
+      deletionRelationships: deletionResult
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message }); // Send an error response
   }
 });
 
@@ -326,7 +301,7 @@ const addRelatedExhibits = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const previewImage = asyncHandler(async (req, res) => {
   const {id} = req.params // exhibit_id
-  console.log(id)
+  // console.log(id)
   try {
     const query = "SELECT * FROM attachments WHERE exhibit_id=? limit 1"; 
     const [results, fields] = await db.promise().query(query, [id]);
@@ -348,44 +323,51 @@ const previewImage = asyncHandler(async (req, res) => {
 
 const rollbackAttachment = asyncHandler(async (req, res) => {
   const { fileName, folderName } = req.body;
-
   try {
-    const query = "DELETE FROM attachments WHERE file_name=? AND file_location=?";
-    const [results, fields] = await db.promise().query(query, [fileName, folderName]);
-    console.log(results);
-    if (results && results.affectedRows > 0) {
-      return res.status(200).json({ folderName });
+    const attachments = await deleteAttachmentsUtils(fileName, folderName);
+    if (attachments.message === "Successfully deleted") {
+      const { message, ...attachmentData } = attachments;
+      res.status(200).json(attachments);
     } else {
-      return res.status(404).json({ message: "Resource doesn;t exist" });
-    }
+      res.status(404).json({ message: attachments.message });
+    } 
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message }); // Send an error response
   }
 });
 
-const deleteObjectsFromS3 = async (req, res) => {
-  try {
-    const { objectKeys } = req.body;
 
-    if (!Array.isArray(objectKeys)) {
-      return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
-    }
+// const deleteObjectsFromS3 = async (req, res) => {
+//   try {
+//     const { objectKeys } = req.body;
 
-    const bucket = process.env.S3_BUCKET;
+//     if (!Array.isArray(objectKeys)) {
+//       return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
+//     }
 
-    // Delete each object in parallel
-    await Promise.all(objectKeys.map(async (objectKey) => {
-      const { folderName, fileName } = objectKey;
-      const key = fileName.length > 0 ? `${folderName}/${fileName}` : folderName;
-      console.log(key);
-      await deleteObjectFromS3(bucket, key);
-    }));
+//     const bucket = process.env.S3_BUCKET;
 
-    return res.status(200).json('All objects deleted successfully.');
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
+//     // Delete each object in parallel
+//     await Promise.all(objectKeys.map(async (objectKey) => {
+//       const { folderName, fileName } = objectKey;
+//       const key = fileName.length > 0 ? `${folderName}/${fileName}` : folderName;
+//       console.log(key);
+//       await deleteObjectFromS3(bucket, key);
+//     }));
+
+//     return res.status(200).json('All objects deleted successfully.');
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
+
+
+
+
+
+
+
 
 
 // @desc    Fetch all attachments file locations
@@ -393,22 +375,18 @@ const deleteObjectsFromS3 = async (req, res) => {
 // @access  Private/Admin
 const getAttachments = asyncHandler(async (req, res) => {
   const {exhibit_id} = req.params
-  
   try {
-    const query = "SELECT * FROM attachments WHERE exhibit_id=?";
-    const [results, fields] = await db.promise().query(query, [exhibit_id]);
-    //console.log(results);
-    if (results && results.length > 0) {
-      res.status(200).json(results)
-      
+    const attachments = await getAttachmentsUtils(exhibit_id);
+    if (attachments.message === "Successfully fetched") {
+      const { message, ...attachmentData } = attachments;
+      res.status(200).json(attachments);
     } else {
-      return res.status(404).json({ message: "Exhibit doesn't exist" });
-    }
+      res.status(404).json({ message: attachments.message });
+    } 
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 })
-
 
 const getNextAssetNumber = asyncHandler(async (req, res) => {
   try {
@@ -465,8 +443,10 @@ export {
    addRelatedExhibits, 
    previewImage, 
    rollbackAttachment, 
-   deleteObjectsFromS3, 
+   modifiedRelatedExhibits,
    getAttachments, 
    getNextAssetNumber,
-   getCategoriesAndLocationTypes
+   getCategoriesAndLocationTypes, 
+   getRelatedExhibits, 
+
 };

@@ -1,7 +1,5 @@
-import express from 'express';
 import multer from 'multer';
 import multerS3 from 'multer-s3';
-import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 import s3 from '../config/s3_config.js'
@@ -15,7 +13,9 @@ const objectExists = async (bucket, key) => {
     }).promise(); 
     return true; 
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    console.log("ERROR");
+    console.log(err.message);
     if (err.code === 'NotFound') {
       return false; 
     }
@@ -23,24 +23,91 @@ const objectExists = async (bucket, key) => {
   }
 };
 
-//delete object from s3
 const deleteObjectFromS3 = async (bucket, key) => {
   try {
     const params = {
       Bucket: bucket,
       Key: key,
     };
-
-    // Delete the object
-    await s3.deleteObject(params).promise();
-
-    console.log(`Object deleted: ${key}`);
+  
+    const response = await s3.deleteObject(params).promise();
+    return { message: `Object deleted: ${key}` };
   } catch (error) {
-    console.error(`Error deleting object: ${key}`, error.message);
-    throw error;
+    if (error.code === 'NoSuchKey') {
+      return { message: `Object not found: ${key}` };
+    } else {
+      throw error;
+    }
   }
 };
 
+
+const deleteObjectsFromS3 = async (objectKeys) => {
+  try {
+    console.log(objectKeys);
+    if (!Array.isArray(objectKeys)) {
+      return { error: 'Invalid input. objectKeys should be an array.' };
+    }
+
+    const bucket = process.env.S3_BUCKET;
+    const deletedObjects = [];
+
+   
+    await Promise.all(objectKeys.map(async (objectKey) => {
+      const { folderName, fileName } = objectKey;
+      const key = fileName && fileName.length > 0 ? `${folderName}/${fileName}` : folderName;
+      //console.log(key);
+
+      try {
+        const deleteResponse = await deleteObjectFromS3(bucket, key);
+        deletedObjects.push(deleteResponse);
+      } catch (error) {
+        if (error.code === 'NoSuchKey') { // wont work will show deletion as successful even if key doesnt exist
+          console.log(`Object not found: ${key}`);
+          deletedObjects.push({ message: `Object not found: ${key}` });
+        } else {
+          //console.error(`Error deleting object: ${key}`, error.message);
+          deletedObjects.push({ error: `Error deleting object: ${key}`, message: error.message });
+        }
+      }
+    }));
+
+    return { message: 'All objects deleted successfully', deletedObjects };
+  } catch (error) {
+    return { message: error.message };
+  }
+};
+
+//no direct API to delete a folder 
+async function deleteFolder(bucketName, folderName) {
+  try {
+    const params = {
+      Bucket: bucketName,
+      Prefix: folderName,
+    };
+
+    const objects = await s3.listObjectsV2(params).promise();
+
+    if (objects.Contents.length === 0) {
+      console.log('No objects found in the folder.');
+      return;
+    }
+
+    const deleteParams = {
+      Bucket: bucketName,
+      Delete: { Objects: [] },
+    };
+
+    objects.Contents.forEach((object) => {
+      deleteParams.Delete.Objects.push({ Key: object.Key });
+    });
+
+    await s3.deleteObjects(deleteParams).promise();
+    console.log('Folder deleted.');
+  } catch (error) {
+    console.error('Error deleting folder:', error);
+  }
+}
 
 // Add object to s3
 let folderName = 'default-folder'
@@ -82,7 +149,6 @@ const upload = multer({
     },
   }),
 });
-
 //fetch presignedl url 
 const getPresignedUrl = async (s3, bucket, key) => { // key - entire path 
   try {
@@ -96,7 +162,7 @@ const getPresignedUrl = async (s3, bucket, key) => { // key - entire path
     const folderExists = await objectExists(bucket, key);
     
     if (!folderExists) {
-      throw new Error('File doesnt exist');
+      throw new Error('Folder doesnt exist');
     }
 
     const url = await s3.getSignedUrlPromise('getObject', params);
@@ -116,5 +182,6 @@ const getPresignedUrl = async (s3, bucket, key) => { // key - entire path
 export{
   upload,
   getPresignedUrl, 
-  deleteObjectFromS3
+  deleteObjectFromS3, 
+  deleteObjectsFromS3
 }

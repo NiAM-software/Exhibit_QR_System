@@ -16,11 +16,11 @@ import {
   getAttachments,
   getNextAssetNumber,
   getCategoriesAndLocationTypes,
-//   getRelatedExhibits,
-//   modifiedRelatedExhibits
+  getRelatedExhibits,
+  modifiedRelatedExhibits
 } from "../controllers/exhibitController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
-// import { deleteObjectsFromS3 } from "../utils/uploadFile.js";
+import { deleteObjectsFromS3 } from "../utils/uploadFile.js";
 
 const router = express.Router();
 router.get("/next-asset-number", getNextAssetNumber);
@@ -66,7 +66,7 @@ router.post(
     });
   }
 );
-// router.post('/add-modified-exhibits', modifiedRelatedExhibits);
+router.post('/add-modified-exhibits/:id', modifiedRelatedExhibits);
 router.put("/undo-delete", protect, undoDeleteExhibits);
 router.put("/:id", protect, updateExhibit);
 router.get("/", protect, getExhibits);
@@ -112,7 +112,7 @@ router.post(
       .json({ message: "All exhibit attachments created successfully" });
   }
 );
-// router.get('/related-exhibits/:id', getRelatedExhibits)
+router.get('/related-exhibits/:id', getRelatedExhibits)
 router.post("/add-related-exhibits/:id", addRelatedExhibits);
 router.get("/preview-image/:id", previewImage);
 router.post("/rollback-attachment", rollbackAttachment);
