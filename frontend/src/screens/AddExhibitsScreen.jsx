@@ -1,5 +1,6 @@
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+
 import { Link, useNavigate } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
@@ -20,7 +21,8 @@ const AddExhibitScreen = () => {
   const [linkList, setLinkList] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [parsedLinkList, setParsedLinkList] = useState([]);
-
+  const [categories, setCategories] = useState([]);
+  const [locationTypes, setLocationTypes] = useState([])
   
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
@@ -77,6 +79,23 @@ const handleCancel = () => {
     navigate('/');
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/admin/exhibits/categories-and-location-types');
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data.categories); 
+        setLocationTypes(data.locationTypes)
+      } else {
+        console.error('Failed to fetch categories');
+      }
+    } catch (error) {
+      console.error('Error while fetching categories:', error);
+    }
+  };
+  useEffect(() => {
+    fetchCategories();
+  }, []); 
 
   const handleLinkSubmit = (updatedLinkList) => {
     // You can use the updatedLinkList received from AddLinks here
@@ -302,6 +321,7 @@ const handleCancel = () => {
                 </Form.Group>
               </Form>
             </Col>
+            
           
           {/* Right Form */}
          
@@ -355,20 +375,26 @@ const handleCancel = () => {
           </Row>
 
           <Row>
-            <Col md={4} className="mb-3">
-              <Form style={formElementSpacing}>
-                <Form.Group controlId="Category" className="mb-3">
-                  <Form.Label style={formLabelStyle}>Category</Form.Label>
-                  <Form.Control 
-                    type="text"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange} 
-                    style={TextInputStyle}
-                     />
-                </Form.Group>
-              </Form>
-            </Col>
+          <Col md={4} className="mb-3">
+      <Form style={formElementSpacing}>
+        <Form.Group controlId="Category" className="mb-3">
+          <Form.Label style={formLabelStyle}>Category</Form.Label>
+          <Form.Control
+            as="select"
+            name="category"
+            value="jkk"
+            onChange={handleChange}
+            style={TextInputStyle}
+          >
+            {categories.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </Form>
+    </Col>
 
             {/* Right Form */}
             <Col md={4} className="offset-md-3 mb-3">
