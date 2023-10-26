@@ -268,32 +268,32 @@ const HomeScreen = () => {
 
   const tableData = data
     ? data
-        .filter(
-          (exhibit) =>
-            exhibit.title &&
-            exhibit.title.toLowerCase().includes(filterText.toLowerCase())
-        )
-        .map((exhibit) => {
-          const {
-            title,
-            room,
-            asset_number,
-            category,
-            subcategory,
-            era,
-            exhibit_id,
-          } = exhibit;
+      .filter(
+        (exhibit) =>
+          exhibit.title &&
+          exhibit.title.toLowerCase().includes(filterText.toLowerCase())
+      )
+      .map((exhibit) => {
+        const {
+          title,
+          room,
+          asset_number,
+          category,
+          subcategory,
+          era,
+          exhibit_id,
+        } = exhibit;
 
-          return {
-            title,
-            room,
-            asset_number,
-            category,
-            subcategory,
-            era,
-            exhibit_id,
-          };
-        })
+        return {
+          title,
+          room,
+          asset_number,
+          category,
+          subcategory,
+          era,
+          exhibit_id,
+        };
+      })
     : [];
 
   //console.log(tableData);
@@ -324,7 +324,7 @@ const HomeScreen = () => {
               <Nav className="ms-auto">
                 <Link to="/AddExhibitScreen">
                   <button className="btn-primary-sm add-exhibit-btn">
-                    add exhibit{" "}
+                    Add New Exhibit{" "}
                   </button>
                 </Link>
               </Nav>

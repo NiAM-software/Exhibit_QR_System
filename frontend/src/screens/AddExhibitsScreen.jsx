@@ -22,10 +22,31 @@ const AddExhibitScreen = () => {
   const [categories, setCategories] = useState([]);
   const [locationTypes, setLocationTypes] = useState([]);
 
+  const [locationTypes, setLocationTypes] = useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
+
+
+  useEffect(() => {
+    Axios.get('/api/admin/exhibits/next-asset-number')
+      .then((response) => {
+        const maxAssetNumber = response.data.asset_number;
+        console.log(maxAssetNumber)
+        const nextAssetNumber = maxAssetNumber + 1;
+        setNextAvailableAssetNumber(nextAssetNumber.toString());
+      })
+      .catch((error) => {
+        console.error('Error fetching next asset number:', error);
+        toast.error('Error fetching next asset number')
+      });
+  }, []);
+
+
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
   };
 
+  const handleupdatedlinks = (newList) => {
   const handleupdatedlinks = (newList) => {
     setLinkList(newList);
   };
@@ -34,9 +55,11 @@ const AddExhibitScreen = () => {
     setIsLinksModalVisible(true);
   };
 
+
   const handleLinksOk = () => {
     setIsLinksModalVisible(false);
   };
+
 
   const handleLinksCancel = () => {
     console.log("Cancel button clicked");
@@ -46,7 +69,13 @@ const AddExhibitScreen = () => {
   const showModal = () => {
     setIsModalVisible(true);
   };
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
 
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
   const handleOk = () => {
     setIsModalVisible(false);
   };
@@ -54,7 +83,12 @@ const AddExhibitScreen = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -65,6 +99,16 @@ const AddExhibitScreen = () => {
     asset_number: "",
     era: "",
     exhibit_desc: "",
+    title: '',
+    category: '',
+    subcategory: '',
+    room: '',
+    location_type: '',
+    location: '',
+    asset_number: '',
+    manufacturer: '',
+    era: '',
+    exhibit_desc: ''
   });
 
   const handleChange = (e) => {
@@ -85,6 +129,8 @@ const AddExhibitScreen = () => {
         const data = await response.json();
         setCategories(data.categories);
         setLocationTypes(data.locationTypes);
+        setCategories(data.categories);
+        setLocationTypes(data.locationTypes)
       } else {
         console.error("Failed to fetch categories");
       }
@@ -111,6 +157,31 @@ const AddExhibitScreen = () => {
     setParsedLinkList(parsedLinkList);
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.title) {
+      errors.title = 'Title is required';
+    }
+
+    if (!formData.asset_number) {
+      errors.asset_number = 'Asset number is required';
+    } else if (isNaN(formData.asset_number)) {
+      errors.asset_number = 'Asset number must be an integer';
+    } else if (formData.asset_number < 0) {
+      errors.asset_number = 'Asset number cannot be negative';
+    }
+
+    if (formData.era !== '' && isNaN(formData.era)) {
+      errors.era = 'Era must be an integer';
+    } else if (formData.era < 0) {
+      errors.asset_number = 'Era cannot be negative';
+    }
+
+    return errors;
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -134,6 +205,24 @@ const AddExhibitScreen = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("First API Call Successful:", data.message);
+    setFormErrors({});
+    const errors = validateForm();
+
+    if (Object.keys(errors).length === 0) {
+
+      try {
+        // First API call to your server
+        const response = await fetch('/api/admin/exhibits', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('First API Call Successful:', data.message);
 
         const new_exhibit_id = data.id;
         const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
@@ -153,6 +242,22 @@ const AddExhibitScreen = () => {
         if (s3Response.ok) {
           const s3Data = await s3Response.json();
           console.log("Second API Call to S3 Successful:", s3Data);
+          const new_exhibit_id = data.id
+          const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
+          fileList.forEach((file) => {
+            formDataForFiles.append('photos', file.originFileObj);
+          });
+
+
+          // Second API call to Amazon S3
+          const s3Response = await fetch(`api/admin/exhibits/upload/${new_exhibit_id}`, {
+            method: 'POST', // or 'PUT' or 'whatever is necessary'
+            body: formDataForFiles,
+          });
+
+          if (s3Response.ok) {
+            const s3Data = await s3Response.json();
+            console.log('Second API Call to S3 Successful:', s3Data);
 
           // Third API call to DB
           //console.log('herheheherhehehe')
@@ -168,13 +273,16 @@ const AddExhibitScreen = () => {
               body: JSON.stringify(parsedLinkList),
             }
           );
-
+          console.log("HELLOOOO");
+          console.log(new_exhibit_id);
+          console.log(parsedLinkList);
+          console.log(dbResponse);
           if (dbResponse.ok) {
             toast.success("Form data submitted successfully");
             setFormSubmitted(true);
-            setTimeout(() => {
-              navigate("/");
-            }, 2000);
+            // setTimeout(() => {
+            //   navigate("/");
+            // }, 2000);
           } else {
             const data = await dbResponse.json();
             console.error("Third API Call to DB Failed:", data.message);
@@ -206,6 +314,11 @@ const AddExhibitScreen = () => {
     marginTop: "30px",
     marginLeft: "460px",
     marginBottom: "20px",
+    fontWeight: 'bold',
+    fontSize: '22px',
+    marginTop: '30px',
+    marginLeft: '460px',
+    marginBottom: '20px',
     // textAlign:'center'
   };
 
@@ -213,17 +326,20 @@ const AddExhibitScreen = () => {
     // textAlign: "center", // Adjust this to align the labels and buttons
     // margin: "0 20px",    // Adjust the margin as needed
     marginTop: "20px",
+    marginTop: "20px"
   };
   const rightButtonContainerStyle = {
     display: "flex",
     //justifyContent: "flex-end", // Right-align the buttons
     alignItems: "center", // Vertically align the buttons
     marginTop: "38px",
+    marginTop: "38px"
   };
 
   const labelStyle = {
     fontSize: "11px",
     color: "#4B4B4B",
+    color: '#4B4B4B'
   };
 
   const buttonStyle = {
@@ -232,6 +348,12 @@ const AddExhibitScreen = () => {
     height: "25px",
     marginRight: "20px",
     marginTop: "0px",
+    fontSize: '14px',
+    width: '125px',
+    height: '25px',
+    marginRight: '20px',
+    marginTop: '0px'
+
   };
   // Define a custom style for the form labels
   const formLabelStyle = {
@@ -242,6 +364,7 @@ const AddExhibitScreen = () => {
   // Define a custom style for the space between form elements
   const formElementSpacing = {
     marginBottom: "-5px", // Adjust the margin-bottom as needed
+    marginBottom: '-15px', // Adjust the margin-bottom as needed
   };
 
   const descriptionInputStyle = {
@@ -253,6 +376,15 @@ const AddExhibitScreen = () => {
     fontSize: "12px", // Adjust the font size as needed
     height: "45px", // Adjust the height as needed
   };
+
+  const errorStyle = {
+    borderColor: 'red',
+  };
+
+  const errorMessage = {
+    color: 'red',
+  };
+
 
   return (
     <Container className="AddExhibit">
@@ -283,6 +415,24 @@ const AddExhibitScreen = () => {
               </Form.Group>
             </Form>
           </Col>
+        <Row>
+
+          <Col md={4} className="mb-3">
+            <Form style={formElementSpacing}>
+              <Form.Group controlId="Title" className="mb-3">
+                <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
+                <Form.Control
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Enter Title"
+                  style={formErrors.title ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                />
+                {formErrors.title && <div style={errorMessage}>{formErrors.title}</div>}
+              </Form.Group>
+            </Form>
+          </Col>
 
           <Col md={4} className="offset-md-3 mb-3">
             <Form style={formElementSpacing}>
@@ -302,7 +452,7 @@ const AddExhibitScreen = () => {
             </Form>
           </Col>
         </Row>
-        {/**jCHANGES */}
+
         <Row>
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
@@ -319,7 +469,29 @@ const AddExhibitScreen = () => {
             </Form>
           </Col>
 
+                />
+              </Form.Group>
+            </Form>
+          </Col>
+
+
           {/* Right Form */}
+
+          <Col md={4} className="offset-md-3 mb-3">
+            <Form style={formElementSpacing}>
+              <Form.Group controlId="Room" className="mb-3">
+                <Form.Label style={formLabelStyle}>Room</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="room"
+                  value={formData.room}
+                  onChange={handleChange}
+                  style={TextInputStyle}
+                />
+              </Form.Group>
+            </Form>
+          </Col>
+        </Row>
 
           <Col md={4} className="offset-md-3 mb-3">
             <Form style={formElementSpacing}>
@@ -340,26 +512,19 @@ const AddExhibitScreen = () => {
         <Row>
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
-              <Form.Group controlId="LocationType" className="mb-3">
+              <Form.Group controlId="Location type" className="mb-3">
                 <Form.Label style={formLabelStyle}>Location type</Form.Label>
                 <Form.Control
                   type="text"
                   name="location_type"
-                  list="locationTypes"
                   value={formData.location_type}
                   onChange={handleChange}
                   style={TextInputStyle}
                 />
-                <datalist id="locationTypes">
-                  {locationTypes.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </datalist>
               </Form.Group>
             </Form>
           </Col>
+
           {/* Right Form */}
           <Col md={4} className="offset-md-3 mb-3">
             <Form style={formElementSpacing}>
@@ -378,7 +543,27 @@ const AddExhibitScreen = () => {
         </Row>
 
         <Row>
+        <Row>
           <Col md={4} className="mb-3">
+            <Form style={formElementSpacing}>
+              <Form.Group controlId="Category" className="mb-3">
+                <Form.Label style={formLabelStyle}>Category</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="category"
+                  value="jkk"
+                  onChange={handleChange}
+                  style={TextInputStyle}
+                >
+                  {categories.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Form>
+          </Col>
             <Form style={formElementSpacing}>
               <Form.Group controlId="Category" className="mb-3">
                 <Form.Label style={formLabelStyle}>Category</Form.Label>
@@ -416,6 +601,10 @@ const AddExhibitScreen = () => {
             </Form>
           </Col>
         </Row>
+              </Form.Group>
+            </Form>
+          </Col>
+        </Row>
 
         <Col md={6} className="mb-4">
           {" "}
@@ -436,7 +625,7 @@ const AddExhibitScreen = () => {
           </Form>
         </Col>
         <Row>
-          <h4> Attachments</h4>
+          <p>Attachments </p>
           <Addfiles
             files={fileList}
             setFiles={handleupdatedfiles}
@@ -447,13 +636,19 @@ const AddExhibitScreen = () => {
           />
         </Row>
         <Row>
-          <AddLinks
-            links={linkList}
-            setLinks={handleupdatedlinks}
-            visible={true}
-            onSubmit={handleLinkSubmit}
-            onCancel={handleLinksCancel}
-          />
+          <Col md={6}>
+            <div className="float-start" style={buttonContainerStyle}>
+              <label style={labelStyle}>Related Exhibits</label>
+
+              <AddLinks
+                links={linkList}
+                setLinks={handleupdatedlinks}
+                visible={isLinksModalVisible}
+                onSubmit={handleLinkSubmit}
+                onCancel={handleLinksCancel}
+              />
+            </div>
+          </Col>
         </Row>
         <Row>
           <Col md={6}>
