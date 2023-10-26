@@ -1,5 +1,4 @@
 import { Modal, Input, Button, Upload, message } from 'antd';
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { PlusOutlined } from '@ant-design/icons';
@@ -37,7 +36,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
-        const response = await axios.get("/api/exhibits");
+        const response = await axios.get("/api/admin/exhibits");
 
         if (response.data && response.data.exhibits) {
           const data = response.data.exhibits;
@@ -63,7 +62,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         console.log("Exhibit_id:", exhibitId);
         
         try {
-          const response = await axios.get(`/api/exhibits/preview-image/${exhibitId}`);
+          const response = await axios.get(`/api/admin/exhibits/preview-image/${exhibitId}`);
           
           console.log(response.data);
           if (response.data && response.data.url) {

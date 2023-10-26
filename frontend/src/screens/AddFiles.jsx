@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState, useEffect} from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, message, Button } from 'antd';
 import axios from 'axios';
@@ -12,12 +12,21 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const Addfiles = ({files,setFiles,nOK,nCancel}) => {
+const Addfiles = ({files,setFiles,formSubmitted, resetFormSubmitted,nOK,nCancel}) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState([ ]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (formSubmitted) {
+      // Reset the fileList and setFiles when formSubmitted is true
+      clearFileListInAddFiles();
+      resetFormSubmitted();
+    }
+  }, [formSubmitted, resetFormSubmitted]);
+
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -26,6 +35,12 @@ const Addfiles = ({files,setFiles,nOK,nCancel}) => {
     justifyContent: 'flex-end', // Right-align the buttons
     marginTop: '20px', // Adjust the margin as needed
     width:'40px',
+  };
+
+  const clearFileListInAddFiles = () => {
+    // Clear the fileList in the AddFiles component
+    setFileList([]);
+    setFiles([]);
   };
 
   const handlePreview = async (file) => {
@@ -50,7 +65,7 @@ const Addfiles = ({files,setFiles,nOK,nCancel}) => {
 
   };
 
-  const handleSubmit = () => {
+  const handleOKbutton = () => {
     // Prepare the uploaded files for sending to the backend
     // const formData = new FormData();
     // fileList.forEach((file) => {
@@ -61,9 +76,9 @@ const Addfiles = ({files,setFiles,nOK,nCancel}) => {
     if(fileList.length>0){
     message.success('Files are uploaded successfully');}
     else{
-        message.info('Please select files to upload');
+        message.info('Please select atleast one file to upload');
     }
-    setFileList([]);
+    //setFileList([]);
     nOK();
 
   };
@@ -72,7 +87,7 @@ const Addfiles = ({files,setFiles,nOK,nCancel}) => {
     // navigate('/AddExhibitScreen'); // Use navigate to navigate back to the home page
     setFileList([]);
     setFiles([]);
-    message.info('No files are uploaded');
+    //message.info('No files are uploaded');
     nCancel();
 
   };
@@ -116,7 +131,7 @@ const Addfiles = ({files,setFiles,nOK,nCancel}) => {
         />
       </Modal>
       <div>
-      <Button type="primary" onClick={handleSubmit}
+      <Button type="primary" onClick={handleOKbutton}
         style={{
         // position: 'fixed',
         top:50,

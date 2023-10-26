@@ -275,7 +275,7 @@ const generatePreSignedUrl = async (req, res) => {
 // @access  Private/Admin
 const addRelatedExhibits = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { related_exhibits_ids } = req.body;
+  const related_exhibits_ids = req.body;
   const insertedRelationships = [];
 
   try {

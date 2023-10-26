@@ -14,16 +14,18 @@ const getBase64 = (file) =>
 
 const Modifyfiles=({files,setFiles,formSubmitted,id,resetFormSubmitted,nOK,nCancel})=>{
 
-const [previewOpen, setPreviewOpen] = useState(false);
-const [previewImage, setPreviewImage] = useState('');
-const [previewTitle, setPreviewTitle] = useState('');
-const [fileList, setFileList] = useState([ ]);
-// const { id } = useParams();
+    const [previewOpen, setPreviewOpen] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [previewTitle, setPreviewTitle] = useState('');
+    const [fileList, setFileList] = useState([ ]);
+    const [deletedFiles, setDeletedFiles] = useState([]);
+    const [initialFileList, setInitialFileList] = useState([]);
+    const [newlyAddedFiles, setNewlyAddedFiles] = useState([]);
 
-    const fetchImageUrls = async (id) => {
+    const fetchImageUrls = async () => {
       try {
-        //get file ids
-        const getAttachmentsResponse = await axios.get(`/api/exhibits/get-attachments/${id}`);
+
+        const getAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${id}`);
         const attachmentsData = getAttachmentsResponse.data;
   
         const pathsArray = attachmentsData.map((item) => ({
@@ -32,13 +34,13 @@ const [fileList, setFileList] = useState([ ]);
         }));
         
         //Get Presigned urls
-        const generatePresignedUrlResponse = await axios.post(`/api/exhibits/generate-presigned-url`, {
+        const generatePresignedUrlResponse = await axios.post(`/api/admin/exhibits/generate-presigned-url`, {
           objectKeys: pathsArray,
         });
     
       
         const presignedUrls = generatePresignedUrlResponse.data.urls;
-
+        
         const newFileList = presignedUrls.map((item, index) => {
           if (item.url) {
             return {
@@ -46,6 +48,7 @@ const [fileList, setFileList] = useState([ ]);
               name: item.fileName, // Use fileName from the presigned URLs
               status: 'done',
               url: item.url,
+              folderName:item.folderName,
             };
           }
           // Handle errors if there is an error message
@@ -60,8 +63,9 @@ const [fileList, setFileList] = useState([ ]);
           return null;
         }).filter(Boolean);
        
-      console.log(newFileList);
+      //console.log(newFileList);
       setFileList(newFileList);
+      setInitialFileList(newFileList);
   
       } catch (error) {
         console.error('Error fetching image URLs:', error);
@@ -69,10 +73,8 @@ const [fileList, setFileList] = useState([ ]);
     };
 
     useEffect(() => {
-      fetchImageUrls(id);
-      //console.log(newFileList)
+      fetchImageUrls();
     }, [id]);
-
 
     useEffect(() => {
       if (formSubmitted) {
@@ -86,6 +88,8 @@ const [fileList, setFileList] = useState([ ]);
       // Clear the fileList in the AddFiles component
       setFileList([]);
       setFiles([]);
+      setDeletedFiles([]);
+      setNewlyAddedFiles([]);
     };
 
     const handleCancel = () => setPreviewOpen(false);
@@ -98,8 +102,6 @@ const [fileList, setFileList] = useState([ ]);
     };
   
     const handlePreview = async (file) => {
-     
-      // console.log(file)
       if (!file.url && !file.preview) {
         file.preview = await getBase64(file.originFileObj);
       }
@@ -107,88 +109,162 @@ const [fileList, setFileList] = useState([ ]);
       setPreviewOpen(true);
       setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
-  
-    const handleChange = ({ fileList: newFileList }) => {
-      const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime']; // Add more formats as needed
-    
-      // Filter out files with invalid formats
-      newFileList = newFileList.filter((file) => {
-        if (!allowedFormats.includes(file.type)) {
+
+    function filterconditions(item){
+      const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime'];
+      if(item.status === 'error'){
+        message.error(`Error uploading ${item.name}: ${item.response}`);
+        return false;
+      }
+      else if(item.status === 'removed'){
+        return false;
+      }
+      else if(!allowedFormats.includes(item.type)){
           message.error('You can only upload image and video files (JPEG, PNG, MP4, QuickTime)!');
           return false;
+      }
+      else if(fileList.some(initialFile => initialFile.name === item.name)){
+          message.error('Duplicate files are not allowed');
+          return false;
+      }
+      else{
+      return true;
+      }
+
+    }
+  
+    const handleChange = ({ fileList: newFileList, file }) =>{ 
+  
+      const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime'];
+      // Filter out files with disallowed formats and update the file list
+      // console.log('newFileList',newFileList);
+      //const removedFileName = file.name;
+      //const updatedNewlyAddedFiles = newlyAddedFiles.filter(item => item.name !== removedFileName);
+      const isDuplicate = fileList.some(item => item.name === file.name);
+
+      if (isDuplicate && file.status!='removed') {
+        message.error('Duplicate files are not allowed');
+        return;
+      }
+      const filteredFileList = newFileList.filter(item => {
+        // if(newlyAddedFiles.some(initialFile => initialFile.name === item.name)){
+        //   console.log("entered gate2");
+        //   console.log("itename",item.name);
+        //  message.error('Duplicate files are not allowed');
+        //  //return false;
+        // }
+        if(item.status === 'done' || allowedFormats.includes(item.type)){ 
+          return true;
         }
-        return true;
+        else if(!allowedFormats.includes(item.type)){
+          message.error('You can only upload image and video files (JPEG, PNG, MP4, QuickTime)!');
+          //return false;
+        }
+        else if (item.status === 'error') {
+          message.error(`Error uploading ${item.name}: ${item.response}`);
+          //return false;
+        }
+        //return true; // Exclude files with disallowed formats or errors
+        //filterconditions(item);
       });
+      
+      if (file.status === 'removed') {
+        // You can identify the removed file by comparing with the initial list
+        const removedFile_initial = initialFileList.find(initialFile => initialFile.name === file.name);
+        if (removedFile_initial) {
+          // The file has been removed, you can take further action if needed
+          console.log(`File removed: ${file.name}`);
+          // You can also store information about the removed file
+          const deletedFile = {
+            name: removedFile_initial.name,
+            folderName: removedFile_initial.folderName,
+          };
+
+      // Add the deleted file to the array
+        setDeletedFiles([...deletedFiles, deletedFile]);
+        }
+        else{
+          const removednewfilename = newlyAddedFiles.find(item => item.name == file.name);
+          if (removednewfilename){
+            const newaddedfiles=newlyAddedFiles.filter(item => item.name !== removednewfilename.name);
+            setNewlyAddedFiles(newaddedfiles);
+          }
+        }
+    }
+
+        // Initialize an array to accumulate newly added files
+      const newlyAdded = [];
+      //const newfiles=filteredFileList.filter(item => !FileList.includes(item));
+      // Check each file to see if it's newly added and not removed
+      filteredFileList.forEach(file => {
+        const isNewlyAdded = !fileList.some(initialFile => initialFile.name === file.name);
+        if (isNewlyAdded && file.status !== 'removed') {
+          // Add newly added files to the array
+          newlyAdded.push({
+            name: file.name,
+            //folderName: file.folderName, // Adjust based on your data
+            //status:file.status,
+          });
+        }
+      });
+
+      if (newlyAdded.length > 0) {
+        // Update the state with all newly added files that are not removed
+        setNewlyAddedFiles([...newlyAddedFiles, ...newlyAdded]);
+      }
+      setFileList(filteredFileList);
+      setFiles(filteredFileList); // Update the files state
+      //console.log(filteredFileList);
     
-      setFileList(newFileList);
-      setFiles(newFileList);
-    };
-    
-    const handleRemove = (file) => {
-      const deletionId = Number(file.uid);
-      const newFileList = fileList.filter((item) => Number(item.uid) !== deletionId);
-      //console.log(newFileList);
-      setFileList(newFileList);
     };
 
+    console.log('Deletedfiles',deletedFiles);
+    console.log('newlyAddedFiles',newlyAddedFiles);
+    console.log('Filelist',fileList);
+  
     const handleSubmit = () => {
-      // Prepare the uploaded files for sending to the backend
-      // const formData = new FormData();
-      // fileList.forEach((file) => {
-      //   formData.append('files', file.originFileObj);
-      // });
-      
-      // navigate('/AddExhibitScreen');
+
       if(fileList.length>0){
       message.success('Files are uploaded successfully');}
       else{
         message.info('Please select atleast one file to upload')
 
       }
-      //setFileList([]);
-      nOK();
-  
+      nOK();  
     };
+
     const goBackToHomePage = () => {
-        // navigate('/AddExhibitScreen'); // Use navigate to navigate back to the home page
-        // setFileList([]);
-        // setFiles([]);
-        // message.info('No files are uploaded');
-        nCancel();
+        nCancel();    
+    };
     
-      };
-    
-      const uploadButton = (
-        <div>
-          <PlusOutlined/>
-          <div
-            style={{
-              marginTop: 8,
-              marginLeft:16,
-              marginRight:8,
-            }}
-          >
-            Upload
-          </div>
+    const uploadButton = (
+      <div>
+        <PlusOutlined/>
+        <div
+          style={{
+            marginTop: 8,
+            marginLeft:16,
+            marginRight:8,
+          }}
+        >
+          Upload
         </div>
-      );
+      </div>
+    );
 
 return (
     <div style={{ position: 'relative' }}>
     <div style={{ padding: '16px' }}>
-
-    <Upload
-  listType="picture-card"
-  fileList={fileList}
-  onPreview={handlePreview}
-  onChange={handleChange}
-  onRemove={handleRemove} // Use the handleRemove function
-  multiple={true}
->
-  {uploadButton}
-</Upload>
-
-      
+      <Upload
+        beforeUpload={() => false}
+        listType="picture-card"
+        fileList={fileList}
+        onPreview={handlePreview}
+        onChange={handleChange}
+        multiple={true}
+      >
+       {uploadButton}
+      </Upload>
       </div>
       <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
         <img
@@ -212,7 +288,7 @@ return (
         //buttonContainerStyle
         }}
       >
-        Ok
+        Upload
       </Button>
       <Button
         type="default"
