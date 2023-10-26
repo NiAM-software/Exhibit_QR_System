@@ -319,11 +319,13 @@ const HomeScreen = () => {
             <InputGroup.Text className="filter-icon">
               <FaFilter />
             </InputGroup.Text>
-            <Navbar.Toggle aria-controls='basic-navbar-nav' />
-            <Navbar.Collapse id='basic-navbar-nav'>
-              <Nav className='ms-auto'>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="ms-auto">
                 <Link to="/AddExhibitScreen">
-                  <button className="btn-primary-sm add-exhibit-btn">Add New Exhibit </button>
+                  <button className="btn-primary-sm add-exhibit-btn">
+                    Add New Exhibit{" "}
+                  </button>
                 </Link>
               </Nav>
             </Navbar.Collapse>
@@ -331,7 +333,6 @@ const HomeScreen = () => {
         </Navbar>
 
         <DataTable
-
           columns={columns}
           data={tableData}
           keyField="exhibit_id"
@@ -346,66 +347,30 @@ const HomeScreen = () => {
           fixedHeaderScrollHeight="400px"
         />
 
-
         {selectedRows.length > 0 && (
-          <Container className="btn-menu d-flex justify-content-end">
-
-            <Row>
-              <Col xs={2} md={3}>
-                <button onClick={showPreview}>Preview</button>
-              </Col>
-              <Col xs={2} md={3}>
-                <button onClick={showQRHandler}>Show QR</button>
-              </Col>
-              <Col xs={2} md={3}>
-                <button onClick={editExhibits}>Edit</button>
-              </Col>
-              <Col xs={2} md={3}>
-                <button onClick={deleteExhibits}>Delete</button>
-              </Col>
-            </Row>
-          </Container>
-        </Navbar>
-
-      <DataTable
-        columns={columns}
-        data={tableData}
-        keyField="exhibit_id"
-        selectableRows
-        onSelectedRowsChange={handleSelectedRowsChange}
-        clearSelectedRows={toggleCleared}
-        progressPending={isLoading}
-        progressComponent={<h1>Loading..</h1>}
-        pagination
-        customStyles={customStyles}
-        fixedHeader
-        fixedHeaderScrollHeight="400px"
-      />
-
-      {selectedRows.length > 0 && (
-        <ButtonsContainer
-          showPreview={showPreview}
-          showQRHandler={showQRHandler}
-          editExhibits={editExhibits}
-          deleteExhibits={deleteExhibits}
-        />
-      )}
-      {/* {console.log(notificationMessage)} */}
-      {showNotification && (
-        <Modal show={showNotification} onHide={closeNotification}>
-          <Modal.Body>{`Exhibits ${notificationMessage2.join(
-            ", "
-          )} have been deleted`}</Modal.Body>
-          <button className="btn-primary-sm" onClick={closeModal}>
-            {" "}
-            close{" "}
-          </button>
-          <StyledModalFooter onClick={handleUndoDelete}>
-            Undo{" "}
-          </StyledModalFooter>
-        </Modal>
-      )}
-    </div >
+          <ButtonsContainer
+            showPreview={showPreview}
+            showQRHandler={showQRHandler}
+            editExhibits={editExhibits}
+            deleteExhibits={deleteExhibits}
+          />
+        )}
+        {/* {console.log(notificationMessage)} */}
+        {showNotification && (
+          <Modal show={showNotification} onHide={closeNotification}>
+            <Modal.Body>{`Exhibits ${notificationMessage2.join(
+              ", "
+            )} have been deleted`}</Modal.Body>
+            <button className="btn-primary-sm" onClick={closeModal}>
+              {" "}
+              close{" "}
+            </button>
+            <StyledModalFooter onClick={handleUndoDelete}>
+              Undo{" "}
+            </StyledModalFooter>
+          </Modal>
+        )}
+      </div>
     </>
   );
 };

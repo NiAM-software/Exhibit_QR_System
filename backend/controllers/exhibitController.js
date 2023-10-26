@@ -114,7 +114,9 @@ const updateExhibit = asyncHandler(async (req, res) => {
         exhibit_desc,
       } = req.body;
 
-      const era_int = era === '' ? null : parseInt(era, 10);
+      console.log(req.body)
+
+      // const era_int = era === '' ? null : parseInt(era, 10);
       
       const values = [
         title,
@@ -125,7 +127,7 @@ const updateExhibit = asyncHandler(async (req, res) => {
         location,
         asset_number,
         manufacturer,
-        era_int,
+        era,
         exhibit_desc,
         id
       ];
@@ -141,6 +143,7 @@ const updateExhibit = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "Exhibit doesn't exist" });
     }
   } catch (err) {
+    console.log(err.message)
     return res.status(500).json({ message: err.message });
   }
 });
