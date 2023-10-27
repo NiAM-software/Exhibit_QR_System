@@ -3,17 +3,27 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import Addfiles from "./AddFiles";
+import { Modal, Input, Button, Upload, message } from "antd";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { PlusOutlined } from "@ant-design/icons";
+import Addfiles from "./AddFiles";
 
 const buttonStyle = {
+  width: "100px",
+  marginRight: "10px",
   width: "100px",
   marginRight: "10px",
 };
 
 const suggestionStyle = {
   cursor: "pointer",
+  cursor: "pointer",
 };
 
 const suggestionHoverStyle = {
+  backgroundColor: "grey",
+  color: "white",
   backgroundColor: "grey",
   color: "white",
 };
@@ -23,14 +33,20 @@ let exhibitId = null;
 const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [selectedExhibitName, setSelectedExhibitName] = useState("");
+  const [exhibitPhotoURL, setExhibitPhotoURL] = useState("");
   const [selectedExhibitName, setSelectedExhibitName] = useState("");
   const [exhibitPhotoURL, setExhibitPhotoURL] = useState("");
   const [linkList, setLinkList] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
   const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
+
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -43,6 +59,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
+        console.error("Error fetching search results:", error);
       }
     };
 
@@ -53,7 +70,12 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     setSearchQuery(query);
     setSuggestions([]);
 
+
     try {
+      const selectedSuggestion = suggestions.find(
+        (suggestion) => suggestion.title === query
+      );
+
       const selectedSuggestion = suggestions.find(
         (suggestion) => suggestion.title === query
       );
@@ -62,7 +84,12 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         exhibitId = selectedSuggestion.exhibit_id;
         console.log("Exhibit_id:", exhibitId);
 
+
         try {
+          const response = await axios.get(
+            `/api/admin/exhibits/preview-image/${exhibitId}`
+          );
+
           const response = await axios.get(
             `/api/admin/exhibits/preview-image/${exhibitId}`
           );
@@ -75,39 +102,39 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         } catch (error) {
           // Handle the error when the image is not found (status code 404)
           console.error("Error fetching exhibit photo:", error);
+          console.error("Error fetching exhibit photo:", error);
           setSelectedExhibitName(query);
+          setExhibitPhotoURL("https://picsum.photos/200");
           setExhibitPhotoURL("https://picsum.photos/200");
           // Set a default dummy image in case of error
         }
       }
     } catch (error) {
       console.error("Error fetching exhibit:", error);
+      console.error("Error fetching exhibit:", error);
     }
   };
+
 
   const handlePlusIconClick = (link) => {
     if (selectedExhibitName === searchQuery.trim() && exhibitId !== null) {
       console.log(link);
       console.log("+is clicked");
 
-      // Define a placeholder URL for the dummy image
-      //const dummyImageUrl = 'https://picsum.photos/200';
-
-      // Check if exhibitPhotoURL is empty; if so, use the dummy image URL
-      //const imageUrl = exhibitPhotoURL ;
-
-      // Add the selected link to the linkList
       const newLink = {
         uid: `${exhibitId}`,
         name: selectedExhibitName,
         status: "done",
+        status: "done",
         url: exhibitPhotoURL,
       };
+
 
       console.log(newLink);
       setLinkList([...linkList, newLink]);
     }
   };
+
 
   const handleSearch = (e) => {
     const query = e.target.value;
@@ -124,7 +151,9 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     setSuggestions(matches);
   };
 
+
   const clearSearchQuery = () => {
+    setSearchQuery("");
     setSearchQuery("");
     setSuggestions([]);
     setLinkList([]); // Clear the linkList
@@ -142,7 +171,9 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
 
     if (linkList.length > 0) {
       message.success("Links are uploaded successfully");
+      message.success("Links are uploaded successfully");
     } else {
+      message.info("Please select Links to upload");
       message.info("Please select Links to upload");
     }
     // Call the onSubmit function from props to pass the selected link data to the parent component
@@ -152,7 +183,11 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     console.log(linkList);
     setSelectedExhibitName("");
     setExhibitPhotoURL("");
+    console.log(linkList);
+    setSelectedExhibitName("");
+    setExhibitPhotoURL("");
     clearSearchQuery();
+    onSubmit(linkList);
     onSubmit(linkList);
   };
 
@@ -167,7 +202,9 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     setLinkList(updatedLinkList);
   };
 
+
   return (
+    <div
     <div
       title="Add Links"
       visible={visible}
@@ -175,7 +212,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         clearSearchQuery();
         onCancel();
       }}
-      style={{ height: "500px", width: "800px" }}
+      style={{ height: "200px", width: "800px" }}
       centered
       footer={[
         <Button
@@ -199,10 +236,12 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
       ]}
     >
       <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <Input
           type="text"
           placeholder="Search..."
           className="col-md-12 input"
+          style={{ flex: 1, height: "40px", marginRight: "5px" }}
           style={{ flex: 1, height: "40px", marginRight: "5px" }}
           value={searchQuery}
           onChange={handleSearch}
@@ -210,6 +249,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         <Button
           type="primary"
           icon={<PlusOutlined />}
+          style={{ width: "40px", height: "40px", marginTop: "0px" }}
           style={{ width: "40px", height: "40px", marginTop: "0px" }}
           onClick={handlePlusIconClick}
         />
@@ -233,17 +273,21 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
           </div>
         ))}
 
+
       {linkList.length > 0 && (
+        <div style={{ marginTop: "16px" }}>
         <div style={{ marginTop: "16px" }}>
           <Upload
             listType="picture-card"
             fileList={linkList}
             onPreview={handlePreview}
             onRemove={handleRemove}
+            onRemove={handleRemove}
           />
         </div>
       )}
       {previewOpen && (
+        <div
         <div
           visible={previewOpen}
           title={previewTitle}
@@ -254,13 +298,17 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
             alt="Exhibit Photo"
             style={{
               width: "100%",
+              width: "100%",
             }}
             src={previewImage}
           />
         </div>
+        </div>
       )}
+    </div>
     </div>
   );
 };
 
 export default AddLinks;
+

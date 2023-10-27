@@ -33,7 +33,7 @@ const deleteAttachmentsUtils = async(fileName, folderName) => {
     if (results && results.affectedRows > 0) {
       return ({ message : "Successfully deleted", folderName, fileName });
     } else {
-      return ({ message: "Resource doesn;t exist" });
+      return ({ message: "Resource doesn't exist" });
     }
   } catch (err) {
     return ({ message: err.message });
@@ -47,10 +47,7 @@ const insertIntoAttachmentsUtils = async() =>{
 // from s3
 const getPresignedUrlsUtils = async(objectKeys) => {
     try {
-        
-        
         const bucketName = process.env.S3_BUCKET; 
-       
         if (!Array.isArray(objectKeys)) {
           return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
         }
@@ -59,7 +56,6 @@ const getPresignedUrlsUtils = async(objectKeys) => {
           const { folderName, fileName } = objectKey
           const path = `${folderName}/${fileName}`;
           try {
-            
             //console.log(path);
             const url = await getPresignedUrl(s3, bucketName, path);
             return { folderName, fileName, url };

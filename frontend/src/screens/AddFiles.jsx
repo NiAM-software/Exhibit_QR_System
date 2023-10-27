@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { Modal, Upload, message, Button } from "antd";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { Modal, Upload, message, Button } from 'antd';
+import axios from 'axios';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -11,33 +11,13 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const Addfiles = ({
-  files,
-  setFiles,
-  formSubmitted,
-  resetFormSubmitted,
-  nOK,
-  nCancel,
-}) => {
+const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCancel }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
+  const [previewImage, setPreviewImage] = useState('');
+  const [previewTitle, setPreviewTitle] = useState('');
   const [fileList, setFileList] = useState([]);
 
   const handleCancel = () => setPreviewOpen(false);
-
-  const buttonContainerStyle = {
-    display: "flex",
-    justifyContent: "flex-end", // Right-align the buttons
-    marginTop: "20px", // Adjust the margin as needed
-    width: "40px",
-  };
-
-  const clearFileListInAddFiles = () => {
-    // Clear the fileList in the AddFiles component
-    setFileList([]);
-    setFiles([]);
-  };
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -51,18 +31,13 @@ const Addfiles = ({
   };
 
   const handleChange = ({ fileList: newFileList, file }) => {
-    const allowedFormats = [
-      "image/jpeg",
-      "image/png",
-      "video/mp4",
-      "video/quicktime",
-    ]; // Add more formats as needed
+
+    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime']; // Add more formats as needed
     if (!allowedFormats.includes(file.type)) {
-      message.error(
-        "You can only upload image and video files (JPEG, PNG, MP4, QuickTime)!"
-      );
+      message.error('You can only upload image and video files (JPEG, PNG, MP4, QuickTime)!');
       return;
     }
+
 
     setFileList(newFileList);
     setFiles(newFileList);
@@ -70,9 +45,10 @@ const Addfiles = ({
 
   const handleOKbutton = () => {
     if (fileList.length > 0) {
-      message.success("Files are uploaded successfully");
-    } else {
-      message.info("Please select atleast one file to upload");
+      message.success('Files are uploaded successfully');
+    }
+    else {
+      message.info('Please select atleast one file to upload');
     }
     //setFileList([]);
     nOK();
@@ -89,9 +65,12 @@ const Addfiles = ({
   const uploadButton = (
     <div>
       <PlusOutlined />
+      <PlusOutlined />
       <div
         style={{
           marginTop: 8,
+          marginLeft: 16,
+          marginRight: 8,
           marginLeft: 16,
           marginRight: 8,
         }}
@@ -102,8 +81,8 @@ const Addfiles = ({
   );
 
   return (
-    <div style={{ position: "relative" }}>
-      <div style={{ padding: "16px" }}>
+    <div style={{ position: 'relative' }}>
+      <div style={{ padding: '16px' }}>
         <Upload
           beforeUpload={() => false}
           listType="picture-card"

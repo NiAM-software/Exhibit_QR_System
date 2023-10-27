@@ -5,21 +5,42 @@ import Axios from 'axios';
 import toast, { Toaster } from "react-hot-toast";
 import { Modal } from 'antd';
 import Modifyfiles from './Modifyfiles';
+import Modifylinks from './ModifyLinks.jsx';
 
 
 const EditExhibitScreen = () => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const [deletefiles, setdeletefiles] = useState([]);
+  const [linkList, setLinkList] = useState([]);
+  const [isLinksModalVisible, setIsLinksModalVisible] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
+  const [parsedLinkList, setParsedLinkList] = useState([]);
 
 
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
   };
 
+  const handleupdatedlinks = (newList) => {
+    setLinkList(newList);
+  }
+
+  const showLinksModal = () => {
+    setIsLinksModalVisible(true);
+  };
+
+  const handleLinksOk = () => {
+    setIsLinksModalVisible(false);
+  };
+
+  const handleLinksCancel = () => {
+    console.log("Cancel button clicked");
+    setIsLinksModalVisible(false);
+  };
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -84,6 +105,20 @@ const EditExhibitScreen = () => {
     navigate('/');
   };
 
+  const handleLinkSubmit = (updatedLinkList) => {
+    // You can use the updatedLinkList received from AddLinks here
+    console.log('linkList after submitting the modal:', updatedLinkList);
+    const parsedLinkList = updatedLinkList.map(link => ({
+      related_exhibit_id: link.uid,
+      related_exhibit_title: link.name,
+    }));
+
+    console.log('Parsed Link List:', parsedLinkList);
+    setIsLinksModalVisible(false);
+
+    // Set the submitted link list
+    setParsedLinkList(parsedLinkList);
+  };
 
   const validateForm = () => {
     const errors = {};
@@ -482,6 +517,8 @@ const EditExhibitScreen = () => {
                   <Modifyfiles
                     files={fileList}
                     setFiles={handleupdatedfiles}
+                    deletefiles={deletefiles}
+                    setdeletefiles={setdeletefiles}
                     formSubmitted={formSubmitted}
                     id={id}
                     resetFormSubmitted={() => setFormSubmitted(false)}
@@ -492,7 +529,16 @@ const EditExhibitScreen = () => {
 
             <div className="float-start" style={buttonContainerStyle}>
               <label style={labelStyle}>Related Exhibits</label>
-              <button type="button" style={buttonStyle}>Modify Links</button>
+              <button type="button" style={buttonStyle} onClick={showLinksModal}>
+                Modify Links
+              </button>
+              <Modifylinks
+                links={linkList}
+                setLinks={handleupdatedlinks}
+                visible={isLinksModalVisible}
+                onSubmit={handleLinkSubmit}
+                onCancel={handleLinksCancel}
+              />
             </div>
           </Col>
 

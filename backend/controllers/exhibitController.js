@@ -181,7 +181,7 @@ const deleteExhibits = asyncHandler(async (req, res) => {
 // @route   PUT /api/exhibits/:id
 // @access  Private/Admin
 const undoDeleteExhibits = asyncHandler(async (req, res) => {
-
+  console.log(req)
   const { ids } = req.body.data;
   
   try { // UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)
@@ -226,6 +226,7 @@ const generatePreSignedUrl = async (req, res) => {
 // @route   POST /api/exhibits/add-related-exhibit
 // @access  Private/Admin
 const addRelatedExhibits = asyncHandler(async (req, res) => {
+  console.log(req.body)
   const { id:exhibit_id } = req.params;
   const { related_exhibits_ids } = req.body;
   try {
@@ -259,7 +260,7 @@ const getRelatedExhibits = asyncHandler(async (req, res) => {
         select distinct related_exhibit_id, related_exhibit_title
         from related_exhibits re
         inner join exhibits e on re.related_exhibit_id = e.exhibit_id and e.active_ind = 'Y'
-        where re.exhibit_id = 195
+        where re.exhibit_id = ?
       ) img
       on atch.exhibit_id = img.related_exhibit_id
     ) images 
@@ -285,13 +286,13 @@ const modifiedRelatedExhibits = asyncHandler(async (req, res) => {
   const { exhibitsToBeDeleted, exhibitsToBeAdded } = req.body;
   try {
    
-    const insertResult = await addRelatedExhibitsUtils(exhibit_id, exhibitsToBeAdded);
     const deletionResult = await deleteRelatedExhibitsUtils(exhibit_id, exhibitsToBeDeleted);
-    
+    const insertResult = await addRelatedExhibitsUtils(exhibit_id, exhibitsToBeAdded);
+
     return res.status(200).json({
       message: 'Exhibits modified successfully',
-      insertedRelationships: insertResult,
-      deletionRelationships: deletionResult
+      deletionRelationships: deletionResult,
+      insertedRelationships: insertResult
     });
   } catch (err) {
     res.status(500).json({ message: err.message }); // Send an error response
@@ -373,6 +374,7 @@ const rollbackAttachment = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getAttachments = asyncHandler(async (req, res) => {
   const {exhibit_id} = req.params
+  console.log(exhibit_id)
   try {
     const attachments = await getAttachmentsUtils(exhibit_id);
     if (attachments.message === "Successfully fetched") {
