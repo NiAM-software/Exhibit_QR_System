@@ -132,6 +132,8 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
 
       console.log(newLink);
       setLinkList([...linkList, newLink]);
+      setLinks([...linkList, newLink]);
+      setSearchQuery("");
     }
   };
 
@@ -212,7 +214,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         clearSearchQuery();
         onCancel();
       }}
-      style={{ height: "200px", width: "800px" }}
+      style={{ height: "100%", width: "100%", paddingTop: '8px' }}
       centered
       footer={[
         <Button
@@ -241,8 +243,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
           type="text"
           placeholder="Search..."
           className="col-md-12 input"
-          style={{ flex: 1, height: "40px", marginRight: "5px" }}
-          style={{ flex: 1, height: "40px", marginRight: "5px" }}
+          style={{ flex: 0.3, height: "40px", marginRight: "5px" }}
           value={searchQuery}
           onChange={handleSearch}
         />
@@ -274,6 +275,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         ))}
 
 
+
       {linkList.length > 0 && (
         <div style={{ marginTop: "16px" }}>
         <div style={{ marginTop: "16px" }}>
@@ -287,8 +289,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         </div>
       )}
       {previewOpen && (
-        <div
-        <div
+        <Modal
           visible={previewOpen}
           title={previewTitle}
           onCancel={handleCancel}
@@ -302,8 +303,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
             }}
             src={previewImage}
           />
-        </div>
-        </div>
+        </Modal>
       )}
     </div>
     </div>

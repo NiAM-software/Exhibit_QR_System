@@ -1,15 +1,13 @@
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, useHistory } from 'react-router-dom';
-import Axios from 'axios';
+import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams, useHistory } from "react-router-dom";
+import Axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import { Modal } from 'antd';
-import Modifyfiles from './Modifyfiles';
-import Modifylinks from './ModifyLinks.jsx';
-
+import { Modal } from "antd";
+import Modifyfiles from "./Modifyfiles";
+import Modifylinks from './ModifyLinks';
 
 const EditExhibitScreen = () => {
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [deletefiles, setdeletefiles] = useState([]);
@@ -17,18 +15,46 @@ const EditExhibitScreen = () => {
   const [isLinksModalVisible, setIsLinksModalVisible] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
+  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState("");
   const [parsedLinkList, setParsedLinkList] = useState([]);
+  const [deletelinks, setdeletelinks] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [locationTypes, setLocationTypes] = useState([]);
+
+  const fetchCategoriesAndLocationTypes = async () => {
+    try {
+      const response = await fetch(
+        "/api/admin/exhibits/categories-and-location-types"
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data.categories);
+        setLocationTypes(data.locationTypes);
+      } else {
+        console.error("Failed to fetch categories");
+      }
+    } catch (error) {
+      console.error("Error while fetching categories:", error);
+    }
+  };
+
+
 
 
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
   };
 
+  const handledeletefiles = (newList) => {
+    setdeletefiles(newList);
+  };
+
   const handleupdatedlinks = (newList) => {
     setLinkList(newList);
-  }
-
+  };
+  const handledeletelinks = (newList) => {
+    setdeletelinks(newList);
+  };
   const showLinksModal = () => {
     setIsLinksModalVisible(true);
   };
@@ -54,45 +80,42 @@ const EditExhibitScreen = () => {
     setIsModalVisible(false);
   };
 
-
   const navigate = useNavigate();
   const { id } = useParams();
+  const link_id = id;
 
   const [formData, setFormData] = useState({
-    title: '',
-    category: '',
-    subcategory: '',
-    room: '',
-    location_type: '',
-    location: '',
-    asset_number: '',
-    manufacturer: '',
-    era: '',
-    exhibit_desc: ''
+    title: "",
+    category: "",
+    subcategory: "",
+    room: "",
+    location_type: "",
+    location: "",
+    asset_number: "",
+    manufacturer: "",
+    era: "",
+    exhibit_desc: "",
   });
 
-
   useEffect(() => {
-    // Fetch data for the specified ID from the backend
     Axios.get(`/api/admin/exhibits/${id}`)
-      .then(response => {
+      .then((response) => {
         setFormData(response.data); // Store data in state for prepopulation
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       });
 
-    // Fetch the next available asset number
-    Axios.get('/api/admin/exhibits/next-asset-number')
+    fetchCategoriesAndLocationTypes();
+    Axios.get("/api/admin/exhibits/next-asset-number")
       .then((response) => {
         const maxAssetNumber = response.data.asset_number;
         const nextAssetNumber = maxAssetNumber + 1;
         setNextAvailableAssetNumber(nextAssetNumber.toString());
       })
       .catch((error) => {
-        // console.log(response)
-        console.error('Error fetching next asset number:', error);
-        toast.error('Error fetching next asset number');
+        console.error("Error fetching next asset number:", error);
+        toast.error("Error fetching next asset number");
       });
   }, [id]);
 
@@ -102,18 +125,17 @@ const EditExhibitScreen = () => {
   };
 
   const handleCancelClick = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleLinkSubmit = (updatedLinkList) => {
-    // You can use the updatedLinkList received from AddLinks here
-    console.log('linkList after submitting the modal:', updatedLinkList);
-    const parsedLinkList = updatedLinkList.map(link => ({
+    console.log("linkList after submitting the modal:", updatedLinkList);
+    const parsedLinkList = updatedLinkList.map((link) => ({
       related_exhibit_id: link.uid,
       related_exhibit_title: link.name,
     }));
 
-    console.log('Parsed Link List:', parsedLinkList);
+    console.log("Parsed Link List:", parsedLinkList);
     setIsLinksModalVisible(false);
 
     // Set the submitted link list
@@ -124,21 +146,21 @@ const EditExhibitScreen = () => {
     const errors = {};
 
     if (!formData.title) {
-      errors.title = 'Title is required';
+      errors.title = "Title is required";
     }
 
     if (!formData.asset_number) {
-      errors.asset_number = 'Asset number is required';
+      errors.asset_number = "Asset number is required";
     } else if (isNaN(formData.asset_number)) {
-      errors.asset_number = 'Asset number must be an integer';
+      errors.asset_number = "Asset number must be an integer";
     } else if (formData.asset_number < 0) {
-      errors.asset_number = 'Asset number cannot be negative';
+      errors.asset_number = "Asset number cannot be negative";
     }
 
-    if (formData.era !== '' && isNaN(formData.era)) {
-      errors.era = 'Era must be an integer';
+    if (formData.era !== "" && isNaN(formData.era)) {
+      errors.era = "Era must be an integer";
     } else if (formData.era < 0) {
-      errors.era = 'Era cannot be negative';
+      errors.era = "Era cannot be negative";
     }
 
     return errors;
@@ -164,38 +186,76 @@ const EditExhibitScreen = () => {
         //console.log(response)
 
         if (response.ok) {
-          const data = await response.json(); // Parse the JSON response
-          console.log('First API call is successful', data.message);
+          // const data = await response.json(); // Parse the JSON response
+          // console.log('First API call is successful', data.message);
 
-          // const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
-          // fileList.forEach((file) => {
-          //   formDataForFiles.append('photos', file.originFileObj);
-          // });
+          const formData = new FormData();
+          // console.log("ADDED FILES");
+          // console.log(fileList);
+          formData.append("filesToBeDeleted", JSON.stringify(deletefiles)); // Assuming filePaths is an array of file paths to be deleted
+          fileList.forEach((file) => {
+            formData.append("newFiles", file.originFileObj);
+          });
 
-          // console.log(formDataForFiles)
+          const res = await fetch(
+            `/api/admin/exhibits/add-modified-files/${id}`,
+            {
+              method: "POST", // or 'PUT' or 'whatever is necessary'
+              body: formData,
+            }
+          );
+          if (res.ok) {
 
-          // const s3Response = await fetch(`api/exhibits/upload/${id}`, {
-          //   method: 'POST', // or 'PUT' or 'whatever is necessary'
-          //   body: formDataForFiles,
-          // });
+            const parsedLinkList = linkList.map((link) => ({
+              related_exhibit_id: link.uid,
+              related_exhibit_title: link.name,
+            }));
 
-          // if (s3Response.ok) {
-          //   const s3Data = await s3Response.json();
-          //   console.log('Second API Call to S3 Successful:', s3Data);
-          toast.success('Form data submitted successfully');
+            console.log("Parsed Link List:", parsedLinkList);
+            setIsLinksModalVisible(false);
 
-          setFormSubmitted(true);
+            // Set the submitted link list
+            setParsedLinkList(parsedLinkList);
+            setdeletelinks(deletelinks);
 
-          setTimeout(() => {
-            navigate('/'); // Redirect to the main page after a delay (adjust as needed)
-          }, 2000);
+            const formDatalinks = {
+              exhibitsToBeDeleted: deletelinks,
+              exhibitsToBeAdded: parsedLinkList,
+            }
 
+            // console.log("formDatalinks", formDatalinks);
+            console.log("objectdataform", JSON.stringify(formDatalinks));
+            const modifylinkres = await fetch(
+              `/api/admin/exhibits/add-modified-exhibits/${id}`,
+              {
+                method: "POST", // or 'PUT' or 'whatever is necessary'
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formDatalinks),
+              }
+            );
+            if (modifylinkres.ok) {
+              //console.log('Thrid API Call to S3 Successful:', parsedLinkList);
+              toast.success('Form data submitted successfully');
+              setFormSubmitted(true);
+              setTimeout(() => {
+                navigate('/');
+              }, 2000);
+            }
+            else {
+              const data = await modifylinkres.json();
+              console.error('Third API Call to DB Failed:', data.message);
+              toast.error('Failed to insert related exhibits');
+            }
+
+          }
+          else {
+            const data = await res.json();
+            console.error('Call to s3 failed :', data.message);
+            toast.error('Failed to update files');
+          }
         }
-        // else {
-        //   console.error('Second API Call to S3 Failed:', s3Response.statusText);
-        //   toast.error('Failed to upload to S3');
-        // }
-        // }
         else {
           const data = await response.json();
           console.error('First API Call Failed:', data.message);
@@ -225,13 +285,14 @@ const EditExhibitScreen = () => {
 
   };
 
+
   const h1Style = {
     fontWeight: 'bold',
     fontSize: '22px',
     marginTop: '30px',
-    marginLeft: '480px',
+    marginLeft: '-20px',
     marginBottom: '20px',
-    // textAlign:'center'
+    textAlign: 'center'
   };
 
   const buttonContainerStyle = {
@@ -243,31 +304,31 @@ const EditExhibitScreen = () => {
     display: "flex",
     //justifyContent: "flex-end", // Right-align the buttons
     alignItems: "center", // Vertically align the buttons
-    marginTop: "38px"
+    marginTop: "38px",
   };
 
   const labelStyle = {
     fontSize: "11px",
-    color: '#4B4B4B'
+    color: "#4B4B4B",
   };
 
   const buttonStyle = {
-    fontSize: '14px',
-    width: '125px',
-    height: '25px',
-    marginRight: '20px',
-    marginTop: '0px'
-
+    fontSize: "14px",
+    width: "125px",
+    height: "25px",
+    marginRight: "20px",
+    marginTop: "0px",
+    marginBottom: '50px'
   };
   // Define a custom style for the form labels
   const formLabelStyle = {
-    fontSize: '14px', // Adjust the font size as needed
-    marginTop: '-20px',
+    fontSize: "12px", // Adjust the font size as needed
+    marginTop: "-20px",
   };
 
   // Define a custom style for the space between form elements
   const formElementSpacing = {
-    marginBottom: '-5px', // Adjust the margin-bottom as needed
+    marginBottom: "-15px", // Adjust the margin-bottom as needed
   };
 
   const descriptionInputStyle = {
@@ -281,49 +342,57 @@ const EditExhibitScreen = () => {
   };
 
   const errorStyle = {
-    borderColor: 'red',
+    borderColor: "red",
   };
 
   const errorMessage = {
-    color: 'red',
+    color: "red",
   };
-
 
   return (
     <Container className="EditExhibit">
       <Row>
-        <Col> {/* Center-align the content */}
-          <h1 style={h1Style}>
-            Edit Exhibit
-          </h1>
+        <Col>
+          <h1 style={h1Style}>Edit Exhibit</h1>
         </Col>
       </Row>
 
       <Form onSubmit={handleSubmit}>
         <Row>
-
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
               <Form.Group controlId="Title" className="mb-3">
-                <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
+                <Form.Label style={formLabelStyle}>
+                  Title<span style={{ color: "red" }}>*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Enter Title"
-                  style={formErrors.title ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  style={
+                    formErrors.title
+                      ? { ...TextInputStyle, ...errorStyle }
+                      : TextInputStyle
+                  }
                 />
-                {formErrors.title && <div style={errorMessage}>{formErrors.title}</div>}
+                {formErrors.title && (
+                  <div style={errorMessage}>{formErrors.title}</div>
+                )}
               </Form.Group>
             </Form>
           </Col>
 
           <Col md={4} className="offset-md-3 mb-3">
             <Form style={formElementSpacing}>
-              <Form.Group controlId="Asset Number" className="mb-3" style={{ position: 'relative' }}>
+              <Form.Group
+                controlId="Asset Number"
+                className="mb-3"
+                style={{ position: "relative" }}
+              >
                 <Form.Label style={formLabelStyle}>
-                  Asset Number<span style={{ color: 'red' }}>*</span>
+                  Asset Number<span style={{ color: "red" }}>*</span>
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -331,18 +400,31 @@ const EditExhibitScreen = () => {
                   value={formData.asset_number}
                   onChange={handleChange}
                   placeholder="Enter Asset number"
-                  style={formErrors.asset_number ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  style={
+                    formErrors.asset_number
+                      ? { ...TextInputStyle, ...errorStyle }
+                      : TextInputStyle
+                  }
                 />
                 {nextAvailableAssetNumber && (
-                  <div style={{ position: 'absolute', top: '0', right: '0', color: 'green', fontSize: '14px' }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "0",
+                      right: "0",
+                      color: "green",
+                      fontSize: "12px",
+                    }}
+                  >
                     Suggested: {nextAvailableAssetNumber}
                   </div>
                 )}
-                {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
+                {formErrors.asset_number && (
+                  <div style={errorMessage}>{formErrors.asset_number}</div>
+                )}
               </Form.Group>
             </Form>
           </Col>
-
         </Row>
 
         <Row>
@@ -382,15 +464,23 @@ const EditExhibitScreen = () => {
         <Row>
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
-              <Form.Group controlId="Location type" className="mb-3">
-                <Form.Label style={formLabelStyle}>Location type</Form.Label>
+              <Form.Group controlId="locationType" className="mb-3">
+                <Form.Label style={formLabelStyle}>LocationType</Form.Label>
                 <Form.Control
                   type="text"
                   name="location_type"
+                  list="locationTypes"
                   value={formData.location_type}
                   onChange={handleChange}
                   style={TextInputStyle}
                 />
+                <datalist id="locationTypes">
+                  {locationTypes.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </datalist>
               </Form.Group>
             </Form>
           </Col>
@@ -405,26 +495,40 @@ const EditExhibitScreen = () => {
                   name="era"
                   value={formData.era}
                   onChange={handleChange}
-                  style={formErrors.era ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  style={
+                    formErrors.era
+                      ? { ...TextInputStyle, ...errorStyle }
+                      : TextInputStyle
+                  }
                 />
-                {formErrors.era && <div style={errorMessage}>{formErrors.era}</div>}
+                {formErrors.era && (
+                  <div style={errorMessage}>{formErrors.era}</div>
+                )}
               </Form.Group>
             </Form>
           </Col>
         </Row>
 
         <Row>
-          <Col md={4} className="mb-3">
+          <Col md={4} className=" mb-3">
             <Form style={formElementSpacing}>
-              <Form.Group controlId="Category" className="mb-3">
+              <Form.Group controlId="category" className="mb-3">
                 <Form.Label style={formLabelStyle}>Category</Form.Label>
                 <Form.Control
                   type="text"
                   name="category"
+                  list="categories"
                   value={formData.category}
                   onChange={handleChange}
                   style={TextInputStyle}
                 />
+                <datalist id="categories">
+                  {categories.map((option, index) => (
+                    <option key={index} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </datalist>
               </Form.Group>
             </Form>
           </Col>
@@ -449,6 +553,23 @@ const EditExhibitScreen = () => {
         <Row>
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
+              <Form.Group controlId="Description" className="mb-3">
+                <Form.Label style={formLabelStyle}>Description</Form.Label>
+                <Form.Control
+                  type="text"
+                  as="textarea"
+                  placeholder="Enter Description"
+                  name="exhibit_desc"
+                  value={formData.exhibit_desc}
+                  onChange={handleChange}
+                  style={descriptionInputStyle}
+                />
+              </Form.Group>
+            </Form>
+          </Col>
+
+          <Col md={4} className="offset-md-3 mb-3">
+            <Form style={formElementSpacing}>
               <Form.Group controlId="Manufacturer" className="mb-3">
                 <Form.Label style={formLabelStyle}>Manufacturer</Form.Label>
                 <Form.Control
@@ -461,24 +582,7 @@ const EditExhibitScreen = () => {
               </Form.Group>
             </Form>
           </Col>
-
-          <Col md={4} className="offset-md-3 mb-3">
-            <Form style={formElementSpacing}>
-              <Form.Group controlId="Description" className="mb-3">
-                <Form.Label style={formLabelStyle}>Description</Form.Label>
-                <Form.Control
-                  type="text" as="textarea"
-                  placeholder="Enter Description"
-                  name="exhibit_desc"
-                  value={formData.exhibit_desc}
-                  onChange={handleChange}
-                  style={descriptionInputStyle} />
-              </Form.Group>
-            </Form>
-          </Col>
         </Row>
-
-
 
         {/* <Col md={6} className="mb-4"> 
             <Form style={formElementSpacing}>
@@ -494,83 +598,70 @@ const EditExhibitScreen = () => {
                 </Form.Group>
             </Form>
           </Col> */}
+        <Row>
+          <Col md={12}>
+            <Modifyfiles
+              files={fileList}
+              setFiles={handleupdatedfiles}
+              deletefiles={deletefiles}
+              setdeletefiles={setdeletefiles}
+              formSubmitted={formSubmitted}
+              id={id}
+              resetFormSubmitted={() => setFormSubmitted(false)}
+              nOK={handleOk}
+              nCancel={handleCancel}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+            <Modifylinks
+              links={linkList}
+              setLinks={handleupdatedlinks}
+              link_id={link_id}
+              deletelinks={deletelinks}
+              setdeletelinks={handledeletelinks}
+              visible={true}
+              onSubmit={handleLinkSubmit}
+              onCancel={handleLinksCancel}
+            />
+          </Col>
+        </Row>
+
 
         <Row>
-          <Col md={6}>
-            <div className="float-start" style={buttonContainerStyle}>
-              <label style={labelStyle}>Images/Videos</label>
-              <button type="button" style={buttonStyle} onClick={showModal}>Modify Files</button>
-              <Modal
-                title="MODIFYFILES"
-                visible={isModalVisible}
-                onOk={handleOk}
-                onCancel={handleCancel}
-                closable={false}
-                footer={null}
-                style={{ height: '1200px', width: '1200px' }}
-
-              // okButtonProps={{ style: { background: 'blue', borderColor: 'black',width:'80px' } }}
-              // cancelButtonProps={{ style: { background: 'white', borderColor: 'black',width:'80px' } }}
-
-              >
-                {isModalVisible &&
-                  <Modifyfiles
-                    files={fileList}
-                    setFiles={handleupdatedfiles}
-                    deletefiles={deletefiles}
-                    setdeletefiles={setdeletefiles}
-                    formSubmitted={formSubmitted}
-                    id={id}
-                    resetFormSubmitted={() => setFormSubmitted(false)}
-                    nOK={handleOk}
-                    nCancel={handleCancel} />}
-              </Modal>
-            </div>
-
-            <div className="float-start" style={buttonContainerStyle}>
-              <label style={labelStyle}>Related Exhibits</label>
-              <button type="button" style={buttonStyle} onClick={showLinksModal}>
-                Modify Links
-              </button>
-              <Modifylinks
-                links={linkList}
-                setLinks={handleupdatedlinks}
-                visible={isLinksModalVisible}
-                onSubmit={handleLinkSubmit}
-                onCancel={handleLinksCancel}
-              />
-            </div>
-          </Col>
-
-          <Col md={6}>
+          <Col md={12}>
             <div className="d-flex justify-content-end" style={rightButtonContainerStyle}>
-              <button className="float-end" style={{
-                backgroundColor: 'white',
-                color: 'black',
-                padding: '8px 16px',
-                fontSize: '12px',
-                width: '100px',
-                height: '25px',
-                marginRight: '15px',
-                marginTop: '-1px',
-                outline: '1px solid black',
-              }}
-                onClick={handleCancelClick}>Cancel</button>
+              <button
+                className="float-end"
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  padding: "8px 16px",
+                  fontSize: "12px",
+                  width: "100px",
+                  height: "25px",
+                  marginRight: "20px",
+                  marginTop: "-1px",
+                  marginBottom: '50px',
+                  outline: "1px solid black",
+                }}
+                onClick={handleCancelClick}
+              >
+                Cancel
+              </button>
 
-              <button className="float-end" style={buttonStyle}>Submit</button>
+              <button className="float-end" style={buttonStyle}>
+                Submit
+              </button>
             </div>
           </Col>
         </Row>
       </Form>
 
       <Toaster />
-
     </Container>
-
-
   );
 };
-
-
 
 export default EditExhibitScreen;

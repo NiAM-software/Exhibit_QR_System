@@ -33,12 +33,36 @@ const deleteAttachmentsUtils = async(fileName, folderName) => {
     if (results && results.affectedRows > 0) {
       return ({ message : "Successfully deleted", folderName, fileName });
     } else {
-      return ({ message: "Resource doesn't exist" });
+      return ({ message: "Resource doesn;t exist" });
     }
   } catch (err) {
     return ({ message: err.message });
   }
 }
+
+const deleteMultipleAttachmentsUtils = async (filesToBeDeleted) => {
+  try {
+    const deletedAttachments = [];
+
+    for (const fileData of filesToBeDeleted) {
+      const fileName = fileData.fileName;
+      const folderName = fileData.folderName;
+
+      const query = "DELETE FROM attachments WHERE file_name=? AND file_location=?";
+      const [results, fields] = await db.promise().query(query, [fileName, folderName]);
+
+      if (results && results.affectedRows > 0) {
+        deletedAttachments.push({ message: "Successfully deleted", folderName, fileName });
+      } else {
+        deletedAttachments.push({ message: "Resource doesn't exist", folderName, fileName });
+      }
+    }
+
+    return deletedAttachments;
+  } catch (err) {
+    return { message: err.message };
+  }
+};
 
 const insertIntoAttachmentsUtils = async() =>{
 
@@ -47,15 +71,19 @@ const insertIntoAttachmentsUtils = async() =>{
 // from s3
 const getPresignedUrlsUtils = async(objectKeys) => {
     try {
+        
+        
         const bucketName = process.env.S3_BUCKET; 
+       
         if (!Array.isArray(objectKeys)) {
-          return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
+          return { error: 'Invalid input. objectKeys should be an array.' };
         }
     
         const urls = await Promise.all(objectKeys.map(async (objectKey) => {
           const { folderName, fileName } = objectKey
           const path = `${folderName}/${fileName}`;
           try {
+            
             //console.log(path);
             const url = await getPresignedUrl(s3, bucketName, path);
             return { folderName, fileName, url };
@@ -161,5 +189,6 @@ export {
     deleteAttachmentsUtils,
     getPresignedUrlsUtils, 
     addRelatedExhibitsUtils, 
-    deleteRelatedExhibitsUtils
+    deleteRelatedExhibitsUtils, 
+    deleteMultipleAttachmentsUtils
 }

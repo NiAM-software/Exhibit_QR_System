@@ -202,20 +202,29 @@ const HomeScreen = () => {
     }
   };
 
-  const showPreview = () => {
-    const selectedRowId = selectedRows.map((row) => row.exhibit_id);
-
+  const showPreview = async () => {
+    const selectedRowId = selectedRows.map(row => row.exhibit_id);
+    console.log('selectedRowId:', selectedRowId)
     if (selectedRows.length > 1) {
       toast.error("Multiple exhibits can't be selected");
-    } else if (selectedRows.length == 0) {
-      toast.error("You need to select at least 1 exhibit");
-    } else if (selectedRowId) {
-      const editUrl = `/ProductScreen/${selectedRowId}`;
-      navigate(editUrl);
-    } else {
-      console.error("No valid ID provided for editing.");
     }
-  };
+
+    else if (selectedRows.length == 0) {
+      toast.error("You need to select at least 1 exhibit");
+    }
+
+    else if (selectedRowId) {
+      const selectedRow = selectedRows[0];
+      const exhibitId = selectedRow.exhibit_id;
+      console.log('exhibitId:', exhibitId)
+      navigate(`/ProductScreen/${exhibitId}`);
+
+    }
+    else {
+      console.error('No valid ID provided for editing.');
+    }
+
+  }
 
   const showQRHandler = () => {
     if (selectedRows.length > 1) {
@@ -358,16 +367,36 @@ const HomeScreen = () => {
         {/* {console.log(notificationMessage)} */}
         {showNotification && (
           <Modal show={showNotification} onHide={closeNotification}>
-            <Modal.Body>{`Exhibits ${notificationMessage2.join(
-              ", "
-            )} have been deleted`}</Modal.Body>
-            <button className="btn-primary-sm" onClick={closeModal}>
+            <Modal.Body>
+              {`Exhibits ${notificationMessage2.join(", ")} have been deleted`}
+            </Modal.Body>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "20px",
+              }}
+            >
+              <button
+                className="btn-primary-sm"
+                style={{ marginRight: "10px" }}
+                onClick={closeModal}
+              >
+                Close
+              </button>
+              <button
+                className="btn-primary-sm"
+                style={{ marginLeft: "10px" }}
+                onClick={handleUndoDelete}
+              >
+                Undo
+              </button>
+            </div>
+            <div style={{ marginTop: "20px" }}>
               {" "}
-              close{" "}
-            </button>
-            <StyledModalFooter onClick={handleUndoDelete}>
-              Undo{" "}
-            </StyledModalFooter>
+              {/* Add margin below the buttons */}
+              {/* You can add additional content or spacing here */}
+            </div>
           </Modal>
         )}
       </div>

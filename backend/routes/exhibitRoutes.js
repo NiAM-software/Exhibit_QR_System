@@ -21,6 +21,10 @@ import {
 } from "../controllers/exhibitController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import { deleteObjectsFromS3 } from "../utils/uploadFile.js";
+import { 
+  deleteAttachmentsUtils,
+  deleteMultipleAttachmentsUtils
+} from '../utils/attachmentUtils.js';
 
 const router = express.Router();
 router.get("/next-asset-number", getNextAssetNumber);
@@ -33,8 +37,11 @@ router.post(
   async function (req, res, next) {
     const { exhibit_id } = req.params;
     const filesToBeDeleted = JSON.parse(req.body.filesToBeDeleted);
+    console.log("DELETED FILES");
+    console.log(filesToBeDeleted);
+  
     const deletedFilesResponse = await deleteObjectsFromS3(filesToBeDeleted);
-
+    const deleteAttachmentsResponse = await deleteMultipleAttachmentsUtils(filesToBeDeleted)
     for (const file of req.files) {
       const name = file.key;
       const folderName = `exhibit_${exhibit_id}`;

@@ -82,7 +82,7 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
 
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{ padding: '16px' }}>
+      <div style={{ paddingTop: '8px', paddingBottom: '4px' }}>
         <Upload
           beforeUpload={() => false}
           listType="picture-card"
