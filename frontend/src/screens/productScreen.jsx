@@ -142,7 +142,17 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import axios from 'axios';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import dummy from '../assets/dummy-image-square.jpg';
 
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
+// const dummyImageUrl = getBase64('../assets/dummy-image-square.jpg');
 
 const ProductScreen = () => {
   const { id } = useParams();
@@ -150,7 +160,7 @@ const ProductScreen = () => {
   const location = useLocation();
   const [imageUrls, setImageUrls] = useState([]);
   const [relatedExhibits, setRelatedExhibits] = useState([]);
-  const dummyImageUrl = 'https://picsum.photos/602';
+  const dummyImageUrl = "https://picsum.photos/200";
   const [exhibitData, setExhibitData] = useState({
     title: '',
     category: '',
@@ -319,15 +329,28 @@ const ProductScreen = () => {
         folderName: item.file_location,
         fileName: item.file_name,
       }));
-      console.log("exhibitPathsArray", exhibitPathsArray)
+
+      // const at_data = {
+      //   objectKeys: exhibitPathsArray,
+      // }
+      // console.log("exhibitPathsArray", JSON.stringify(at_data))
       // Get Presigned urls
-      const generateExhibitPresignedUrlResponse = await axios.post(`/api/admin/exhibits/generate-presigned-url`, {
-        objectKeys: exhibitPathsArray,
-      });
-      console.log("generateExhibitPresignedUrlResponse", generateExhibitPresignedUrlResponse)
-      const exhibitPresignedUrls = generateExhibitPresignedUrlResponse.data;
-      console.log("exhibitPresignedUrls", exhibitPresignedUrls)
-      const exhibitImageUrls = exhibitPresignedUrls.map((item) => item.url).filter(Boolean);
+
+      const generateExhibitPresignedUrlResponse = await fetch(
+        "/api/admin/exhibits/generate-presigned-url",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(exhibitPathsArray),
+        }
+      );
+
+      const exhibitPresignedUrls = await generateExhibitPresignedUrlResponse.json(); // Convert the response to JSON
+      console.log("generateExhibitPresignedUrlResponse", exhibitPresignedUrls); // Now you can access the JSON data
+
+      const exhibitImageUrls = exhibitPresignedUrls.data.map((item) => item.url).filter(Boolean);
       console.log("exhibitImageUrls", exhibitImageUrls)
 
       if (exhibitImageUrls.length === 0) {
@@ -336,7 +359,7 @@ const ProductScreen = () => {
       // Set the imageUrls state
       setImageUrls(exhibitImageUrls);
     } catch (error) {
-      console.error('Error fetching exhibit images:', error);
+      console.error('horror fetching exhibit images:', error);
 
       // If there's an error, you can set some default images or handle the error as needed
       const defaultImages = [dummyImageUrl];
@@ -347,23 +370,37 @@ const ProductScreen = () => {
   const fetchRelatedExhibits = async (Id) => {
     try {
       const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${Id}`);
+
       const relatedExhibitsData = getRelatedExhibitResponse.data.data;
+
       console.log("relatedExhibitsData", relatedExhibitsData)
+
       const relatedExhibitsPathsArray = relatedExhibitsData.map((item) => ({
         exhibit_id: item.related_exhibit_id,
         folderName: item.file_location,
         fileName: item.file_name,
         title: item.related_exhibit_title,
       }));
+
       console.log("relatedExhibitsPathsArray", relatedExhibitsPathsArray)
-      const generateRelatedExhibitsPresignedUrlResponse = await axios.post(`/api/admin/exhibits/generate-presigned-url`, {
-        objectKeys: relatedExhibitsPathsArray,
-      });
-      const relatedExhibitPresignedUrls = generateRelatedExhibitsPresignedUrlResponse.data;
+
+      const generateRelatedExhibitsPresignedUrlResponse = await fetch(
+        "/api/admin/exhibits/generate-presigned-url",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(relatedExhibitsPathsArray),
+        }
+      );
+      // console.log("relatedExhibitPresignedUrls", generateRelatedExhibitsPresignedUrlResponse)
+      const relatedExhibitPresignedUrls = await generateRelatedExhibitsPresignedUrlResponse.json();
       console.log("relatedExhibitPresignedUrls", relatedExhibitPresignedUrls)
+
       const relatedExhibits = relatedExhibitsPathsArray.map((item, index) => ({
         relatedExhibit_id: item.exhibit_id,
-        imageUrl: relatedExhibitPresignedUrls[index].url || dummyImageUrl, // Use the URL from the response
+        imageUrl: relatedExhibitPresignedUrls.data[index].url || dummyImageUrl, // Use the URL from the response
         title: item.title, // Use the title from the data
       }));
       console.log("relatedExhibits", relatedExhibits)
@@ -377,10 +414,6 @@ const ProductScreen = () => {
       }
     }
   };
-
-
-
-
 
   useEffect(() => {
     // Fetch image data for the exhibit using axios
@@ -471,7 +504,7 @@ const ProductScreen = () => {
                 >
                   <div className="banner-image" style={{ position: 'relative', textAlign: 'center' }}>
                     <figure>
-                      <img src={exhibit.imageUrl} alt={exhibit.title} style={leftPanelImgStyle} style={{
+                      <img src={exhibit.imageUrl} alt={exhibit.title} style={{
                         maxWidth: '80%', // Set a maximum width for the image
                         height: 'auto', // Allow the height to adjust proportionally
                         marginLeft: '10%', // Add a left margin to adjust the spacing

@@ -214,13 +214,15 @@ const uploadFilestoS3 = asyncHandler(async (req, res) => {
 
 //folder structure
 const generatePreSignedUrl = asyncHandler(async (req, res) => {
+  console.log('HI',req.body)
   try {
     const objectKeys = req.body // Parse the request body properly
     console.log(objectKeys);
     const presignedURLS = await getPresignedUrlsUtils(objectKeys);
+    console.log(presignedURLS,'hih')
     res.status(200).json({data:presignedURLS});
   } catch (error) {
-    console.error(error);
+    console.error('HI',error);
     res.status(500).json({ error: error.message });
   }
 });

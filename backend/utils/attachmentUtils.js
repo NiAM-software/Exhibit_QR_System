@@ -70,35 +70,33 @@ const insertIntoAttachmentsUtils = async() =>{
 
 // from s3
 const getPresignedUrlsUtils = async(objectKeys) => {
-    try {
-        
-        
-        const bucketName = process.env.S3_BUCKET; 
-       
-        if (!Array.isArray(objectKeys)) {
-          return { error: 'Invalid input. objectKeys should be an array.' };
-        }
-    
-        const urls = await Promise.all(objectKeys.map(async (objectKey) => {
-          const { folderName, fileName } = objectKey
-          const path = `${folderName}/${fileName}`;
-          try {
-            
-            //console.log(path);
-            const url = await getPresignedUrl(s3, bucketName, path);
-            return { folderName, fileName, url };
-          } catch (error) {
-            console.error(`Error generating presigned URL for ${path}`, error.message);
-            return { folderName, fileName, error: error.message };
-          }
-        }));
-    
-        return ( urls );
-      } catch (error) {
-        console.error(error);
-        return { error: error.message };
+  try {
+      const bucketName = process.env.S3_BUCKET; 
+      if (!Array.isArray(objectKeys)) {
+        return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
       }
-}
+  
+      const urls = await Promise.all(objectKeys.map(async (objectKey) => {
+        const { folderName, fileName } = objectKey
+        const path = `${folderName}/${fileName}`;
+        try {
+          
+          //console.log(path);
+          const url = await getPresignedUrl(s3, bucketName, path);
+          // console.log(url,'hii')
+          return { folderName, fileName, url };
+        } catch (error) {
+          console.error(`Error generating presigned URL for ${path}`, error.message);
+          return { folderName, fileName, error: error.message };
+        }
+      }));
+  
+      return ( urls );
+    } catch (error) {
+      console.error(error);
+      return { error: error.message };
+    }
+};
 
 
 const addRelatedExhibitsUtils = async (exhibitId, relatedExhibitsInfo) => {
