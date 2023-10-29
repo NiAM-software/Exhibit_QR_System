@@ -64,12 +64,6 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
 
                 }
                 catch (error) {
-                    return {
-                        uid: `${item.related_exhibit_id}`,
-                        name: item.related_exhibit_title,
-                        status: 'done',
-                        url: 'https://picsum.photos/200',
-                    };
                     console.error("Error fetching url of related exhibit:", error);
                     return null;
                 }

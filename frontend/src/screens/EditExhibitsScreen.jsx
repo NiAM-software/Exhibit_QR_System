@@ -599,7 +599,6 @@ const EditExhibitScreen = () => {
             </Form>
           </Col> */}
         <Row>
-
           <Col md={12}>
             <Modifyfiles
               files={fileList}
@@ -615,7 +614,6 @@ const EditExhibitScreen = () => {
           </Col>
         </Row>
         <Row>
-
           <Col md={12}>
             <Modifylinks
               links={linkList}

@@ -66,7 +66,7 @@ const customStyles = {
 };
 
 const recycleBin = () => {
-
+    const navigate = useNavigate();
     const [toggleCleared, setToggleCleared] = React.useState(false);
     //const [tableData, setTableData] = React.useState([]);
     const [filterText, setFilterText] = useState("");
@@ -134,6 +134,31 @@ const recycleBin = () => {
         }
     };
 
+    const deleteExhibits = async () => {
+        const selectedKeys = selectedRows.map((row) => row.exhibit_id);
+        const selectedTitles = selectedRows.map((row) => row.title);
+        if (selectedKeys.length === 0) {
+            toast.error("You need to select at least 1 exhibit");
+            return;
+        }
+
+        try {
+            await deleteMutation.mutateAsync(selectedKeys);
+            setSelectedRows((currentSelectedRows) =>
+                currentSelectedRows.filter(
+                    (row) => !selectedKeys.includes(row.exhibit_id)
+                )
+            );
+            setShowNotification(true);
+            setNotificationMessage(selectedKeys);
+            setNotificationMessage2(selectedTitles);
+            setToggleCleared(!toggleCleared); // Toggle the clear state
+        } catch (error) {
+            console.error("Error deleting exhibits:", error);
+            // Handle error if needed
+        }
+    };
+
     const handleShow = () => setShow(true);
     const closeNotification = () => {
         setShowNotification(false);
@@ -162,6 +187,52 @@ const recycleBin = () => {
         console.log(state.selectedRows);
     }, []);
 
+    const editExhibits = () => {
+        const selectedRowId = selectedRows.map((row) => row.exhibit_id);
+        if (selectedRows.length > 1) {
+            toast.error("Multiple exhibits can't be selected");
+        } else if (selectedRows.length == 0) {
+            toast.error("You need to select at least 1 exhibit");
+        } else if (selectedRowId) {
+            const editUrl = `/EditExhibitScreen/${selectedRowId}`;
+            console.log(selectedRowId);
+            navigate(editUrl);
+        } else {
+            console.error("No valid ID provided for editing.");
+        }
+    };
+
+    const showPreview = async () => {
+        const selectedRowId = selectedRows.map(row => row.exhibit_id);
+        console.log('selectedRowId:', selectedRowId)
+        if (selectedRows.length > 1) {
+            toast.error("Multiple exhibits can't be selected");
+        }
+
+        else if (selectedRows.length == 0) {
+            toast.error("You need to select at least 1 exhibit");
+        }
+
+        else if (selectedRowId) {
+            const selectedRow = selectedRows[0];
+            const exhibitId = selectedRow.exhibit_id;
+            console.log('exhibitId:', exhibitId)
+            navigate(`/ProductScreen/${exhibitId}`);
+
+        }
+        else {
+            console.error('No valid ID provided for editing.');
+        }
+
+    }
+
+    const showQRHandler = () => {
+        if (selectedRows.length > 1) {
+            toast.error("Multiple exhibits can't be selected");
+        } else {
+            handleShow();
+        }
+    };
 
     if (isError) return <h1>{error.message}</h1>;
 
@@ -258,15 +329,15 @@ const recycleBin = () => {
                             <FaFilter />
                         </InputGroup.Text>
                         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                        {/* <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto">
-                <Link to="/AddExhibitScreen">
-                  <button className="btn-primary-sm add-exhibit-btn">
-                    Add New Exhibit
-                  </button>
-                </Link>
-              </Nav>
-            </Navbar.Collapse> */}
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="ms-auto">
+                                <Link to="/AddExhibitScreen">
+                                    <button className="btn-primary-sm add-exhibit-btn">
+                                        Add New Exhibit{" "}
+                                    </button>
+                                </Link>
+                            </Nav>
+                        </Navbar.Collapse>
                     </Container>
                 </Navbar>
 
@@ -284,6 +355,15 @@ const recycleBin = () => {
                     fixedHeader
                     fixedHeaderScrollHeight="400px"
                 />
+
+                {selectedRows.length > 0 && (
+                    <ButtonsContainer
+                        showPreview={showPreview}
+                        showQRHandler={showQRHandler}
+                        editExhibits={editExhibits}
+                        deleteExhibits={deleteExhibits}
+                    />
+                )}
                 {/* {console.log(notificationMessage)} */}
                 {showNotification && (
                     <Modal show={showNotification} onHide={closeNotification}>
