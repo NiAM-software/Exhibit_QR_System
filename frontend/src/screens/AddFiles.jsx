@@ -81,8 +81,10 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
   );
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', marginBottom: '100px' }}>
       <div style={{ paddingTop: '8px', paddingBottom: '4px' }}>
+        <p>Attachments</p>
+
         <Upload
           beforeUpload={() => false}
           listType="picture-card"

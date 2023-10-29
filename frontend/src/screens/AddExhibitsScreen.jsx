@@ -691,7 +691,7 @@ const AddExhibitScreen = () => {
       </Form> */}
 
         <Row>
-          <p>Attachments </p>
+
           <Addfiles
             files={fileList}
             setFiles={handleupdatedfiles}

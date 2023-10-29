@@ -214,7 +214,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         clearSearchQuery();
         onCancel();
       }}
-      style={{ height: "100%", width: "100%", paddingTop: '8px' }}
+      style={{ height: "100%", width: "100%", marginTop: "10px", paddingTop: '8px' }}
       centered
       footer={[
         <Button
@@ -238,7 +238,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
       ]}
     >
       <div style={{ display: "flex", alignItems: "center" }}>
-      <div style={{ display: "flex", alignItems: "center" }}>
+
         <Input
           type="text"
           placeholder="Search..."

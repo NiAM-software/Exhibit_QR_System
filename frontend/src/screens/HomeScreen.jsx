@@ -333,9 +333,14 @@ const HomeScreen = () => {
               <Nav className="ms-auto">
                 <Link to="/AddExhibitScreen">
                   <button className="btn-primary-sm add-exhibit-btn">
-                    Add New Exhibit{" "}
+                    Add New Exhibit
                   </button>
                 </Link>
+                {/* <Link to="/recylceBin" style={{ marginLeft: '10px' }}>
+                  <button className="btn-primary-sm add-exhibit-btn">
+                    Recycle Bin
+                  </button>
+                </Link> */}
               </Nav>
             </Navbar.Collapse>
           </Container>
