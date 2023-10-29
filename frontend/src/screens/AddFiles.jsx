@@ -25,9 +25,7 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     }
     setPreviewImage(file.url || file.preview);
     setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
+    setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
   };
 
   const handleChange = ({ fileList: newFileList, file }) => {
@@ -38,9 +36,9 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
       return;
     }
 
-
     setFileList(newFileList);
     setFiles(newFileList);
+
   };
 
   const handleOKbutton = () => {
@@ -52,6 +50,7 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     }
     //setFileList([]);
     nOK();
+
   };
 
   const goBackToHomePage = () => {
@@ -65,12 +64,9 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
   const uploadButton = (
     <div>
       <PlusOutlined />
-      <PlusOutlined />
       <div
         style={{
           marginTop: 8,
-          marginLeft: 16,
-          marginRight: 8,
           marginLeft: 16,
           marginRight: 8,
         }}
@@ -81,8 +77,10 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
   );
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', marginBottom: '100px' }}>
       <div style={{ paddingTop: '8px', paddingBottom: '4px' }}>
+        <p>Attachments</p>
+
         <Upload
           beforeUpload={() => false}
           listType="picture-card"
@@ -94,16 +92,11 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
           {uploadButton}
         </Upload>
       </div>
-      <Modal
-        open={previewOpen}
-        title={previewTitle}
-        footer={null}
-        onCancel={handleCancel}
-      >
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
         <img
           alt="example"
           style={{
-            width: "100%",
+            width: '100%',
           }}
           src={previewImage}
         />

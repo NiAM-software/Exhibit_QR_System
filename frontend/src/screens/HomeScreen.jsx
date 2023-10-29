@@ -382,7 +382,7 @@ const HomeScreen = () => {
                 style={{ marginRight: "10px" }}
                 onClick={closeModal}
               >
-                Close
+                Confirm
               </button>
               <button
                 className="btn-primary-sm"
