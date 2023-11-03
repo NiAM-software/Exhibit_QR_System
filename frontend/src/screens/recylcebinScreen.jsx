@@ -115,21 +115,45 @@ const RecycleBin = () => {
             },
         }
     );
-
     const handleUndoDelete = async () => {
-        const ids = notificationMessage;
-        console.log(typeof ids);
-        console.log(ids);
+        const selectedKeys = selectedRows.map((row) => row.exhibit_id);
+
+        if (selectedKeys.length === 0) {
+            toast.error("You need to select at least 1 exhibit to undo");
+            return;
+        }
+
         try {
-            await undoDeleteMutation.mutateAsync(ids);
+            await undoDeleteMutation.mutateAsync(selectedKeys);
+
+            setSelectedRows((currentSelectedRows) =>
+                currentSelectedRows.filter(
+                    (row) => !selectedKeys.includes(row.exhibit_id)
+                )
+            );
             setToggleCleared(!toggleCleared); // Toggle the clear state
-            closeModal();
+            toast.success('Exhibits Restored successfully');
         } catch (error) {
-            console.log(error.message);
-            console.error("Error performing undo op:", error);
+            console.error("Error undoing exhibits:", error);
             // Handle error if needed
         }
     };
+
+
+    // const handleUndoDelete = async () => {
+    //     const ids = notificationMessage;
+    //     console.log(typeof ids);
+    //     console.log(ids);
+    //     try {
+    //         await undoDeleteMutation.mutateAsync(ids);
+    //         setToggleCleared(!toggleCleared); // Toggle the clear state
+    //         closeModal();
+    //     } catch (error) {
+    //         console.log(error.message);
+    //         console.error("Error performing undo op:", error);
+    //         // Handle error if needed
+    //     }
+    // };
 
     const handleShow = () => setShow(true);
     const closeNotification = () => {
