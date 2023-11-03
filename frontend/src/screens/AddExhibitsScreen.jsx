@@ -22,21 +22,6 @@ const AddExhibitScreen = () => {
   const [formErrors, setFormErrors] = useState({});
   const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
 
-  useEffect(() => {
-    Axios.get('/api/admin/exhibits/next-asset-number')
-      .then((response) => {
-        const maxAssetNumber = response.data.asset_number;
-        console.log(maxAssetNumber)
-        const nextAssetNumber = maxAssetNumber + 1;
-        setNextAvailableAssetNumber(nextAssetNumber.toString());
-      })
-      .catch((error) => {
-        console.error('Error fetching next asset number:', error);
-        toast.error('Error fetching next asset number')
-      });
-  }, []);
-
-
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
   };
@@ -113,7 +98,24 @@ const AddExhibitScreen = () => {
   };
   useEffect(() => {
     fetchCategoriesAndLocationTypes();
+
+    Axios.get('/api/admin/exhibits/next-asset-number')
+      .then((response) => {
+        const maxAssetNumber = response.data.asset_number;
+        console.log(maxAssetNumber)
+        const nextAssetNumber = maxAssetNumber + 1;
+        // setNextAvailableAssetNumber(nextAssetNumber.toString());
+        setFormData({ ...formData, asset_number: nextAssetNumber.toString(), });
+      })
+      .catch((error) => {
+        console.error('Error fetching next asset number:', error);
+        toast.error('Error fetching next asset number')
+      });
   }, []);
+
+
+
+
 
   const validateForm = () => {
     const errors = {};
@@ -235,7 +237,7 @@ const AddExhibitScreen = () => {
             const errors = {};
             errors.asset_number = 'Duplicate entries not allowed.';
             setFormErrors(errors);
-            toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
+            // toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
           }
           else {
             toast.error('Failed to submit form data.');
@@ -364,11 +366,11 @@ const AddExhibitScreen = () => {
                   placeholder="Enter Asset number"
                   style={formErrors.asset_number ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
                 />
-                {nextAvailableAssetNumber && (
+                {/* {nextAvailableAssetNumber && (
                   <div style={{ position: 'absolute', top: '0', right: '0', color: 'green', fontSize: '14px' }}>
                     Suggested: {nextAvailableAssetNumber}
                   </div>
-                )}
+                )} */}
                 {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
               </Form.Group>
             </Form>

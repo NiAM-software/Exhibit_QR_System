@@ -26,9 +26,28 @@ import {
   deleteMultipleAttachmentsUtils
 } from '../utils/attachmentUtils.js';
 
+import {getMaintenanceList,
+  createCategory,
+  updateCategory,
+  createLocation,
+  updateLocation,
+  createLocationType,
+  updateLocationType,
+  createRoom,
+  updateRoom} from "../controllers/maintenanceController.js";
+
 const router = express.Router();
 router.get("/next-asset-number", getNextAssetNumber);
 router.get("/categories-and-location-types", getCategoriesAndLocationTypes);
+router.get("/maintenance", getMaintenanceList);
+router.post("/maintenance/category", createCategory);
+router.put("/maintenance/category", updateCategory);
+router.post("/maintenance/location", createLocation);
+router.put("/maintenance/location", updateLocation);
+router.post("/maintenance/location_type", createLocationType);
+router.put("/maintenance/location_type", updateLocationType);
+router.post("/maintenance/room", createRoom);
+router.put("/maintenance/room", updateRoom);
 router.post("/generate-presigned-url", protect, generatePreSignedUrl);
 
 router.post(

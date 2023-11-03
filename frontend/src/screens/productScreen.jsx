@@ -1,137 +1,3 @@
-// import React from 'react';
-// import { useParams, useLocation } from 'react-router-dom';
-// import { Carousel } from 'react-responsive-carousel';
-// import 'react-responsive-carousel/lib/styles/carousel.min.css';
-
-// const titleStyle = {
-//   textAlign: 'center',
-//   margin: '20px 0',
-//   fontWeight: 'bold',
-// };
-
-// const productCarouselStyle = {
-//   display: 'flex',
-//   alignItems: 'flex-start',
-//   justifyContent: 'flex-start',
-//   margin: '20px',
-// };
-
-// const carouselContainerStyle = {
-//   width: '30%',
-//   marginRight: '20px',
-//   maxHeight: '70vh',
-//   overflowY: 'auto',
-// };
-
-// const descriptionContainerStyle = {
-//   flex: 1,
-// };
-
-// const leftPanelImgStyle = {
-//   width: '100%',
-// };
-
-// const customButtonStyle = {
-//   position: 'absolute',
-//   top: '50%',
-//   background: 'rgba(0, 0, 0, 0.3)',
-//   border: 'none',
-//   color: 'white',
-//   fontSize: '1vw',
-//   width: '2vw',
-//   height: '2vw',
-//   cursor: 'pointer',
-//   transform: 'translateY(-50%)',
-// };
-
-// const leftButtonStyle = {
-//   ...customButtonStyle,
-//   left: '1vw',
-//   zIndex: 1,
-// };
-
-// const rightButtonStyle = {
-//   ...customButtonStyle,
-//   right: '1vw',
-//   zIndex: 1,
-// };
-
-// const carouselImages = [
-//   'https://picsum.photos/600',
-//   'https://picsum.photos/601',
-//   'https://picsum.photos/602',
-// ];
-
-// const ProductScreen = () => {
-//   const { exhibitId } = useParams();
-//   const location = useLocation();
-//   const exhibitData = location.state ? location.state.exhibitData : null;
-//   const [imageUrls, setImageUrls] = useState([]);
-
-//   return (
-//     <div>
-//       <div>
-//         <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
-//       </div>
-//       try {
-//           const response = await axios.get(`/api/exhibits/preview-image/${exhibitId}`);
-
-//           console.log(response.data);
-
-//         } catch (error) {
-//           // Handle the error when the image is not found (status code 404)
-//           console.error('Error fetching exhibit photo:', error);          
-//         }
-//       <div style={productCarouselStyle}>
-//         <div style={carouselContainerStyle}>
-//           <Carousel
-//             showArrows={true}
-//             dynamicHeight={true}
-//             showThumbs={false}
-//             renderArrowPrev={(onClickHandler, hasPrev) =>
-//               hasPrev && (
-//                 <button
-//                   onClick={onClickHandler}
-//                   style={leftButtonStyle}
-//                   aria-label="Previous"
-//                 >
-//                   &lt;
-//                 </button>
-//               )
-//             }
-//             renderArrowNext={(onClickHandler, hasNext) =>
-//               hasNext && (
-//                 <button
-//                   onClick={onClickHandler}
-//                   style={rightButtonStyle}
-//                   aria-label="Next"
-//                 >
-//                   &gt;
-//                 </button>
-//               )
-//             }
-//           >
-//             {carouselImages.map((image, index) => (
-//               <div key={index}>
-//                 <img src={image} alt={`Exhibit Image ${index}`} style={leftPanelImgStyle} />
-//               </div>
-//             ))}
-//           </Carousel>
-//         </div>
-//         <div style={descriptionContainerStyle}>
-//           <p>
-//             {exhibitData
-//               ? exhibitData.exhibit_desc
-//               : 'Loading...'}
-//           </p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ProductScreen;
-
 
 import styled from "styled-components";
 import React, { useEffect, useState } from 'react';
@@ -173,8 +39,7 @@ const ProductScreen = () => {
     era: '',
     exhibit_desc: ''
   });
-  // console.log(id)
-  // console.log('exhibitData:',exhibitData)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const responsive = {
     superLargeDesktop: {
@@ -196,42 +61,9 @@ const ProductScreen = () => {
     }
   };
 
-  const verticalArrowsStyle = {
-    transform: 'rotate(90deg)', // Rotate arrows vertically
-  };
-
-  const customButtonGroupStyle = {
-    display: 'flex',
-    flexDirection: 'column', // Rotate buttons vertically
-    alignItems: 'center',
-  };
 
 
-  const rlcustomButtonGroupStyle = {
-    top: '50%',
-    position: 'absolute',
-    background: 'rgba(0, 0, 0, 0.3)',
-    border: 'none',
-    color: 'white',
-    fontSize: '1vw',
-    width: '2.5rem',
-    height: '2.5rem',
-    cursor: 'pointer',
-    borderRadius: '50%', // Make the buttons circular
-    transform: 'translateY(-50%)',
-    zIndex: 1,
-  };
 
-  const rlcustomLeftButtonStyle = {
-    ...rlcustomButtonGroupStyle,
-    // marginRight: '1rem', // Add margin between the buttons
-    left: '20px',
-  };
-
-  const rlcustomRightButtonStyle = {
-    ...rlcustomButtonGroupStyle,
-    right: '20px',
-  };
 
   const sliderStyle = {
     margin: '0 20px',
@@ -245,32 +77,47 @@ const ProductScreen = () => {
   };
 
 
-
-
   const titleStyle = {
     textAlign: 'center',
     margin: '20px 0',
     fontWeight: 'bold',
   };
 
-  const productCarouselStyle = {
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    margin: '20px',
-  };
+  const ProductCarouselRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 20px;
+`;
+
+  const ProductCarouselColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 20px;
+`;
+
+  const CarouselContainerRow = styled.div`
+  width: 30%;
+  margin-right: 20px;
+  overflow-y: auto;
+  `;
+
+  // Define a styled component for the column layout
+  const CarouselContainerColumn = styled.div`
+  width: 100%; 
+  overflow-y: auto;
+  display: flex; /* Use flexbox for centering vertically */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center vertically */
+  `;
 
 
-  const carouselContainerStyle = {
-    width: '30%',
-    marginRight: '20px',
-    maxHeight: '70vh',
-    overflowY: 'auto',
-  };
-
-  const descriptionContainerStyle = {
-    flex: 1,
-  };
+  const DescriptionContainer = styled.div`
+  flex: 1;
+`;
 
   const descriptionStyle = {
     whiteSpace: 'pre-line', // Preserve line breaks as paragraphs
@@ -308,6 +155,7 @@ const ProductScreen = () => {
   const fetchExhibitData = async (Id) => {
     await axios.get(`/api/admin/exhibits/${Id}`)
       .then(response => {
+        console.log("I'm here", response.data)
         setExhibitData(response.data); // Store data in state for prepopulation
       })
       .catch(error => {
@@ -416,11 +264,19 @@ const ProductScreen = () => {
   };
 
   useEffect(() => {
-    // Fetch image data for the exhibit using axios
-
     fetchExhibitData(id);
     fetchExhibitImages(id);
     fetchRelatedExhibits(id);
+    // Fetch image data for the exhibit using axios
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
 
   }, [id]);
 
@@ -438,9 +294,80 @@ const ProductScreen = () => {
         <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
 
       </div>
+      {windowWidth <= 600 ? (
+        <ProductCarouselColumn>
+          <CarouselContainerColumn>
+            <ResponsiveCarousel
+              showArrows={true}
+              dynamicHeight={true}
+              showThumbs={false}
+              renderArrowPrev={(onClickHandler, hasPrev) =>
+                hasPrev && (
+                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                    &lt;
+                  </button>
+                )
+              }
+              renderArrowNext={(onClickHandler, hasNext) =>
+                hasNext && (
+                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                    &gt;
+                  </button>
+                )
+              }
+            >
+              {imageUrls.map((image, index) => (
+                <div key={index}>
+                  <img src={image} alt={`Exhibit Image ${index}`} style={leftPanelImgStyle} />
+                </div>
+              ))}
+            </ResponsiveCarousel>
+          </CarouselContainerColumn>
+          <DescriptionContainer>
+            <p style={descriptionStyle}>
+              {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+            </p>
+          </DescriptionContainer>
+        </ProductCarouselColumn>
+      ) : (
+        <ProductCarouselRow>
+          <CarouselContainerRow>
+            <ResponsiveCarousel
+              showArrows={true}
+              dynamicHeight={true}
+              showThumbs={false}
+              renderArrowPrev={(onClickHandler, hasPrev) =>
+                hasPrev && (
+                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                    &lt;
+                  </button>
+                )
+              }
+              renderArrowNext={(onClickHandler, hasNext) =>
+                hasNext && (
+                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                    &gt;
+                  </button>
+                )
+              }
+            >
+              {imageUrls.map((image, index) => (
+                <div key={index}>
+                  <img src={image} alt={`Exhibit Image ${index}`} style={leftPanelImgStyle} />
+                </div>
+              ))}
+            </ResponsiveCarousel>
+          </CarouselContainerRow>
+          <DescriptionContainer>
+            <p style={descriptionStyle}>
+              {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+            </p>
+          </DescriptionContainer>
+        </ProductCarouselRow>
+      )}
 
-      <div style={productCarouselStyle}>
-        <div style={carouselContainerStyle}>
+      {/* <div style={productCarouselStyle}>
+        <div style={combinedCarouselContainerStyle}>
           <ResponsiveCarousel
             showArrows={true}
             dynamicHeight={true}
@@ -470,14 +397,14 @@ const ProductScreen = () => {
         <div style={descriptionContainerStyle}>
           <p style={descriptionStyle}>{exhibitData ? exhibitData.exhibit_desc : 'Loading...'}</p>
         </div>
-      </div>
+      </div> */}
       {relatedExhibits.length > 0 && (
         <div>
           <h2>Related Exhibits</h2>
 
           <Carousel
             responsive={responsive}
-            arrows={true}
+            arrows={false}
             showDots={true}
             focusOnSelect={true}
             //autoPlay={true}
