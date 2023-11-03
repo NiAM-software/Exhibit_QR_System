@@ -23,6 +23,8 @@ import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 import AddExhibitScreen  from './screens/AddExhibitsScreen.jsx';
 import EditExhibitScreen from './screens/EditExhibitsScreen.jsx';
 import ProductScreen from './screens/productScreen.jsx';
+import RecycleBin from './screens/recylcebinScreen.jsx';
+
 import './assets/styles/bootstrap.custom.css';
 import './assets/styles/index.css'
 
@@ -36,6 +38,7 @@ const router = createBrowserRouter(
       <Route path="/AddExhibitScreen" element={<AddExhibitScreen/>}></Route>
       <Route path="/EditExhibitScreen/:id" element={<EditExhibitScreen/>}></Route>
       <Route path="/ProductScreen/:id" element={<ProductScreen/>}></Route>
+      <Route path="/RecycleBin" element={<RecycleBin/>}></Route>
     </Route>
   )
 )

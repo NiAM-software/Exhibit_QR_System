@@ -48,6 +48,39 @@ const getExhibits = asyncHandler(async (req, res) => {
 });
 
 
+
+// @desc    Fetch deleted exhibits
+// @route   GET /api/exhibits/bin
+// @access  Private/Admin
+const getDeletedExhibits = asyncHandler(async (req, res) => {
+  const keyword = req.query.keyword
+  ? `WHERE e.title LIKE '%${req.query.keyword}%' AND e.active_ind='N'`
+  : 'WHERE e.active_ind="N"';
+
+  const exhibitsQuery = `select e.exhibit_id,e.title,
+        c.category_name as category,
+        r.room_name as room,
+        lt.location_type as location_type,
+        l.location_name as location,
+        asset_number,manufacturer,era,e.exhibit_desc
+        from exhibits e
+        left join category c on c.category_id=e.category_id and c.active_ind='Y'
+        left join location l on l.location_id=e.location_id and l.active_ind='Y'
+        left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
+        left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
+
+  try {
+    const [exhibitsResults] = await db.promise().query(exhibitsQuery);
+    const exhibits = exhibitsResults;
+    //console.log(exhibits.length);
+    res.json({ exhibits }); 
+  } catch (err) {
+    console.error('Error fetching exhibits:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 // @desc    Fetch single exhibit
 // @route   GET /api/exhibits/:id
 // @access  Private/Admin
@@ -462,6 +495,7 @@ const getCategoriesAndLocationTypes = async (req, res) => {
 
 export {
    getExhibits,
+   getDeletedExhibits,
    getExhibitById,
    createExhibit,
    updateExhibit,

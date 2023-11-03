@@ -3,6 +3,7 @@ import { upload, getPresignedUrl } from "../utils/uploadFile.js";
 import { iventoryDBConnection as db } from "../config/db.js";
 import {
   getExhibitById,
+  getDeletedExhibits,
   getExhibits,
   createExhibit,
   deleteExhibits,
@@ -96,6 +97,7 @@ router.post('/add-modified-exhibits/:id', modifiedRelatedExhibits);
 router.put("/undo-delete", protect, undoDeleteExhibits);
 router.put("/:id", protect, updateExhibit);
 router.get("/", protect, getExhibits);
+router.get("/bin", protect, getDeletedExhibits);
 router.post("/", protect, createExhibit);
 router.get("/:id", protect, getExhibitById); // when ure redirected to edit product screen
 router.delete("/", protect, deleteExhibits);

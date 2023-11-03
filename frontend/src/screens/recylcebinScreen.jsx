@@ -20,7 +20,6 @@ import DataTable from "react-data-table-component";
 import { FaSearch, FaFilter } from "react-icons/fa";
 import styled from "styled-components";
 import CustomModal from "../components/CustomModal";
-import ButtonsContainer from "../components/ButtonsContainer";
 
 const customStyles = {
     rows: {
@@ -65,7 +64,7 @@ const customStyles = {
     },
 };
 
-const recycleBin = () => {
+const RecycleBin = () => {
     const navigate = useNavigate();
     const [toggleCleared, setToggleCleared] = React.useState(false);
     //const [tableData, setTableData] = React.useState([]);
@@ -85,25 +84,23 @@ const recycleBin = () => {
         closeNotification();
         setNotificationMessage();
     };
-    // const { data, isLoading, error2 } = useGetExhibitsQuery();
-    // console.log("DATA");
-    // console.log(data2+ " " + error2)
+
     const queryClient = useQueryClient();
 
-    const deleteMutation = useMutation(
-        async (selectedKeys) => {
-            const response = await axios.delete("/api/admin/exhibits", {
-                data: { ids: selectedKeys },
-            });
-            return response.data;
-        },
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries("user-data");
-                setSelectedRows([]);
-            },
-        }
-    );
+    // const deleteMutation = useMutation(
+    //     async (selectedKeys) => {
+    //         const response = await axios.delete("/api/admin/exhibits", {
+    //             data: { ids: selectedKeys },
+    //         });
+    //         return response.data;
+    //     },
+    //     {
+    //         onSuccess: () => {
+    //             queryClient.invalidateQueries("user-data");
+    //             setSelectedRows([]);
+    //         },
+    //     }
+    // );
 
     const undoDeleteMutation = useMutation(
         async (ids) => {
@@ -134,31 +131,6 @@ const recycleBin = () => {
         }
     };
 
-    const deleteExhibits = async () => {
-        const selectedKeys = selectedRows.map((row) => row.exhibit_id);
-        const selectedTitles = selectedRows.map((row) => row.title);
-        if (selectedKeys.length === 0) {
-            toast.error("You need to select at least 1 exhibit");
-            return;
-        }
-
-        try {
-            await deleteMutation.mutateAsync(selectedKeys);
-            setSelectedRows((currentSelectedRows) =>
-                currentSelectedRows.filter(
-                    (row) => !selectedKeys.includes(row.exhibit_id)
-                )
-            );
-            setShowNotification(true);
-            setNotificationMessage(selectedKeys);
-            setNotificationMessage2(selectedTitles);
-            setToggleCleared(!toggleCleared); // Toggle the clear state
-        } catch (error) {
-            console.error("Error deleting exhibits:", error);
-            // Handle error if needed
-        }
-    };
-
     const handleShow = () => setShow(true);
     const closeNotification = () => {
         setShowNotification(false);
@@ -168,7 +140,7 @@ const recycleBin = () => {
         ["user-data"],
         async () => {
             try {
-                const response = await axios.get("/api/admin/exhibits");
+                const response = await axios.get("/api/admin/exhibits/bin");
                 console.log("Data fetched successfully:", response.data);
                 return response.data;
             } catch (error) {
@@ -187,52 +159,7 @@ const recycleBin = () => {
         console.log(state.selectedRows);
     }, []);
 
-    const editExhibits = () => {
-        const selectedRowId = selectedRows.map((row) => row.exhibit_id);
-        if (selectedRows.length > 1) {
-            toast.error("Multiple exhibits can't be selected");
-        } else if (selectedRows.length == 0) {
-            toast.error("You need to select at least 1 exhibit");
-        } else if (selectedRowId) {
-            const editUrl = `/EditExhibitScreen/${selectedRowId}`;
-            console.log(selectedRowId);
-            navigate(editUrl);
-        } else {
-            console.error("No valid ID provided for editing.");
-        }
-    };
 
-    const showPreview = async () => {
-        const selectedRowId = selectedRows.map(row => row.exhibit_id);
-        console.log('selectedRowId:', selectedRowId)
-        if (selectedRows.length > 1) {
-            toast.error("Multiple exhibits can't be selected");
-        }
-
-        else if (selectedRows.length == 0) {
-            toast.error("You need to select at least 1 exhibit");
-        }
-
-        else if (selectedRowId) {
-            const selectedRow = selectedRows[0];
-            const exhibitId = selectedRow.exhibit_id;
-            console.log('exhibitId:', exhibitId)
-            navigate(`/ProductScreen/${exhibitId}`);
-
-        }
-        else {
-            console.error('No valid ID provided for editing.');
-        }
-
-    }
-
-    const showQRHandler = () => {
-        if (selectedRows.length > 1) {
-            toast.error("Multiple exhibits can't be selected");
-        } else {
-            handleShow();
-        }
-    };
 
     if (isError) return <h1>{error.message}</h1>;
 
@@ -312,7 +239,7 @@ const recycleBin = () => {
             <CustomModal show={show} handleClose={handleClose} data={selectedRows} />
 
             <div className="exhibits-list-wrapper">
-                <h1 className="text-center">Exhibit inventory </h1>
+                <h1 className="text-center">Recycle Bin </h1>
                 <Navbar expand="sm" collapseOnSelect className="table-header">
                     <Container>
                         <InputGroup>
@@ -325,10 +252,13 @@ const recycleBin = () => {
                                 <FaSearch />
                             </InputGroup.Text>
                         </InputGroup>
-                        <InputGroup.Text className="filter-icon">
+                        <button onClick={handleUndoDelete} className="btn-primary-sm">
+                            Restore
+                        </button>
+                        {/* <InputGroup.Text className="filter-icon">
                             <FaFilter />
-                        </InputGroup.Text>
-                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        </InputGroup.Text> */}
+                        {/* <Navbar.Toggle aria-controls="basic-navbar-nav" />
                         <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="ms-auto">
                                 <Link to="/AddExhibitScreen">
@@ -337,7 +267,7 @@ const recycleBin = () => {
                                     </button>
                                 </Link>
                             </Nav>
-                        </Navbar.Collapse>
+                        </Navbar.Collapse> */}
                     </Container>
                 </Navbar>
 
@@ -356,14 +286,11 @@ const recycleBin = () => {
                     fixedHeaderScrollHeight="400px"
                 />
 
-                {selectedRows.length > 0 && (
+                {/* {selectedRows.length > 0 && (
                     <ButtonsContainer
-                        showPreview={showPreview}
-                        showQRHandler={showQRHandler}
-                        editExhibits={editExhibits}
-                        deleteExhibits={deleteExhibits}
+                        restoreExhibits={handleUndoDelete}
                     />
-                )}
+                )} */}
                 {/* {console.log(notificationMessage)} */}
                 {showNotification && (
                     <Modal show={showNotification} onHide={closeNotification}>
@@ -382,7 +309,7 @@ const recycleBin = () => {
                                 style={{ marginRight: "10px" }}
                                 onClick={closeModal}
                             >
-                                Close
+                                Confirm
                             </button>
                             <button
                                 className="btn-primary-sm"
@@ -416,4 +343,4 @@ const StyledModalFooter = styled(Modal.Footer)`
   font-size: 13px;
 `;
 
-export default recycleBin;
+export default RecycleBin;
