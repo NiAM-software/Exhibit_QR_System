@@ -19,6 +19,8 @@ const AddExhibitScreen = () => {
   const [parsedLinkList, setParsedLinkList] = useState([]);
   const [categories, setCategories] = useState([]);
   const [locationTypes, setLocationTypes] = useState([]);
+  const [locations, setlocations] = useState([]);
+  const [rooms, setrooms] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
 
@@ -28,7 +30,8 @@ const AddExhibitScreen = () => {
         const maxAssetNumber = response.data.asset_number;
         console.log(maxAssetNumber)
         const nextAssetNumber = maxAssetNumber + 1;
-        setNextAvailableAssetNumber(nextAssetNumber.toString());
+        //  setFormData({ ...formData, asset_number: nextAssetNumber.toString(), });
+        setFormData({ ...formData, asset_number: nextAssetNumber.toString(), });
       })
       .catch((error) => {
         console.error('Error fetching next asset number:', error);
@@ -75,11 +78,11 @@ const AddExhibitScreen = () => {
 
   const [formData, setFormData] = useState({
     title: '',
-    category: '',
+    category_id: '',
     subcategory: '',
-    room: '',
-    location_type: '',
-    location: '',
+    room_id: '',
+    loctype_id: '',
+    location_id: '',
     asset_number: '',
     manufacturer: '',
     era: '',
@@ -91,28 +94,64 @@ const AddExhibitScreen = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleChange_category = (e) => {
+    const { name, value } = e.target;
+    const selectedCategoryId = categories.find(
+      (category) => category.name === value
+    )?.id;
+    setFormData({ ...formData, [name]: selectedCategoryId });
+  };
+
+  const handleChange_location = (e) => {
+    const { name, value } = e.target;
+    const selectedlocationId = locations.find(
+      (location) => location.name === value
+    )?.id;
+    setFormData({ ...formData, [name]: selectedlocationId });
+  };
+
+  const handleChange_locationtype = (e) => {
+    const { name, value } = e.target;
+    const selectedlocationtypeId = locationTypes.find(
+      (locationType) => locationType.name === value
+    )?.id;
+    setFormData({ ...formData, [name]: selectedlocationtypeId });
+  };
+
+  const handleChange_room = (e) => {
+    const { name, value } = e.target;
+    const selectedroomId = rooms.find(
+      (room) => room.name === value
+    )?.id;
+    setFormData({ ...formData, [name]: selectedroomId });
+  };
+
   const handleCancelClick = () => {
     navigate("/");
   };
 
-  const fetchCategoriesAndLocationTypes = async () => {
+  const fetch_maintenance_fields = async () => {
     try {
       const response = await fetch(
-        "/api/admin/exhibits/categories-and-location-types"
+        "/api/admin/exhibits/maintenance"
       );
       if (response.ok) {
         const data = await response.json();
+        //console.log("data",data);
         setCategories(data.categories);
         setLocationTypes(data.locationTypes);
+        setlocations(data.locations);
+        setrooms(data.rooms);
       } else {
-        console.error("Failed to fetch categories");
+        console.error("Failed to fetch maintenance fields");
       }
     } catch (error) {
-      console.error("Error while fetching categories:", error);
+      console.error("Error while fetching maintenance fields:", error);
     }
   };
+
   useEffect(() => {
-    fetchCategoriesAndLocationTypes();
+    fetch_maintenance_fields();
   }, []);
 
   const validateForm = () => {
@@ -121,7 +160,6 @@ const AddExhibitScreen = () => {
     if (!formData.title) {
       errors.title = 'Title is required';
     }
-
     if (!formData.asset_number) {
       errors.asset_number = 'Asset number is required';
     } else if (isNaN(formData.asset_number)) {
@@ -235,7 +273,7 @@ const AddExhibitScreen = () => {
             const errors = {};
             errors.asset_number = 'Duplicate entries not allowed.';
             setFormErrors(errors);
-            toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
+            // toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
           }
           else {
             toast.error('Failed to submit form data.');
@@ -364,11 +402,11 @@ const AddExhibitScreen = () => {
                   placeholder="Enter Asset number"
                   style={formErrors.asset_number ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
                 />
-                {nextAvailableAssetNumber && (
+                {/* {nextAvailableAssetNumber && (
                   <div style={{ position: 'absolute', top: '0', right: '0', color: 'green', fontSize: '14px' }}>
                     Suggested: {nextAvailableAssetNumber}
                   </div>
-                )}
+                )} */}
                 {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
               </Form.Group>
             </Form>
@@ -382,12 +420,21 @@ const AddExhibitScreen = () => {
               <Form.Group controlId="Location" className="mb-3">
                 <Form.Label style={formLabelStyle}>Location</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="location"
+                  name="location_id"
+                  list="locations"
                   value={formData.location}
-                  onChange={handleChange}
+                  onChange={handleChange_location}
                   style={TextInputStyle}
-                />
+                >
+                  <option value="">Select a location</option>
+                  {locations.map((location) => (
+                    <option key={location.id} value={location.name}>
+                      {location.name}
+                    </option>
+                  ))}
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -400,12 +447,21 @@ const AddExhibitScreen = () => {
               <Form.Group controlId="Room" className="mb-3">
                 <Form.Label style={formLabelStyle}>Room</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="room"
+                  name="room_id"
+                  list="rooms"
                   value={formData.room}
-                  onChange={handleChange}
+                  onChange={handleChange_room}
                   style={TextInputStyle}
-                />
+                >
+                  <option value="">Select a room</option>
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.name}>
+                      {room.name}
+                    </option>
+                  ))}
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -417,20 +473,21 @@ const AddExhibitScreen = () => {
               <Form.Group controlId="locationType" className="mb-3">
                 <Form.Label style={formLabelStyle}>LocationType</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="location_type"
+                  name="loctype_id"
                   list="locationTypes"
                   value={formData.location_type}
-                  onChange={handleChange}
+                  onChange={handleChange_locationtype}
                   style={TextInputStyle}
-                />
-                <datalist id="locationTypes">
-                  {locationTypes.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
+                >
+                  <option value="">Select a location_type</option>
+                  {locationTypes.map((location_type) => (
+                    <option key={location_type.id} value={location_type.name}>
+                      {location_type.name}
                     </option>
                   ))}
-                </datalist>
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -445,9 +502,10 @@ const AddExhibitScreen = () => {
                   name="era"
                   value={formData.era}
                   onChange={handleChange}
-                  style={formErrors.era ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  //style={formErrors.era ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  style={TextInputStyle}
                 />
-                {formErrors.era && <div style={errorMessage}>{formErrors.era}</div>}
+                {/* {formErrors.era && <div style={errorMessage}>{formErrors.era}</div>} */}
               </Form.Group>
             </Form>
           </Col>
@@ -457,22 +515,25 @@ const AddExhibitScreen = () => {
           <Col md={4} className=" mb-3">
             <Form style={formElementSpacing}>
               <Form.Group controlId="category" className="mb-3">
-                <Form.Label style={formLabelStyle}>Category</Form.Label>
+                <Form.Label style={formLabelStyle}>
+                  Category
+                </Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="category"
+                  name="category_id"
                   list="categories"
                   value={formData.category}
-                  onChange={handleChange}
+                  onChange={handleChange_category}
                   style={TextInputStyle}
-                />
-                <datalist id="categories">
-                  {categories.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
                     </option>
                   ))}
-                </datalist>
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>

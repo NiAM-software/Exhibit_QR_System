@@ -21,10 +21,53 @@ import {
 // @access  Private/Admin
 const getExhibits = asyncHandler(async (req, res) => {
   const keyword = req.query.keyword
-  ? `WHERE title LIKE '%${req.query.keyword}%' AND active_ind='Y'`
-  : 'WHERE active_ind="Y"';
+  ? `WHERE e.title LIKE '%${req.query.keyword}%' AND e.active_ind='Y'`
+  : 'WHERE e.active_ind="Y"';
 
-  const exhibitsQuery = `SELECT * FROM exhibits ${keyword}`;
+  const exhibitsQuery = `select e.exhibit_id,e.title,
+        c.category_name as category,
+        r.room_name as room,
+        lt.location_type as location_type,
+        l.location_name as location,
+        asset_number,manufacturer,era,e.exhibit_desc
+        from exhibits e
+        left join category c on c.category_id=e.category_id and c.active_ind='Y'
+        left join location l on l.location_id=e.location_id and l.active_ind='Y'
+        left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
+        left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
+
+  try {
+    const [exhibitsResults] = await db.promise().query(exhibitsQuery);
+    const exhibits = exhibitsResults;
+    //console.log(exhibits.length);
+    res.json({ exhibits }); 
+  } catch (err) {
+    console.error('Error fetching exhibits:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
+// @desc    Fetch deleted exhibits
+// @route   GET /api/exhibits/bin
+// @access  Private/Admin
+const getDeletedExhibits = asyncHandler(async (req, res) => {
+  const keyword = req.query.keyword
+  ? `WHERE e.title LIKE '%${req.query.keyword}%' AND e.active_ind='N'`
+  : 'WHERE e.active_ind="N"';
+
+  const exhibitsQuery = `select e.exhibit_id,e.title,
+        c.category_name as category,
+        r.room_name as room,
+        lt.location_type as location_type,
+        l.location_name as location,
+        asset_number,manufacturer,era,e.exhibit_desc
+        from exhibits e
+        left join category c on c.category_id=e.category_id and c.active_ind='Y'
+        left join location l on l.location_id=e.location_id and l.active_ind='Y'
+        left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
+        left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
 
   try {
     const [exhibitsResults] = await db.promise().query(exhibitsQuery);
@@ -45,7 +88,21 @@ const getExhibitById = asyncHandler(async (req, res) => {
   const {id} = req.params
  
   try {
-    const query = "SELECT * FROM exhibits WHERE exhibit_id=? and active_ind='Y'";
+    const query = `select e.exhibit_id,e.title,
+    c.category_name as category,
+    r.room_name as room,
+    lt.location_type as location_type,
+    l.location_name as location,
+    asset_number,
+    manufacturer,
+    era,
+    e.exhibit_desc
+    from exhibits e
+    left join category c on c.category_id=e.category_id and c.active_ind='Y'
+    left join location l on l.location_id=e.location_id and l.active_ind='Y'
+    left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
+    left join room r on r.room_id=e.room_id and r.active_ind='Y'
+     WHERE exhibit_id=? and e.active_ind='Y'`;
     const [results, fields] = await db.promise().query(query, [id]);
     //console.log(results);
     if (results && results.length > 0) {
@@ -66,11 +123,11 @@ const getExhibitById = asyncHandler(async (req, res) => {
 const createExhibit = asyncHandler(async (req, res) => {
   const {
     title, 
-    category, 
+    category_id, 
     subcategory, 
-    room, 
-    location_type, 
-    location, 
+    room_id, 
+    loctype_id, 
+    location_id, 
     asset_number,
     manufacturer,
     era, 
@@ -79,8 +136,8 @@ const createExhibit = asyncHandler(async (req, res) => {
   
   const era_int = era === '' ? null : parseInt(era, 10);
   try {
-    const query = 'INSERT INTO exhibits (title, category, subcategory, room, location_type, location, asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
-    const [results, fields] = await db.promise().query(query, [title, category, subcategory, room, location_type, location, asset_number, manufacturer, era_int, exhibit_desc,'Y']);
+    const query = 'INSERT INTO exhibits (title, category_id, subcategory, room_id, loctype_id, location_id,  asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
+    const [results, fields] = await db.promise().query(query, [title, category_id, subcategory, room_id, loctype_id, location_id, asset_number, manufacturer, era_int, exhibit_desc,'Y']);
 
     if (results && results.affectedRows > 0) {
       const newExhibitId = results.insertId;
@@ -102,16 +159,16 @@ const updateExhibit = asyncHandler(async (req, res) => {
 
     if (selectResults && selectResults.length > 0) {
       const {
-        title,
-        category,
-        subcategory,
-        room,
-        location_type,
-        location,
+        title, 
+        category_id, 
+        subcategory, 
+        room_id, 
+        loctype_id, 
+        location_id, 
         asset_number,
         manufacturer,
-        era,
-        exhibit_desc,
+        era, 
+        exhibit_desc
       } = req.body;
 
       console.log(req.body)
@@ -119,19 +176,19 @@ const updateExhibit = asyncHandler(async (req, res) => {
       // const era_int = era === '' ? null : parseInt(era, 10);
       
       const values = [
-        title,
-        category,
-        subcategory,
-        room,
-        location_type,
-        location,
+        title, 
+        category_id, 
+        subcategory, 
+        room_id, 
+        loctype_id, 
+        location_id, 
         asset_number,
         manufacturer,
-        era,
+        era, 
         exhibit_desc,
         id
       ];
-      const updateQuery ="UPDATE exhibits SET title=?, category=?, subcategory=?, room=?, location_type=?, location=?, asset_number=?,manufacturer=?, era=?, exhibit_desc=? WHERE exhibit_id=? and active_ind='Y'";
+      const updateQuery ="UPDATE exhibits SET title=?, category_id=?, subcategory=?, room_id=?, loctype_id=?, location_id=?, asset_number=?,manufacturer=?, era=?, exhibit_desc=? WHERE exhibit_id=? and active_ind='Y'";
       const [updateResults, updateFields] = await db.promise().query(updateQuery, values);
 
       if (updateResults.affectedRows > 0) {
@@ -438,6 +495,7 @@ const getCategoriesAndLocationTypes = async (req, res) => {
 
 export {
    getExhibits,
+   getDeletedExhibits,
    getExhibitById,
    createExhibit,
    updateExhibit,

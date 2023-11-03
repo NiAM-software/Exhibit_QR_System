@@ -3,6 +3,7 @@ import { upload, getPresignedUrl } from "../utils/uploadFile.js";
 import { iventoryDBConnection as db } from "../config/db.js";
 import {
   getExhibitById,
+  getDeletedExhibits,
   getExhibits,
   createExhibit,
   deleteExhibits,
@@ -26,9 +27,28 @@ import {
   deleteMultipleAttachmentsUtils
 } from '../utils/attachmentUtils.js';
 
+import {getMaintenanceList,
+  createCategory,
+  updateCategory,
+  createLocation,
+  updateLocation,
+  createLocationType,
+  updateLocationType,
+  createRoom,
+  updateRoom} from "../controllers/maintenanceController.js";
+
 const router = express.Router();
 router.get("/next-asset-number", getNextAssetNumber);
 router.get("/categories-and-location-types", getCategoriesAndLocationTypes);
+router.get("/maintenance", getMaintenanceList);
+router.post("/maintenance/category", createCategory);
+router.put("/maintenance/category", updateCategory);
+router.post("/maintenance/location", createLocation);
+router.put("/maintenance/location", updateLocation);
+router.post("/maintenance/location_type", createLocationType);
+router.put("/maintenance/location_type", updateLocationType);
+router.post("/maintenance/room", createRoom);
+router.put("/maintenance/room", updateRoom);
 router.post("/generate-presigned-url", protect, generatePreSignedUrl);
 
 router.post(
@@ -77,6 +97,7 @@ router.post('/add-modified-exhibits/:id', modifiedRelatedExhibits);
 router.put("/undo-delete", protect, undoDeleteExhibits);
 router.put("/:id", protect, updateExhibit);
 router.get("/", protect, getExhibits);
+router.get("/bin", protect, getDeletedExhibits);
 router.post("/", protect, createExhibit);
 router.get("/:id", protect, getExhibitById); // when ure redirected to edit product screen
 router.delete("/", protect, deleteExhibits);

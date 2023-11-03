@@ -100,6 +100,7 @@ const EditExhibitScreen = () => {
   useEffect(() => {
     Axios.get(`/api/admin/exhibits/${id}`)
       .then((response) => {
+        console.log(response.data)
         setFormData(response.data); // Store data in state for prepopulation
       })
       .catch((error) => {
@@ -108,10 +109,18 @@ const EditExhibitScreen = () => {
 
     fetchCategoriesAndLocationTypes();
     Axios.get("/api/admin/exhibits/next-asset-number")
-      .then((response) => {
-        const maxAssetNumber = response.data.asset_number;
+      .then((newresponse) => {
+        const maxAssetNumber = newresponse.data.asset_number;
         const nextAssetNumber = maxAssetNumber + 1;
-        setNextAvailableAssetNumber(nextAssetNumber.toString());
+
+        // Update the formData with the nextAssetNumber only if response.data.asset_number is null
+        if (formData.asset_number === null || formData.asset_number === "") {
+          setFormData({
+            ...formData,
+            asset_number: nextAssetNumber.toString(),
+          });
+        }
+
       })
       .catch((error) => {
         console.error("Error fetching next asset number:", error);
@@ -264,7 +273,7 @@ const EditExhibitScreen = () => {
             const errors = {};
             errors.asset_number = 'Duplicate entries not allowed.';
             setFormErrors(errors);
-            toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
+            // toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
           }
           else {
             console.log(data.message)
@@ -406,7 +415,7 @@ const EditExhibitScreen = () => {
                       : TextInputStyle
                   }
                 />
-                {nextAvailableAssetNumber && (
+                {/* {nextAvailableAssetNumber && (
                   <div
                     style={{
                       position: "absolute",
@@ -418,7 +427,7 @@ const EditExhibitScreen = () => {
                   >
                     Suggested: {nextAvailableAssetNumber}
                   </div>
-                )}
+                )} */}
                 {formErrors.asset_number && (
                   <div style={errorMessage}>{formErrors.asset_number}</div>
                 )}
