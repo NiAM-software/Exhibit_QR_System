@@ -86,6 +86,7 @@ const getDeletedExhibits = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getExhibitById = asyncHandler(async (req, res) => {
   const {id} = req.params
+  console.log('leave me alone')
  
   try {
     const query = `select e.exhibit_id,e.title,
@@ -276,7 +277,7 @@ const generatePreSignedUrl = asyncHandler(async (req, res) => {
     const objectKeys = req.body // Parse the request body properly
     console.log(objectKeys);
     const presignedURLS = await getPresignedUrlsUtils(objectKeys);
-    console.log(presignedURLS,'hih')
+    console.log(presignedURLS)
     res.status(200).json({data:presignedURLS});
   } catch (error) {
     console.error('HI',error);

@@ -1,6 +1,6 @@
 
 import styled from "styled-components";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useLocation, Link, useNavigate } from 'react-router-dom';
 import { Carousel as ResponsiveCarousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -8,7 +8,7 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import axios from 'axios';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import dummy from '../assets/dummy-image-square.jpg';
+import dummyImageUrl from '../assets/dummy-image-square.jpg';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -24,9 +24,10 @@ const ProductScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [imageUrls, setImageUrls] = useState([]);
+  const [mediaUrls, setMediaUrls] = useState([]);
   const [relatedExhibits, setRelatedExhibits] = useState([]);
-  const dummyImageUrl = "https://picsum.photos/200";
+
+  //const dummyImageUrl = "https://picsum.photos/200";
   const [exhibitData, setExhibitData] = useState({
     title: '',
     category: '',
@@ -40,6 +41,8 @@ const ProductScreen = () => {
     exhibit_desc: ''
   });
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [showArrows, setShowArrows] = useState(window.innerWidth); // Initially set to true for larger screens
+
 
   const responsive = {
     superLargeDesktop: {
@@ -61,27 +64,79 @@ const ProductScreen = () => {
     }
   };
 
-
-
-
-
-  const sliderStyle = {
-    margin: '0 20px',
-    overflow: 'hidden', // Removed double quotes around "hidden"
-    padding: '2rem 0',
-  };
-
-  const sliderImageStyle = {
-    width: '100%',
-    borderRadius: '10px', // Added border-radius
-  };
-
-
   const titleStyle = {
     textAlign: 'center',
     margin: '20px 0',
     fontWeight: 'bold',
   };
+
+
+  const descriptionStyle = {
+    whiteSpace: 'pre-line', // Preserve line breaks as paragraphs
+    //flex: '1',
+  };
+
+  const mediaStyleRow = {
+    width: 'auto',
+    height: 'auto',
+    maxWidth: '100%',
+    maxHeight: '18vw',
+    objectFit: 'contain',
+    margin: 'auto',
+    display: 'block',
+  };
+
+  const mediaStyleColumn = {
+    width: 'auto',
+    height: 'auto',
+    maxWidth: '100%',
+    maxHeight: '60vw',
+    objectFit: 'contain',
+    margin: 'auto',
+    display: 'block',
+  };
+
+  const ImageStyleRow = {
+    width: 'auto', // Width will be auto to maintain aspect ratio
+    height: 'auto',
+    maxWidth: '100%',
+    maxHeight: '18vw', // Ensure the image's height does not exceed the container's height
+    objectFit: 'contain', // Ensures the entire image is visible without stretching or cropping
+    margin: 'auto', // Center the image within the container horizontally and vertically
+    display: 'block', // Display block for images
+  };
+
+  const ImageStyleColumn = {
+    width: 'auto', // Width will be auto to maintain aspect ratio
+    height: 'auto',
+    maxWidth: '100%',
+    maxHeight: '60vw', // Ensure the image's height does not exceed the container's height
+    objectFit: 'contain', // Ensures the entire image is visible without stretching or cropping
+    margin: 'auto', // Center the image within the container horizontally and vertically
+    display: 'block', // Display block for images
+  };
+
+  const CarouselContainerRow = styled.div`
+  width: 30%;
+  height: 18vw;
+  margin-right: 20px;
+  overflow: hidden; // Hide the overflow
+  position: relative;
+  display: flex; // Added for vertical centering
+  justify-content: center; // Center horizontally
+  align-items: center;
+  `;
+
+  // Define a styled component for the column layout
+  const CarouselContainerColumn = styled.div`
+  width: 100%; 
+  height: 60vw;
+  margin-bottom: 20px;
+  overflow: hidden;
+  display: flex; /* Use flexbox for centering vertically */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center vertically */
+  `;
 
   const ProductCarouselRow = styled.div`
   display: flex;
@@ -99,33 +154,15 @@ const ProductScreen = () => {
   margin: 20px;
 `;
 
-  const CarouselContainerRow = styled.div`
-  width: 30%;
-  margin-right: 20px;
-  overflow-y: auto;
-  `;
-
-  // Define a styled component for the column layout
-  const CarouselContainerColumn = styled.div`
-  width: 100%; 
-  overflow-y: auto;
-  display: flex; /* Use flexbox for centering vertically */
-  justify-content: center; /* Center vertically */
-  align-items: center; /* Center vertically */
-  `;
-
 
   const DescriptionContainer = styled.div`
   flex: 1;
 `;
 
-  const descriptionStyle = {
-    whiteSpace: 'pre-line', // Preserve line breaks as paragraphs
-  };
 
-  const leftPanelImgStyle = {
-    width: '100%',
-  };
+
+
+
 
   const customButtonStyle = {
     position: 'absolute',
@@ -152,10 +189,38 @@ const ProductScreen = () => {
     zIndex: 1,
   };
 
+  const arrowButtonStyles = {
+    position: 'absolute',
+    zIndex: 1000, // High z-index to ensure visibility
+    top: '50%', // Centered vertically
+    transform: 'translateY(-50%)', // This centers the arrow vertically
+    background: '#808080', // Grey background
+    color: '#FFFFFF', // White color for the arrows
+    border: 'none',
+    borderRadius: '50%', // Circular shape
+    width: '32px', // Width of the arrow
+    height: '32px', // Height of the arrow
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0, // Reset any default padding
+  };
+
+
+  const leftArrowButtonStyle = {
+    ...arrowButtonStyles,
+    left: '10px', // Adjust the position as necessary
+  };
+
+  const rightArrowButtonStyle = {
+    ...arrowButtonStyles,
+    right: '10px', // Adjust the position as necessary
+  };
+
   const fetchExhibitData = async (Id) => {
     await axios.get(`/api/admin/exhibits/${Id}`)
       .then(response => {
-        console.log("I'm here", response.data)
         setExhibitData(response.data); // Store data in state for prepopulation
       })
       .catch(error => {
@@ -167,7 +232,7 @@ const ProductScreen = () => {
 
   };
 
-  const fetchExhibitImages = async (Id) => {
+  const fetchExhibitMedia = async (Id) => {
     try {
       // Fetch attachments data
       const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${Id}`);
@@ -198,20 +263,20 @@ const ProductScreen = () => {
       const exhibitPresignedUrls = await generateExhibitPresignedUrlResponse.json(); // Convert the response to JSON
       console.log("generateExhibitPresignedUrlResponse", exhibitPresignedUrls); // Now you can access the JSON data
 
-      const exhibitImageUrls = exhibitPresignedUrls.data.map((item) => item.url).filter(Boolean);
-      console.log("exhibitImageUrls", exhibitImageUrls)
+      const exhibitMediaUrls = exhibitPresignedUrls.data.map((item) => item.url).filter(Boolean);
+      console.log("exhibitMediaUrls", exhibitMediaUrls)
 
-      if (exhibitImageUrls.length === 0) {
+      if (exhibitMediaUrls.length === 0) {
         throw new Error('No image URLs found.'); // Throw an error
       }
       // Set the imageUrls state
-      setImageUrls(exhibitImageUrls);
+      setMediaUrls(exhibitMediaUrls);
     } catch (error) {
       console.error('horror fetching exhibit images:', error);
 
       // If there's an error, you can set some default images or handle the error as needed
       const defaultImages = [dummyImageUrl];
-      setImageUrls(defaultImages);
+      setMediaUrls(defaultImages);
     }
   };
 
@@ -263,14 +328,19 @@ const ProductScreen = () => {
     }
   };
 
+
+
+
   useEffect(() => {
     fetchExhibitData(id);
-    fetchExhibitImages(id);
+    fetchExhibitMedia(id);
     fetchRelatedExhibits(id);
     // Fetch image data for the exhibit using axios
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
+      setShowArrows(window.innerWidth > 700);
     };
+
 
     window.addEventListener('resize', handleResize);
 
@@ -285,7 +355,40 @@ const ProductScreen = () => {
   const handleRelatedExhibitClick = async (exhibitId) => {
     console.log("you have reached here.....")
     console.log("exhibitId", exhibitId)
+    window.scrollTo(0, 0);
     navigate(`/ProductScreen/${exhibitId}`);
+  };
+
+
+  const videoRef = useRef(null);
+
+  const handleFullScreen = (event) => {
+    event.preventDefault();
+    if (videoRef.current) {
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      } else if (videoRef.current.webkitRequestFullscreen) { // For Safari
+        videoRef.current.webkitRequestFullscreen();
+      } // Add other vendor prefixes if needed
+    }
+  };
+
+  const renderMedia = (media, index) => {
+    const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
+    const style = isVideo ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+
+    return (
+      <div key={index}>
+        {isVideo ? (
+          <video ref={videoRef} controls style={style}>
+            <source src={media} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        ) : (
+          <img src={media} alt={`Media ${isVideo ? 'Video' : 'Image'} ${index}`} style={style} />
+        )}
+      </div>
+    );
   };
 
   return (
@@ -304,23 +407,19 @@ const ProductScreen = () => {
               renderArrowPrev={(onClickHandler, hasPrev) =>
                 hasPrev && (
                   <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                    &lt;
+                    <LeftOutlined />
                   </button>
                 )
               }
               renderArrowNext={(onClickHandler, hasNext) =>
                 hasNext && (
                   <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                    &gt;
+                    <RightOutlined />
                   </button>
                 )
               }
             >
-              {imageUrls.map((image, index) => (
-                <div key={index}>
-                  <img src={image} alt={`Exhibit Image ${index}`} style={leftPanelImgStyle} />
-                </div>
-              ))}
+              {mediaUrls.map((media, index) => renderMedia(media, index))}
             </ResponsiveCarousel>
           </CarouselContainerColumn>
           <DescriptionContainer>
@@ -339,23 +438,19 @@ const ProductScreen = () => {
               renderArrowPrev={(onClickHandler, hasPrev) =>
                 hasPrev && (
                   <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                    &lt;
+                    <LeftOutlined />
                   </button>
                 )
               }
               renderArrowNext={(onClickHandler, hasNext) =>
                 hasNext && (
                   <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                    &gt;
+                    <RightOutlined />
                   </button>
                 )
               }
             >
-              {imageUrls.map((image, index) => (
-                <div key={index}>
-                  <img src={image} alt={`Exhibit Image ${index}`} style={leftPanelImgStyle} />
-                </div>
-              ))}
+              {mediaUrls.map((media, index) => renderMedia(media, index))}
             </ResponsiveCarousel>
           </CarouselContainerRow>
           <DescriptionContainer>
@@ -366,107 +461,53 @@ const ProductScreen = () => {
         </ProductCarouselRow>
       )}
 
-      {/* <div style={productCarouselStyle}>
-        <div style={combinedCarouselContainerStyle}>
-          <ResponsiveCarousel
-            showArrows={true}
-            dynamicHeight={true}
-            showThumbs={false}
-            renderArrowPrev={(onClickHandler, hasPrev) =>
-              hasPrev && (
-                <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                  &lt;
-                </button>
-              )
-            }
-            renderArrowNext={(onClickHandler, hasNext) =>
-              hasNext && (
-                <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                  &gt;
-                </button>
-              )
-            }
-          >
-            {imageUrls.map((image, index) => (
-              <div key={index}>
-                <img src={image} alt={`Exhibit Image ${index}`} style={leftPanelImgStyle} />
-              </div>
-            ))}
-          </ResponsiveCarousel>
-        </div>
-        <div style={descriptionContainerStyle}>
-          <p style={descriptionStyle}>{exhibitData ? exhibitData.exhibit_desc : 'Loading...'}</p>
-        </div>
-      </div> */}
+
+
       {relatedExhibits.length > 0 && (
         <div>
-          <h2>Related Exhibits</h2>
-
+          <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
           <Carousel
             responsive={responsive}
-            arrows={false}
+            arrows={true}
             showDots={true}
             focusOnSelect={true}
-            //autoPlay={true}
-            // swipeable={true}
-            // draggable={true}
-
-
-            // customButtonGroup={<rlcustomButtonGroupStyle />}
             infinite={true}
-          //  partialVisible={true}
-          // customDotListClass={customDotListStyle}
-          // customDot={dotButtonStyle}
-          // customDotActive={activeDotButtonStyle}
-          // renderButtonGroupOutside={true}
-
+            customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
+            customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
           >
-            {relatedExhibits.map((exhibit, index) => (
-              //<Wrapper key={index}>
-              <div className="container">
-                <Link
-                  // to={`/ProductScreen/${exhibit.relatedExhibit_id}`}
-                  // style={{ textDecoration: 'none' }}
-                  onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}
-                >
-                  <div className="banner-image" style={{ position: 'relative', textAlign: 'center' }}>
-                    <figure>
-                      <img src={exhibit.imageUrl} alt={exhibit.title} style={{
-                        maxWidth: '80%', // Set a maximum width for the image
-                        height: 'auto', // Allow the height to adjust proportionally
-                        marginLeft: '10%', // Add a left margin to adjust the spacing
-                        marginRight: '10%',
-                      }} />
-                      <div
+            {
+              relatedExhibits.map((exhibit, index) => (
+                <div className="container" key={index}>
+                  <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
+                    <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                      <img
+                        src={exhibit.imageUrl}
+                        alt={exhibit.title}
                         style={{
-                          position: 'absolute',
-                          bottom: '0',
-                          left: '0',
-                          right: '0',
-                          color: 'white',
-                          padding: '10px',
-                          textShadow: '2px 2px 4px black',
-                          textDecoration: 'underline',
-                          textDecorationColor: 'white',
-                          WebkitTextStroke: '0.1px black',
+                          maxWidth: '80%',
+                          maxHeight: '200px',
+                          height: 'auto',
+                          marginLeft: '10%',
+                          marginRight: '10%',
                         }}
-
-                      >
-                        {exhibit.title}
-                      </div>
-                    </figure>
-                  </div>
-                </Link>
-              </div>
-
-              // </div>
-              //</Wrapper>
-            ))}
-
+                      />
+                    </div>
+                    <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
+                      {exhibit.title}
+                    </div>
+                  </Link>
+                </div>
+              ))
+            }
           </Carousel>
         </div>
-      )}
-    </div>
+      )
+      }
+
+
+
+
+    </div >
   );
 };
 

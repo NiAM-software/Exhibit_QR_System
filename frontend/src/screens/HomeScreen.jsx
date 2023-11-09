@@ -337,7 +337,7 @@ const HomeScreen = () => {
                   </button>
                 </Link>
                 <span style={{ marginLeft: "10px" }}></span>
-                <Link to="/Maintenancescreen">
+                <Link to="/MaintenanceScreen">
                   <button className="btn-primary-sm maintenance-btn">
                     Maintenance{" "}
                   </button>
