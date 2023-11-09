@@ -110,11 +110,11 @@ router.post(
   upload.array("photos", 25),
   async function (req, res, next) {
     const { exhibit_id } = req.params;
+  
     for (const file of req.files) {
       const name = file.key;
       const folderName = `exhibit_${req.params.exhibit_id}`;
       const fileName = name.split("/")[1];
-      // console.log(folderName + " " + fileName);
 
       try {
         const query =

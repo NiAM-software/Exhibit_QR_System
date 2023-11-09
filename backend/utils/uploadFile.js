@@ -5,21 +5,17 @@ dotenv.config();
 import s3 from '../config/s3_config.js'
 
 //check if object exists
-const objectExists = async (bucket, key) => {
+const objectExists = async (bucket, Key) => {
   try {
     await s3.headObject({
       Bucket: bucket,
-      Key: key,
+      Key: Key,
     }).promise(); 
     return true; 
   } catch (err) {
-    // console.log(err);
-    console.log("ERROR");
-    console.log(err.message);
-    if (err.code === 'NotFound') {
-      return false; 
-    }
-    throw err; // Rethrow other errors
+    console.log("HERE");
+    console.log(err); // KEY MISSING IN PARAMS
+    // throw err; // Rethrow other errors
   }
 };
 
@@ -118,8 +114,7 @@ const upload = multer({
     s3: s3,
     bucket: (req, file, cb) => {
       folderName = req.params?.exhibit_id? `exhibit_${req.params.exhibit_id}` : 'default-folder';
-      // console.log("FOLDERNAME" + folderName);
-      // console.log(file)
+      //  console.log("FOLDERNAME" + folderName);
       cb(null, bucketName);
     },
     metadata: function (req, file, cb) {
@@ -128,7 +123,6 @@ const upload = multer({
     key: async function (req, file, cb) {
       try {
         const folderExists = await objectExists(bucketName, folderName)
-        // console.log(folderName);
         if (!folderExists) {
           console.log('folder doesnt exist');
 
@@ -140,7 +134,7 @@ const upload = multer({
         }
 
         // Set the key with folder name and file name
-        const fileName = folderName+"_"+`exhibit_${Date.now().toString()}`;
+        const fileName = `${folderName}_${Date.now().toString()}${getFileTypeExtension(file.mimetype)}`;
         const key = `${folderName}/${fileName}`;
         cb(null, key);
       } catch (err) {
@@ -149,6 +143,22 @@ const upload = multer({
     },
   }),
 });
+
+//Helper function to get file type extension
+const getFileTypeExtension = (mimeType) => {
+  switch (mimeType) {
+    case 'image/jpeg':
+      return '.jpg';
+    case 'image/png':
+      return '.png';
+    case 'video/mp4':
+      return '.mp4';
+    // Add more cases as needed
+    default:
+      return '';
+  }
+};
+
 //fetch presignedl url 
 const getPresignedUrl = async (s3, bucket, key) => { // key - entire path 
   try {
