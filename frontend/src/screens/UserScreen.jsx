@@ -9,6 +9,9 @@ import 'react-multi-carousel/lib/styles.css';
 import axios from 'axios';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import dummyImageUrl from '../assets/dummy-image-square.jpg';
+import { Navbar, Nav, Container, Badge, NavDropdown } from 'react-bootstrap';
+import logo from '../assets/logo.png';
+import { LinkContainer } from 'react-router-bootstrap';
 
 
 const UserScreen = () => {
@@ -332,122 +335,155 @@ const UserScreen = () => {
     };
 
     return (
-        <div>
+        <>
+
+            <header className='__header'>
+
+                <Navbar expand='sm' collapseOnSelect>
+                    <Container>
+                        <LinkContainer to='/'>
+                            <Navbar.Brand>
+                                <img src={logo} alt='Museum' />
+
+                            </Navbar.Brand>
+                        </LinkContainer>
+                        <Navbar.Toggle aria-controls='basic-navbar-nav' />
+                        <Navbar.Collapse id='basic-navbar-nav'>
+                            {/* <Nav className='ms-auto'> */}
+
+                            {/* (
+                    <>
+                        <LinkContainer to='/' className='home'>
+                        <Navbar.Brand>
+                            Home
+                        </Navbar.Brand>
+                        </LinkContainer>
+                    </>
+                    )
+                </Nav> */}
+                        </Navbar.Collapse>
+                    </Container>
+                </Navbar>
+            </header>
+
             <div>
-                <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
-
-            </div>
-            {windowWidth <= 600 ? (
-                <ProductCarouselColumn>
-                    <CarouselContainerColumn>
-                        <ResponsiveCarousel
-                            showArrows={true}
-                            dynamicHeight={true}
-                            showThumbs={false}
-                            renderArrowPrev={(onClickHandler, hasPrev) =>
-                                hasPrev && (
-                                    <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                                        <LeftOutlined />
-                                    </button>
-                                )
-                            }
-                            renderArrowNext={(onClickHandler, hasNext) =>
-                                hasNext && (
-                                    <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                                        <RightOutlined />
-                                    </button>
-                                )
-                            }
-                        >
-                            {mediaUrls.map((media, index) => renderMedia(media, index))}
-                        </ResponsiveCarousel>
-                    </CarouselContainerColumn>
-                    <DescriptionContainer>
-                        <p style={descriptionStyle}>
-                            {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
-                        </p>
-                    </DescriptionContainer>
-                </ProductCarouselColumn>
-            ) : (
-                <ProductCarouselRow>
-                    <CarouselContainerRow>
-                        <ResponsiveCarousel
-                            showArrows={true}
-                            dynamicHeight={true}
-                            showThumbs={false}
-                            renderArrowPrev={(onClickHandler, hasPrev) =>
-                                hasPrev && (
-                                    <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                                        <LeftOutlined />
-                                    </button>
-                                )
-                            }
-                            renderArrowNext={(onClickHandler, hasNext) =>
-                                hasNext && (
-                                    <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                                        <RightOutlined />
-                                    </button>
-                                )
-                            }
-                        >
-                            {mediaUrls.map((media, index) => renderMedia(media, index))}
-                        </ResponsiveCarousel>
-                    </CarouselContainerRow>
-                    <DescriptionContainer>
-                        <p style={descriptionStyle}>
-                            {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
-                        </p>
-                    </DescriptionContainer>
-                </ProductCarouselRow>
-            )}
-
-
-
-            {relatedExhibits.length > 0 && (
                 <div>
-                    <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
-                    <Carousel
-                        responsive={responsive}
-                        arrows={true}
-                        showDots={true}
-                        focusOnSelect={true}
-                        infinite={true}
-                        customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
-                        customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
-                    >
-                        {
-                            relatedExhibits.map((exhibit, index) => (
-                                <div className="container" key={index}>
-                                    <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
-                                        <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
-                                            <img
-                                                src={exhibit.imageUrl}
-                                                alt={exhibit.title}
-                                                style={{
-                                                    maxWidth: '80%',
-                                                    maxHeight: '200px',
-                                                    height: 'auto',
-                                                    marginLeft: '10%',
-                                                    marginRight: '10%',
-                                                }}
-                                            />
-                                        </div>
-                                        <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
-                                            {exhibit.title}
-                                        </div>
-                                    </Link>
-                                </div>
-                            ))
-                        }
-                    </Carousel>
+                    <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
+
                 </div>
-            )
-            }
+                {windowWidth <= 600 ? (
+                    <ProductCarouselColumn>
+                        <CarouselContainerColumn>
+                            <ResponsiveCarousel
+                                showArrows={true}
+                                dynamicHeight={true}
+                                showThumbs={false}
+                                renderArrowPrev={(onClickHandler, hasPrev) =>
+                                    hasPrev && (
+                                        <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                                            <LeftOutlined />
+                                        </button>
+                                    )
+                                }
+                                renderArrowNext={(onClickHandler, hasNext) =>
+                                    hasNext && (
+                                        <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                                            <RightOutlined />
+                                        </button>
+                                    )
+                                }
+                            >
+                                {mediaUrls.map((media, index) => renderMedia(media, index))}
+                            </ResponsiveCarousel>
+                        </CarouselContainerColumn>
+                        <DescriptionContainer>
+                            <p style={descriptionStyle}>
+                                {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+                            </p>
+                        </DescriptionContainer>
+                    </ProductCarouselColumn>
+                ) : (
+                    <ProductCarouselRow>
+                        <CarouselContainerRow>
+                            <ResponsiveCarousel
+                                showArrows={true}
+                                dynamicHeight={true}
+                                showThumbs={false}
+                                renderArrowPrev={(onClickHandler, hasPrev) =>
+                                    hasPrev && (
+                                        <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                                            <LeftOutlined />
+                                        </button>
+                                    )
+                                }
+                                renderArrowNext={(onClickHandler, hasNext) =>
+                                    hasNext && (
+                                        <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                                            <RightOutlined />
+                                        </button>
+                                    )
+                                }
+                            >
+                                {mediaUrls.map((media, index) => renderMedia(media, index))}
+                            </ResponsiveCarousel>
+                        </CarouselContainerRow>
+                        <DescriptionContainer>
+                            <p style={descriptionStyle}>
+                                {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+                            </p>
+                        </DescriptionContainer>
+                    </ProductCarouselRow>
+                )}
+
+
+
+                {relatedExhibits.length > 0 && (
+                    <div>
+                        <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
+                        <Carousel
+                            responsive={responsive}
+                            arrows={true}
+                            showDots={true}
+                            focusOnSelect={true}
+                            infinite={true}
+                            customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
+                            customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
+                        >
+                            {
+                                relatedExhibits.map((exhibit, index) => (
+                                    <div className="container" key={index}>
+                                        <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
+                                            <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                                                <img
+                                                    src={exhibit.imageUrl}
+                                                    alt={exhibit.title}
+                                                    style={{
+                                                        maxWidth: '80%',
+                                                        maxHeight: '200px',
+                                                        height: 'auto',
+                                                        marginLeft: '10%',
+                                                        marginRight: '10%',
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
+                                                {exhibit.title}
+                                            </div>
+                                        </Link>
+                                    </div>
+                                ))
+                            }
+                        </Carousel>
+                    </div>
+                )
+                }
 
 
 
 
-        </div >
+            </div >
+
+        </>
     );
 };
 export default UserScreen;
