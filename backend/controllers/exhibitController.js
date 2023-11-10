@@ -26,6 +26,7 @@ const getExhibits = asyncHandler(async (req, res) => {
 
   const exhibitsQuery = `select e.exhibit_id,e.title,
         c.category_name as category,
+        e.subcategory,
         r.room_name as room,
         lt.location_type as location_type,
         l.location_name as location,
@@ -59,6 +60,7 @@ const getDeletedExhibits = asyncHandler(async (req, res) => {
 
   const exhibitsQuery = `select e.exhibit_id,e.title,
         c.category_name as category,
+        e.subcategory,
         r.room_name as room,
         lt.location_type as location_type,
         l.location_name as location,
@@ -86,7 +88,6 @@ const getDeletedExhibits = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getExhibitById = asyncHandler(async (req, res) => {
   const {id} = req.params
-  console.log('leave me alone')
  
   try {
     const query = `select 
@@ -94,9 +95,10 @@ const getExhibitById = asyncHandler(async (req, res) => {
         e.title,
         c.category_id,
         c.category_name as category,
+        e.subcategory,
         r.room_id,
         r.room_name as room,
-        lt.id,
+        lt.id as loctype_id,
         lt.location_type as location_type,
         l.location_id,
         l.location_name as location,
@@ -144,7 +146,6 @@ const createExhibit = asyncHandler(async (req, res) => {
   const lt_id = loctype_id  === '' || NaN? null : parseInt(loctype_id, 10);
   const l_id = location_id === '' || NaN? null : parseInt(location_id, 10);
 
-  console.log(c_id,r_id,lt_id,l_id)
   try {
     const query = 'INSERT INTO exhibits (title, category_id, subcategory, room_id, loctype_id, location_id,  asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
     const [results, fields] = await db.promise().query(query, [title, c_id, subcategory, r_id, lt_id, l_id, asset_number, manufacturer, era, exhibit_desc,'Y']);

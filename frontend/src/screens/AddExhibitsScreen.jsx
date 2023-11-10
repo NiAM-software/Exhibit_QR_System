@@ -77,16 +77,20 @@ const AddExhibitScreen = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    title: '',
-    category_id: '',
-    subcategory: '',
-    room_id: '',
-    loctype_id: '',
-    location_id: '',
-    asset_number: '',
-    manufacturer: '',
-    era: '',
-    exhibit_desc: ''
+    title: "",
+    category_id: "",
+    category: "",
+    subcategory: "",
+    room_id: "",
+    room: "",
+    id: "",
+    location_type: "",
+    location_id: "",
+    location: "",
+    asset_number: "",
+    manufacturer: "",
+    era: "",
+    exhibit_desc: "",
   });
 
   const handleChange = (e) => {

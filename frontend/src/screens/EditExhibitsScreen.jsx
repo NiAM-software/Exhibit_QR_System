@@ -20,21 +20,25 @@ const EditExhibitScreen = () => {
   const [deletelinks, setdeletelinks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [locationTypes, setLocationTypes] = useState([]);
+  const [locations, setlocations] = useState([]);
+  const [rooms, setrooms] = useState([]);
 
   const fetchCategoriesAndLocationTypes = async () => {
     try {
       const response = await fetch(
-        "/api/admin/exhibits/categories-and-location-types"
+        "/api/admin/exhibits/maintenance"
       );
       if (response.ok) {
         const data = await response.json();
         setCategories(data.categories);
         setLocationTypes(data.locationTypes);
+        setlocations(data.locations);
+        setrooms(data.rooms);
       } else {
-        console.error("Failed to fetch categories");
+        console.error("Failed to fetch maintenance");
       }
     } catch (error) {
-      console.error("Error while fetching categories:", error);
+      console.error("Error while fetching maintenance fields:", error);
     }
   };
 
@@ -84,12 +88,16 @@ const EditExhibitScreen = () => {
   const { id } = useParams();
   const link_id = id;
 
-  const [formData, setFormData] = useState({
+  const [SubmitData, setFormData] = useState({
     title: "",
+    category_id: "",
     category: "",
     subcategory: "",
+    room_id: "",
     room: "",
+    loctype_id: "",
     location_type: "",
+    location_id: "",
     location: "",
     asset_number: "",
     manufacturer: "",
@@ -100,7 +108,7 @@ const EditExhibitScreen = () => {
   useEffect(() => {
     Axios.get(`/api/admin/exhibits/${id}`)
       .then((response) => {
-        console.log(response.data)
+        console.log("response.data", response.data);
         setFormData(response.data); // Store data in state for prepopulation
       })
       .catch((error) => {
@@ -114,9 +122,9 @@ const EditExhibitScreen = () => {
         const nextAssetNumber = maxAssetNumber + 1;
 
         // Update the formData with the nextAssetNumber only if response.data.asset_number is null
-        if (formData.asset_number === null || formData.asset_number === "") {
+        if (SubmitData.asset_number === null || SubmitData.asset_number === "") {
           setFormData({
-            ...formData,
+            ...SubmitData,
             asset_number: nextAssetNumber.toString(),
           });
         }
@@ -130,7 +138,59 @@ const EditExhibitScreen = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...SubmitData, [name]: value });
+  };
+
+  const handleChange_category = (e) => {
+    const { name, value } = e.target;
+    //console.log("name,value",name,value);
+    const selectedCategoryId = categories.find(
+      (item) => item.name === value
+    )?.id;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedCategoryId, // Update category_id
+      category: value, // Update category
+    }));
+
+  };
+
+  const handleChange_location = (e) => {
+    const { name, value } = e.target;
+    const selectedlocationId = locations.find(
+      (location) => location.name === value
+    )?.id;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedlocationId, // Update category_id
+      location: value, // Update category
+    }));
+
+  };
+
+  const handleChange_locationtype = (e) => {
+    const { name, value } = e.target;
+    const selectedlocationtypeId = locationTypes.find(
+      (location_type) => location_type.name === value
+    )?.id;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedlocationtypeId, // Update category_id
+      location_type: value, // Update category
+    }));
+  };
+
+  const handleChange_room = (e) => {
+    const { name, value } = e.target;
+    const selectedroomId = rooms.find(
+      (room) => room.name === value
+    )?.id;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedroomId, // Update category_id
+      room: value, // Update category
+    }));
   };
 
   const handleCancelClick = () => {
@@ -154,17 +214,18 @@ const EditExhibitScreen = () => {
   const validateForm = () => {
     const errors = {};
 
-    if (!formData.title) {
+    if (!SubmitData.title) {
       errors.title = "Title is required";
     }
 
-    if (!formData.asset_number) {
+    if (!SubmitData.asset_number) {
       errors.asset_number = "Asset number is required";
-    } else if (isNaN(formData.asset_number)) {
+    } else if (isNaN(SubmitData.asset_number)) {
       errors.asset_number = "Asset number must be an integer";
-    } else if (formData.asset_number < 0) {
+    } else if (SubmitData.asset_number < 0) {
       errors.asset_number = "Asset number cannot be negative";
     }
+
 
     return errors;
   };
@@ -173,17 +234,19 @@ const EditExhibitScreen = () => {
     e.preventDefault();
     setFormErrors({});
     const errors = validateForm();
+    console.log("formData.title", SubmitData.category_id);
 
     if (Object.keys(errors).length === 0) {
 
       try {
 
+        console.log("formData", SubmitData);
         const response = await fetch(`/api/admin/exhibits/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(SubmitData),
         });
 
         //console.log(response)
@@ -371,7 +434,7 @@ const EditExhibitScreen = () => {
                 <Form.Control
                   type="text"
                   name="title"
-                  value={formData.title}
+                  value={SubmitData.title}
                   onChange={handleChange}
                   placeholder="Enter Title"
                   style={
@@ -400,7 +463,7 @@ const EditExhibitScreen = () => {
                 <Form.Control
                   type="text"
                   name="asset_number"
-                  value={formData.asset_number}
+                  value={SubmitData.asset_number}
                   onChange={handleChange}
                   placeholder="Enter Asset number"
                   style={
@@ -436,12 +499,21 @@ const EditExhibitScreen = () => {
               <Form.Group controlId="Location" className="mb-3">
                 <Form.Label style={formLabelStyle}>Location</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
+                  name="location_id"
+                  list="locations"
+                  value={SubmitData.location}
+                  onChange={handleChange_location}
                   style={TextInputStyle}
-                />
+                >
+                  <option value="">Select a location</option>
+                  {locations.map((location) => (
+                    <option key={location.id} value={location.name}>
+                      {location.name}
+                    </option>
+                  ))}
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -453,12 +525,21 @@ const EditExhibitScreen = () => {
               <Form.Group controlId="Room" className="mb-3">
                 <Form.Label style={formLabelStyle}>Room</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="room"
-                  value={formData.room}
-                  onChange={handleChange}
+                  name="room_id"
+                  list="rooms"
+                  value={SubmitData.room}
+                  onChange={handleChange_room}
                   style={TextInputStyle}
-                />
+                >
+                  <option value="">Select a room</option>
+                  {rooms.map((room) => (
+                    <option key={room.id} value={room.name}>
+                      {room.name}
+                    </option>
+                  ))}
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -470,20 +551,21 @@ const EditExhibitScreen = () => {
               <Form.Group controlId="locationType" className="mb-3">
                 <Form.Label style={formLabelStyle}>LocationType</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="location_type"
+                  name="loctype_id"
                   list="locationTypes"
-                  value={formData.location_type}
-                  onChange={handleChange}
+                  value={SubmitData.location_type}
+                  onChange={handleChange_locationtype}
                   style={TextInputStyle}
-                />
-                <datalist id="locationTypes">
-                  {locationTypes.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
+                >
+                  <option value="">Select a location_type</option>
+                  {locationTypes.map((location_type) => (
+                    <option key={location_type.id} value={location_type.name}>
+                      {location_type.name}
                     </option>
                   ))}
-                </datalist>
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -496,17 +578,18 @@ const EditExhibitScreen = () => {
                 <Form.Control
                   type="text"
                   name="era"
-                  value={formData.era}
+                  value={SubmitData.era}
                   onChange={handleChange}
-                  style={
-                    formErrors.era
-                      ? { ...TextInputStyle, ...errorStyle }
-                      : TextInputStyle
-                  }
+                  // style={
+                  //   formErrors.era
+                  //     ? { ...TextInputStyle, ...errorStyle }
+                  //     : TextInputStyle
+                  // }
+                  style={TextInputStyle}
                 />
-                {formErrors.era && (
+                {/* {formErrors.era && (
                   <div style={errorMessage}>{formErrors.era}</div>
-                )}
+                )} */}
               </Form.Group>
             </Form>
           </Col>
@@ -518,20 +601,21 @@ const EditExhibitScreen = () => {
               <Form.Group controlId="category" className="mb-3">
                 <Form.Label style={formLabelStyle}>Category</Form.Label>
                 <Form.Control
+                  as="select"
                   type="text"
-                  name="category"
+                  name="category_id"
                   list="categories"
-                  value={formData.category}
-                  onChange={handleChange}
+                  value={SubmitData.category}
+                  onChange={handleChange_category}
                   style={TextInputStyle}
-                />
-                <datalist id="categories">
-                  {categories.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
+                >
+                  <option value="">Select a category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
                     </option>
                   ))}
-                </datalist>
+                </Form.Control>
               </Form.Group>
             </Form>
           </Col>
@@ -544,7 +628,7 @@ const EditExhibitScreen = () => {
                 <Form.Control
                   type="text"
                   name="subcategory"
-                  value={formData.subcategory}
+                  value={SubmitData.subcategory}
                   onChange={handleChange}
                   style={TextInputStyle}
                 />
@@ -563,7 +647,7 @@ const EditExhibitScreen = () => {
                   as="textarea"
                   placeholder="Enter Description"
                   name="exhibit_desc"
-                  value={formData.exhibit_desc}
+                  value={SubmitData.exhibit_desc}
                   onChange={handleChange}
                   style={descriptionInputStyle}
                 />
@@ -578,7 +662,7 @@ const EditExhibitScreen = () => {
                 <Form.Control
                   type="text"
                   name="manufacturer"
-                  value={formData.manufacturer}
+                  value={SubmitData.manufacturer}
                   onChange={handleChange}
                   style={TextInputStyle}
                 />

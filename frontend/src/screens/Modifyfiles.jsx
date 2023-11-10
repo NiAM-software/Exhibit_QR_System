@@ -3,6 +3,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload, message, Button } from "antd";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -30,6 +32,8 @@ const Modifyfiles = ({
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [initialFileList, setInitialFileList] = useState([]);
   const [newlyAddedFiles, setNewlyAddedFiles] = useState([]);
+
+  const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
 
   const fetchImageUrls = async () => {
     try {
@@ -131,6 +135,63 @@ const Modifyfiles = ({
     setPreviewOpen(true);
     setPreviewTitle(
       file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+  };
+
+  const renderItem = (originNode, file, fileList, actions) => {
+    const thumbnailStyle = {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+      width: '100%',
+      overflow: 'hidden', // To handle videos that might exceed the container size
+    };
+    const actionButtonStyle = {
+      background: 'transparent',
+      border: 'none', // Remove button border
+      boxShadow: 'none', // Remove button shadow if any
+    };
+
+    console.log('fil', file);
+    const isVideo = /\.(mp4|webm)(\?|$)/i.test(file.url);
+    return (
+      <div className="ant-upload-list-item">
+        <div style={thumbnailStyle}>
+          {isVideo ? (
+            <video
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              controls
+              src={file.url}
+            />
+          ) : (
+            <img
+              src={file.url}
+              alt={file.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          )}
+        </div>
+        <div className="ant-upload-list-item-actions">
+          <a
+            href={file.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => {
+              e.preventDefault();
+              handlePreview(file);
+            }}
+          >
+            <Button icon={<EyeOutlined />} size="small" style={actionButtonStyle} />
+          </a>
+          <Button
+            icon={<DeleteOutlined />}
+            size="small"
+            style={actionButtonStyle}
+            onClick={() => actions.remove(file)}
+          />
+        </div>
+      </div>
     );
   };
 
@@ -262,18 +323,20 @@ const Modifyfiles = ({
           onPreview={handlePreview}
           onChange={handleChange}
           multiple={true}
+          itemRender={(originNode, file, fileList, actions) => renderItem(originNode, file, fileList, actions)}
         >
           {uploadButton}
         </Upload>
       </div>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-        <img
-          alt="example"
-          style={{
-            width: '100%',
-          }}
-          src={previewImage}
-        />
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+        {isVideoLink(previewImage) ? (
+          <video style={{ width: '100%' }} controls>
+            <source src={previewImage} type="video/mp4" />
+            Your browser does not support HTML video.
+          </video>
+        ) : (
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        )}
       </Modal>
     </div>
 

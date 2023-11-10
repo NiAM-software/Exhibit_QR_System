@@ -13,6 +13,47 @@ import { Navbar, Nav, Container, Badge, NavDropdown } from 'react-bootstrap';
 import logo from '../assets/logo.png';
 import { LinkContainer } from 'react-router-bootstrap';
 
+const CarouselContainerRow = styled.div`
+width: 30%;
+height: 18vw;
+margin-right: 20px;
+overflow: hidden; // Hide the overflow
+position: relative;
+display: flex; // Added for vertical centering
+justify-content: center; // Center horizontally
+align-items: center;
+`;
+
+// Define a styled component for the column layout
+const CarouselContainerColumn = styled.div`
+width: 100%; 
+height: 60vw;
+margin-bottom: 20px;
+overflow: hidden;
+display: flex; /* Use flexbox for centering vertically */
+justify-content: center; /* Center vertically */
+align-items: center; /* Center vertically */
+`;
+
+const ProductCarouselRow = styled.div`
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+justify-content: flex-start;
+margin: 20px;
+`;
+
+const ProductCarouselColumn = styled.div`
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+justify-content: flex-start;
+margin: 20px;
+`;
+
+const DescriptionContainer = styled.div`
+flex: 1;
+`;
 
 const UserScreen = () => {
     const { id } = useParams();
@@ -109,48 +150,6 @@ const UserScreen = () => {
         display: 'block', // Display block for images
     };
 
-    const CarouselContainerRow = styled.div`
-  width: 30%;
-  height: 18vw;
-  margin-right: 20px;
-  overflow: hidden; // Hide the overflow
-  position: relative;
-  display: flex; // Added for vertical centering
-  justify-content: center; // Center horizontally
-  align-items: center;
-  `;
-
-    // Define a styled component for the column layout
-    const CarouselContainerColumn = styled.div`
-  width: 100%; 
-  height: 60vw;
-  margin-bottom: 20px;
-  overflow: hidden;
-  display: flex; /* Use flexbox for centering vertically */
-  justify-content: center; /* Center vertically */
-  align-items: center; /* Center vertically */
-  `;
-
-    const ProductCarouselRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin: 20px;
-`;
-
-    const ProductCarouselColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin: 20px;
-`;
-
-
-    const DescriptionContainer = styled.div`
-  flex: 1;
-`;
 
 
     const customButtonStyle = {
@@ -341,14 +340,23 @@ const UserScreen = () => {
 
                 <Navbar expand='sm' collapseOnSelect>
                     <Container>
-                        <LinkContainer to='/'>
-                            <Navbar.Brand>
+                        <Navbar.Brand>
+                            <a href="https://niagaraaerospacemuseum.org" target="_blank" rel="noopener noreferrer">
                                 <img src={logo} alt='Museum' />
-
-                            </Navbar.Brand>
-                        </LinkContainer>
+                            </a>
+                        </Navbar.Brand>
                         <Navbar.Toggle aria-controls='basic-navbar-nav' />
                         <Navbar.Collapse id='basic-navbar-nav'>
+                            <Navbar.Brand className="ms-auto">
+                                <a href="https://niagaraaerospacemuseum.org" target="_blank" rel="noopener noreferrer">
+                                    Home
+                                </a>
+                            </Navbar.Brand>
+
+
+
+
+
                             {/* <Nav className='ms-auto'> */}
 
                             {/* (

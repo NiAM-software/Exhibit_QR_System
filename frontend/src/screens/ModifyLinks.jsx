@@ -2,6 +2,9 @@ import { Modal, Input, Button, Upload, message } from 'antd';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
+import dummyImageUrl from '../assets/dummy-image-square.jpg';
 
 const buttonStyle = {
     width: '100px',
@@ -34,14 +37,17 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
     const [previewTitle, setPreviewTitle] = useState('');
     const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
 
+    const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
+
     const fetchrelatedexhibits = async () => {
         try {
             const getrelatedexhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${link_id}`);
             const responsedata = getrelatedexhibitResponse.data.data;
-            console.log(responsedata);
+            console.log('responsedata', responsedata);
             const apicallpromises = responsedata.map(async (item) => {
                 try {
                     const linkurlresponse = await axios.get(`/api/admin/exhibits/preview-image/${item.related_exhibit_id}`);
+                    console.log('linkurlresponse', linkurlresponse);
                     //console.log('${item.related_exhibit_title}', linkurlresponse.data);
                     if (linkurlresponse.data && linkurlresponse.data.url) {
                         const newData = {
@@ -57,7 +63,7 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                             uid: `${item.related_exhibit_id}`,
                             name: item.related_exhibit_title,
                             status: 'done',
-                            url: 'https://picsum.photos/200',
+                            url: dummyImageUrl,
                         };
                         return newData;
                     }
@@ -65,7 +71,13 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                 }
                 catch (error) {
                     console.error("Error fetching url of related exhibit:", error);
-                    return null;
+                    const newData = {
+                        uid: `${item.related_exhibit_id}`,
+                        name: item.related_exhibit_title,
+                        status: 'done',
+                        url: dummyImageUrl,
+                    };
+                    return newData;
                 }
             });
             const linkurldata = (await Promise.all(apicallpromises)).filter(item => item);
@@ -243,6 +255,63 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
         }
     };
 
+    const renderItem = (originNode, link, linkList, actions) => {
+        const thumbnailStyle = {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+            overflow: 'hidden', // To handle videos that might exceed the container size
+        };
+        const actionButtonStyle = {
+            background: 'transparent',
+            border: 'none', // Remove button border
+            boxShadow: 'none', // Remove button shadow if any
+        };
+
+        console.log('link', link);
+        const isVideo = /\.(mp4|webm)(\?|$)/i.test(link.url);
+        return (
+            <div className="ant-upload-list-item">
+                <div style={thumbnailStyle}>
+                    {isVideo ? (
+                        <video
+                            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                            controls
+                            src={link.url}
+                        />
+                    ) : (
+                        <img
+                            src={link.url}
+                            alt={link.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    )}
+                </div>
+                <div className="ant-upload-list-item-actions">
+                    <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => {
+                            e.preventDefault();
+                            handlePreview(link);
+                        }}
+                    >
+                        <Button icon={<EyeOutlined />} size="small" style={actionButtonStyle} />
+                    </a>
+                    <Button
+                        icon={<DeleteOutlined />}
+                        size="small"
+                        style={actionButtonStyle}
+                        onClick={() => actions.remove(link)}
+                    />
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div
             title="Add Links"
@@ -308,34 +377,35 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                         {suggestion.title}
                     </div>
                 ))}
-
             {linkList.length > 0 && (
-                <div style={{ marginTop: '16px' }}>
+                console.log('linkList', linkList),
+
+                < div style={{ marginTop: '16px' }}>
                     <Upload
                         listType="picture-card"
                         fileList={linkList}
                         onPreview={handlePreview}
                         onRemove={handleRemove}
+                        itemRender={(originNode, link, linkList, actions) => renderItem(originNode, link, linkList, actions)}
                     />
                 </div>
-            )}
-            {previewOpen && (
-                <Modal
-                    visible={previewOpen}
-                    title={previewTitle}
-                    onCancel={handleCancel}
-                    footer={null}
-                >
-                    <img
-                        alt="Exhibit Photo"
-                        style={{
-                            width: '100%',
-                        }}
-                        src={previewImage}
-                    />
-                </Modal>
-            )}
-        </div>
+            )
+            }
+            {
+                previewOpen && (
+                    <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+                        {isVideoLink(previewImage) ? (
+                            <video style={{ width: '100%' }} controls>
+                                <source src={previewImage} type="video/mp4" />
+                                Your browser does not support HTML video.
+                            </video>
+                        ) : (
+                            <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                        )}
+                    </Modal>
+                )
+            }
+        </div >
     );
 };
 

@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import Addfiles from "./AddFiles";
+import dummyImageUrl from '../assets/dummy-image-square.jpg';
+import { DeleteOutlined } from '@ant-design/icons';
+import { EyeOutlined } from '@ant-design/icons';
 
 const buttonStyle = {
   width: "100px",
@@ -28,9 +31,12 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
   const [exhibitPhotoURL, setExhibitPhotoURL] = useState("");
   const [linkList, setLinkList] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewLinkType, setPreviewLinkType] = useState('');
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
+
+  const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
 
   useEffect(() => {
     const fetchSearchResults = async () => {
@@ -76,7 +82,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
           // Handle the error when the image is not found (status code 404)
           console.error("Error fetching exhibit photo:", error);
           setSelectedExhibitName(query);
-          setExhibitPhotoURL("https://picsum.photos/200");
+          setExhibitPhotoURL(dummyImageUrl);
           // Set a default dummy image in case of error
         }
       }
@@ -152,6 +158,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
   };
 
   const handlePreview = (link) => {
+    console.log('link', link);
     setPreviewImage(link.url);
     setPreviewTitle(link.name);
     setPreviewOpen(true);
@@ -160,6 +167,73 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
   const handleRemove = (link) => {
     const updatedLinkList = linkList.filter((item) => item.uid !== link.uid);
     setLinkList(updatedLinkList);
+  };
+
+  useEffect(() => {
+    // Clean up function to revoke object URLs
+    return () => {
+      if (previewLinkType === 'video') {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage, previewLinkType]);
+
+  const renderItem = (originNode, link, linkList, actions) => {
+    const thumbnailStyle = {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+      width: '100%',
+      overflow: 'hidden', // To handle videos that might exceed the container size
+    };
+    const actionButtonStyle = {
+      background: 'transparent',
+      border: 'none', // Remove button border
+      boxShadow: 'none', // Remove button shadow if any
+    };
+
+    console.log('link', link);
+    const isVideo = /\.(mp4|webm)(\?|$)/i.test(link.url);
+    console.log('isVideooo', isVideo);
+    return (
+      <div className="ant-upload-list-item">
+        <div style={thumbnailStyle}>
+          {isVideo ? (
+            <video
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              controls
+              src={link.url}
+            />
+          ) : (
+            <img
+              src={link.url}
+              alt={link.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          )}
+        </div>
+        <div className="ant-upload-list-item-actions">
+          <a
+            href={link.url || link.preview}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => {
+              e.preventDefault();
+              handlePreview(link);
+            }}
+          >
+            <Button icon={<EyeOutlined />} size="small" style={actionButtonStyle} />
+          </a>
+          <Button
+            icon={<DeleteOutlined />}
+            size="small"
+            style={actionButtonStyle}
+            onClick={() => actions.remove(link)}
+          />
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -237,25 +311,21 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
             fileList={linkList}
             onPreview={handlePreview}
             onRemove={handleRemove}
+            itemRender={(originNode, link, linkList, actions) => renderItem(originNode, link, linkList, actions)}
           />
         </div>
       )}
-      {previewOpen && (
-        <Modal
-          visible={previewOpen}
-          title={previewTitle}
-          onCancel={handleCancel}
-          footer={null}
-        >
-          <img
-            alt="Exhibit Photo"
-            style={{
-              width: "100%",
-            }}
-            src={previewImage}
-          />
-        </Modal>
-      )}
+
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+        {isVideoLink(previewImage) ? (
+          <video style={{ width: '100%' }} controls>
+            <source src={previewImage} type="video/mp4" />
+            Your browser does not support HTML video.
+          </video>
+        ) : (
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        )}
+      </Modal>
     </div>
   );
 };

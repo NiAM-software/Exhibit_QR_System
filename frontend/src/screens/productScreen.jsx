@@ -20,6 +20,49 @@ const getBase64 = (file) =>
 
 // const dummyImageUrl = getBase64('../assets/dummy-image-square.jpg');
 
+const CarouselContainerRow = styled.div`
+  width: 30%;
+  height: 18vw;
+  margin-right: 20px;
+  overflow: hidden; // Hide the overflow
+  position: relative;
+  display: flex; // Added for vertical centering
+  justify-content: center; // Center horizontally
+  align-items: center;
+  `;
+
+// Define a styled component for the column layout
+const CarouselContainerColumn = styled.div`
+  width: 100%; 
+  height: 60vw;
+  margin-bottom: 20px;
+  overflow: hidden;
+  display: flex; /* Use flexbox for centering vertically */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center vertically */
+  `;
+
+const ProductCarouselRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 20px;
+`;
+
+const ProductCarouselColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 20px;
+`;
+
+
+const DescriptionContainer = styled.div`
+  flex: 1;
+`;
+
 const ProductScreen = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -43,6 +86,7 @@ const ProductScreen = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showArrows, setShowArrows] = useState(window.innerWidth); // Initially set to true for larger screens
 
+  console.log('ProductScreen is rendering!'); // This will log on every render
 
   const responsive = {
     superLargeDesktop: {
@@ -116,48 +160,7 @@ const ProductScreen = () => {
     display: 'block', // Display block for images
   };
 
-  const CarouselContainerRow = styled.div`
-  width: 30%;
-  height: 18vw;
-  margin-right: 20px;
-  overflow: hidden; // Hide the overflow
-  position: relative;
-  display: flex; // Added for vertical centering
-  justify-content: center; // Center horizontally
-  align-items: center;
-  `;
 
-  // Define a styled component for the column layout
-  const CarouselContainerColumn = styled.div`
-  width: 100%; 
-  height: 60vw;
-  margin-bottom: 20px;
-  overflow: hidden;
-  display: flex; /* Use flexbox for centering vertically */
-  justify-content: center; /* Center vertically */
-  align-items: center; /* Center vertically */
-  `;
-
-  const ProductCarouselRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin: 20px;
-`;
-
-  const ProductCarouselColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin: 20px;
-`;
-
-
-  const DescriptionContainer = styled.div`
-  flex: 1;
-`;
 
 
 
@@ -218,128 +221,131 @@ const ProductScreen = () => {
     right: '10px', // Adjust the position as necessary
   };
 
-  const fetchExhibitData = async (Id) => {
-    await axios.get(`/api/admin/exhibits/${Id}`)
-      .then(response => {
-        setExhibitData(response.data); // Store data in state for prepopulation
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-
-
-    console.log('data for exhibitid: ${Id}', exhibitData)
-
-  };
-
-  const fetchExhibitMedia = async (Id) => {
-    try {
-      // Fetch attachments data
-      const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${Id}`);
-      const exhibitAttachmentsData = getExhibitAttachmentsResponse.data.data;
-      console.log("exhibitAttachmentsData:", exhibitAttachmentsData)
-      const exhibitPathsArray = exhibitAttachmentsData.map((item) => ({
-        folderName: item.file_location,
-        fileName: item.file_name,
-      }));
-
-      // const at_data = {
-      //   objectKeys: exhibitPathsArray,
-      // }
-      // console.log("exhibitPathsArray", JSON.stringify(at_data))
-      // Get Presigned urls
-
-      const generateExhibitPresignedUrlResponse = await fetch(
-        "/api/admin/exhibits/generate-presigned-url",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(exhibitPathsArray),
-        }
-      );
-
-      const exhibitPresignedUrls = await generateExhibitPresignedUrlResponse.json(); // Convert the response to JSON
-      console.log("generateExhibitPresignedUrlResponse", exhibitPresignedUrls); // Now you can access the JSON data
-
-      const exhibitMediaUrls = exhibitPresignedUrls.data.map((item) => item.url).filter(Boolean);
-      console.log("exhibitMediaUrls", exhibitMediaUrls)
-
-      if (exhibitMediaUrls.length === 0) {
-        throw new Error('No image URLs found.'); // Throw an error
-      }
-      // Set the imageUrls state
-      setMediaUrls(exhibitMediaUrls);
-    } catch (error) {
-      console.error('horror fetching exhibit images:', error);
-
-      // If there's an error, you can set some default images or handle the error as needed
-      const defaultImages = [dummyImageUrl];
-      setMediaUrls(defaultImages);
-    }
-  };
-
-  const fetchRelatedExhibits = async (Id) => {
-    try {
-      const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${Id}`);
-
-      const relatedExhibitsData = getRelatedExhibitResponse.data.data;
-
-      console.log("relatedExhibitsData", relatedExhibitsData)
-
-      const relatedExhibitsPathsArray = relatedExhibitsData.map((item) => ({
-        exhibit_id: item.related_exhibit_id,
-        folderName: item.file_location,
-        fileName: item.file_name,
-        title: item.related_exhibit_title,
-      }));
-
-      console.log("relatedExhibitsPathsArray", relatedExhibitsPathsArray)
-
-      const generateRelatedExhibitsPresignedUrlResponse = await fetch(
-        "/api/admin/exhibits/generate-presigned-url",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(relatedExhibitsPathsArray),
-        }
-      );
-      // console.log("relatedExhibitPresignedUrls", generateRelatedExhibitsPresignedUrlResponse)
-      const relatedExhibitPresignedUrls = await generateRelatedExhibitsPresignedUrlResponse.json();
-      console.log("relatedExhibitPresignedUrls", relatedExhibitPresignedUrls)
-
-      const relatedExhibits = relatedExhibitsPathsArray.map((item, index) => ({
-        relatedExhibit_id: item.exhibit_id,
-        imageUrl: relatedExhibitPresignedUrls.data[index].url || dummyImageUrl, // Use the URL from the response
-        title: item.title, // Use the title from the data
-      }));
-      console.log("relatedExhibits", relatedExhibits)
-      setRelatedExhibits(relatedExhibits);
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        // Handle the 404 error here, e.g., set relatedExhibits to an empty array
-        setRelatedExhibits([]);
-      } else {
-        console.error('Error fetching related exhibits:', error);
-      }
-    }
-  };
-
 
 
 
   useEffect(() => {
-    fetchExhibitData(id);
-    fetchExhibitMedia(id);
-    fetchRelatedExhibits(id);
+    const fetchExhibitData = async () => {
+      await axios.get(`/api/admin/exhibits/${id}`)
+        .then(response => {
+          setExhibitData(response.data); // Store data in state for prepopulation
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+
+
+      console.log('data for exhibitid: ${Id}', exhibitData)
+
+    };
+
+    const fetchExhibitMedia = async () => {
+      try {
+        // Fetch attachments data
+        const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${id}`);
+        const exhibitAttachmentsData = getExhibitAttachmentsResponse.data.data;
+        console.log("exhibitAttachmentsData:", exhibitAttachmentsData)
+        const exhibitPathsArray = exhibitAttachmentsData.map((item) => ({
+          folderName: item.file_location,
+          fileName: item.file_name,
+        }));
+
+        // const at_data = {
+        //   objectKeys: exhibitPathsArray,
+        // }
+        // console.log("exhibitPathsArray", JSON.stringify(at_data))
+        // Get Presigned urls
+
+        const generateExhibitPresignedUrlResponse = await fetch(
+          "/api/admin/exhibits/generate-presigned-url",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(exhibitPathsArray),
+          }
+        );
+
+        const exhibitPresignedUrls = await generateExhibitPresignedUrlResponse.json(); // Convert the response to JSON
+        console.log("generateExhibitPresignedUrlResponse", exhibitPresignedUrls); // Now you can access the JSON data
+
+        const exhibitMediaUrls = exhibitPresignedUrls.data.map((item) => item.url).filter(Boolean);
+        console.log("exhibitMediaUrls", exhibitMediaUrls)
+
+        if (exhibitMediaUrls.length === 0) {
+          throw new Error('No image URLs found.'); // Throw an error
+        }
+        // Set the imageUrls state
+        setMediaUrls(exhibitMediaUrls);
+      } catch (error) {
+        console.error('horror fetching exhibit images:', error);
+
+        // If there's an error, you can set some default images or handle the error as needed
+        const defaultImages = [dummyImageUrl];
+        setMediaUrls(defaultImages);
+      }
+    };
+
+    const fetchRelatedExhibits = async () => {
+      try {
+        const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${id}`);
+
+        const relatedExhibitsData = getRelatedExhibitResponse.data.data;
+
+        console.log("relatedExhibitsData", relatedExhibitsData)
+
+        const relatedExhibitsPathsArray = relatedExhibitsData.map((item) => ({
+          exhibit_id: item.related_exhibit_id,
+          folderName: item.file_location,
+          fileName: item.file_name,
+          title: item.related_exhibit_title,
+        }));
+
+        console.log("relatedExhibitsPathsArray", relatedExhibitsPathsArray)
+
+        const generateRelatedExhibitsPresignedUrlResponse = await fetch(
+          "/api/admin/exhibits/generate-presigned-url",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(relatedExhibitsPathsArray),
+          }
+        );
+        // console.log("relatedExhibitPresignedUrls", generateRelatedExhibitsPresignedUrlResponse)
+        const relatedExhibitPresignedUrls = await generateRelatedExhibitsPresignedUrlResponse.json();
+        console.log("relatedExhibitPresignedUrls", relatedExhibitPresignedUrls)
+
+        const relatedExhibits = relatedExhibitsPathsArray.map((item, index) => ({
+          relatedExhibit_id: item.exhibit_id,
+          imageUrl: relatedExhibitPresignedUrls.data[index].url || dummyImageUrl, // Use the URL from the response
+          title: item.title, // Use the title from the data
+        }));
+        console.log("relatedExhibits", relatedExhibits)
+        setRelatedExhibits(relatedExhibits);
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          // Handle the 404 error here, e.g., set relatedExhibits to an empty array
+          setRelatedExhibits([]);
+        } else {
+          console.error('Error fetching related exhibits:', error);
+        }
+      }
+    };
+
+
+    fetchExhibitData();
+    fetchExhibitMedia();
+    fetchRelatedExhibits();
     // Fetch image data for the exhibit using axios
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
       setShowArrows(window.innerWidth > 700);
     };
+
+
 
 
     window.addEventListener('resize', handleResize);
@@ -349,6 +355,7 @@ const ProductScreen = () => {
     };
 
   }, [id]);
+
 
 
 
