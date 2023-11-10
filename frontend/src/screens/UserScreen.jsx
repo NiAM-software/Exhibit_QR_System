@@ -1,6 +1,6 @@
 
 import styled from "styled-components";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useLocation, Link, useNavigate } from 'react-router-dom';
 import { Carousel as ResponsiveCarousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -273,7 +273,7 @@ const UserScreen = () => {
 
     useEffect(() => {
         fetchExhibitData(id);
-        console.log('I am here:', exhibitData)
+        // console.log('I am here:', exhibitData)
         fetchRelatedExhibits(id);
         // Fetch image data for the exhibit using axios
         const handleResize = () => {
@@ -296,7 +296,39 @@ const UserScreen = () => {
         console.log("you have reached here.....")
         console.log("exhibitId", exhibitId)
         window.scrollTo(0, 0);
-        navigate(`/ProductScreen/${exhibitId}`);
+        navigate(`/UserScreen/${exhibitId}`);
+    };
+
+    const videoRef = useRef(null);
+
+    const handleFullScreen = (event) => {
+        event.preventDefault();
+        if (videoRef.current) {
+            if (videoRef.current.requestFullscreen) {
+                videoRef.current.requestFullscreen();
+            } else if (videoRef.current.webkitRequestFullscreen) { // For Safari
+                videoRef.current.webkitRequestFullscreen();
+            } // Add other vendor prefixes if needed
+        }
+    };
+
+    const renderMedia = (media, index) => {
+        const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
+        const style = isVideo ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+
+
+        return (
+            <div key={index}>
+                {isVideo ? (
+                    <video ref={videoRef} controls style={style}>
+                        <source src={media} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                ) : (
+                    <img src={media} alt={`Media ${isVideo ? 'Video' : 'Image'} ${index}`} style={style} />
+                )}
+            </div>
+        );
     };
 
     return (
@@ -327,24 +359,7 @@ const UserScreen = () => {
                                 )
                             }
                         >
-                            {mediaUrls.map((media, index) => {
-                                // Check if the media is a video by its file extension.
-                                const isVideo = /\.(mp4|webm)$/i.test(media);
-                                console.log(`Media ${index} is ${isVideo ? 'video' : 'image'}`);
-
-                                return (
-                                    <div key={index}>
-                                        {isVideo ? (
-                                            <video controls style={mediaStyleRow}>
-                                                <source src={media} type="video/mp4" /> {/* You can add more source elements for different video formats if needed */}
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        ) : (
-                                            <img src={media} alt={`Media Image ${index}`} style={ImageStyleColumn} />
-                                        )}
-                                    </div>
-                                );
-                            })}
+                            {mediaUrls.map((media, index) => renderMedia(media, index))}
                         </ResponsiveCarousel>
                     </CarouselContainerColumn>
                     <DescriptionContainer>
@@ -375,24 +390,7 @@ const UserScreen = () => {
                                 )
                             }
                         >
-                            {mediaUrls.map((media, index) => {
-                                // Check if the media is a video by its file extension.
-                                const isVideo = /\.(mp4|webm)$/i.test(media);
-                                console.log(`Media ${index} is ${isVideo ? 'video' : 'image'}`);
-
-                                return (
-                                    <div key={index}>
-                                        {isVideo ? (
-                                            <video controls style={mediaStyleRow}>
-                                                <source src={media} type="video/mp4" /> {/* You can add more source elements for different video formats if needed */}
-                                                Your browser does not support the video tag.
-                                            </video>
-                                        ) : (
-                                            <img src={media} alt={`Media Image ${index}`} style={ImageStyleRow} />
-                                        )}
-                                    </div>
-                                );
-                            })}
+                            {mediaUrls.map((media, index) => renderMedia(media, index))}
                         </ResponsiveCarousel>
                     </CarouselContainerRow>
                     <DescriptionContainer>
@@ -452,5 +450,4 @@ const UserScreen = () => {
         </div >
     );
 };
-
 export default UserScreen;

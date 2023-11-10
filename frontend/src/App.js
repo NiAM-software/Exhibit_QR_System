@@ -11,7 +11,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // create a new QueryClient
 const queryClient = new QueryClient();
-const excludeHeaderRoutes = ['/UserScreen','/AddExhibitScreen'];
+const excludeHeaderRoutes = ['/UserScreen'];
 
 const App = () => {
   const location = useLocation();

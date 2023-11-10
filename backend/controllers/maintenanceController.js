@@ -14,10 +14,10 @@ import {
 // @access  Private/Admin
 const getMaintenanceList = async (req, res) => {
     try {
-      const categoriesQuery    = 'SELECT DISTINCT category_id, category_name FROM category'; 
-      const locationQuery      = 'SELECT DISTINCT location_id, location_name FROM location'; 
-      const locationTypesQuery = 'SELECT DISTINCT  id, location_type FROM location_type';
-      const roomQuery          = 'SELECT DISTINCT room_id, room_name FROM room';
+      const categoriesQuery    = "SELECT DISTINCT category_id, category_name FROM category where active_ind='Y'"; 
+      const locationQuery      = "SELECT DISTINCT location_id, location_name FROM location where active_ind='Y'"; 
+      const locationTypesQuery = "SELECT DISTINCT  id, location_type FROM location_type where active_ind='Y'";
+      const roomQuery          = "SELECT DISTINCT room_id, room_name FROM room where active_ind='Y'";
   
       const [categoriesResults,locationResults,locationTypesResults,roomResults] = await Promise.all([
         db.promise().query(categoriesQuery),
@@ -118,6 +118,63 @@ const createCategory = asyncHandler(async (req, res) => {
       return res.status(500).json({ message: err.message });
     }
   });
+
+// @desc    Delete exhibit
+// @route   DELETE /api/exhibits/maintenance/category
+// @access  Private/Admin
+const deleteCategory = asyncHandler(async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    const selectQuery = "SELECT * FROM category WHERE category_id IN (?) AND active_ind='Y'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
+
+    if (selectResults && selectResults.length > 0) {
+      const updateQuery = "UPDATE category SET active_ind='N' WHERE category_id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+
+      if (updateResults.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully deleted category" }); // Successfully deleted, no content to send
+      } else {
+        return res.status(500).json({ message: "No categories were deleted" });
+      }
+    } else {
+      return res.status(404).json({ message: "Categories doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+
+// @desc    Undo delete category
+// @route   PUT /api/exhibits/maintenance/category
+// @access  Private/Admin
+const undoDeleteCategory = asyncHandler(async (req, res) => {
+
+  const { ids } = req.body.data;
+  
+  try { // UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)
+    const selectQuery = "SELECT * FROM category WHERE category_id IN (?) AND active_ind='N'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
+
+    if (selectResults && selectResults.length > 0) {
+      const updateQuery = "UPDATE category SET active_ind='Y' WHERE category_id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+
+      if (updateResults.affectedRows > 0) {
+     
+        return res.status(200).json({ message: "Successfully restored categories" }); // Successfully deleted, no content to send
+      } else {
+        return res.status(500).json({ message: "Couldn't restore categories" });
+      }
+    } else {
+      return res.status(404).json({ message: "Categories doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
 
 
   // @desc    Create new location
@@ -262,15 +319,105 @@ const createRoom = asyncHandler(async (req, res) => {
       return res.status(500).json({ message: err.message });
     }
   });
+
+
+
+
+// @desc    Delete location
+// @route   DELETE /api/exhibits/maintenance/location/:id
+// @access  Private/Admin
+const deleteLocation = asyncHandler(async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    const selectQuery = "SELECT * FROM location WHERE location_id IN (?) AND active_ind='Y'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
+
+    if (selectResults && selectResults.length > 0) {
+      const updateQuery = "UPDATE location SET active_ind='N' WHERE location_id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+
+      if (updateResults.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully deleted location" }); // Successfully deleted, no content to send
+      } else {
+        return res.status(500).json({ message: "No location were deleted" });
+      }
+    } else {
+      return res.status(404).json({ message: "location doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+// @desc    Delete location Type
+// @route   DELETE /api/exhibits/maintenance/location/:id
+// @access  Private/Admin
+const deleteLocationType = asyncHandler(async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    const selectQuery = "SELECT * FROM location_type WHERE id IN (?) AND active_ind='Y'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
+
+    if (selectResults && selectResults.length > 0) {
+      const updateQuery = "UPDATE location_type SET active_ind='N' WHERE id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+
+      if (updateResults.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully deleted location_type" }); // Successfully deleted, no content to send
+      } else {
+        return res.status(500).json({ message: "No location_type were deleted" });
+      }
+    } else {
+      return res.status(404).json({ message: "location_type doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
+
+
+// @desc    Delete Room
+// @route   DELETE /api/exhibits/maintenance/room
+// @access  Private/Admin
+const deleteRoom = asyncHandler(async (req, res) => {
+  const { ids } = req.body;
+
+  try {
+    const selectQuery = "SELECT * FROM room WHERE room_id IN (?) AND active_ind='Y'";
+    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
+
+    if (selectResults && selectResults.length > 0) {
+      const updateQuery = "UPDATE room SET active_ind='N' WHERE room_id IN (?)";
+      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+
+      if (updateResults.affectedRows > 0) {
+        return res.status(200).json({ message: "Successfully deleted room" }); // Successfully deleted, no content to send
+      } else {
+        return res.status(500).json({ message: "No room were deleted" });
+      }
+    } else {
+      return res.status(404).json({ message: "room doesn't exist" });
+    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+});
   
   export {
      getMaintenanceList,
      createCategory,
      updateCategory,
+     deleteCategory,
+     undoDeleteCategory,
      createLocation,
      updateLocation,
+     deleteLocation,
      createLocationType,
      updateLocationType,
+     deleteLocationType,
      createRoom,
-     updateRoom
+     updateRoom,
+      deleteRoom
   };

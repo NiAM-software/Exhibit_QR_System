@@ -168,11 +168,11 @@ const AddExhibitScreen = () => {
       errors.asset_number = 'Asset number cannot be negative';
     }
 
-    if (formData.era !== '' && isNaN(formData.era)) {
-      errors.era = 'Era must be an integer';
-    } else if (formData.era < 0) {
-      errors.asset_number = 'Era cannot be negative';
-    }
+    // if (formData.era !== '' && isNaN(formData.era)) {
+    //   errors.era = 'Era must be an integer';
+    // } else if (formData.era < 0) {
+    //   errors.asset_number = 'Era cannot be negative';
+    // }
 
     return errors;
   };

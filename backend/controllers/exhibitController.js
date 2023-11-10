@@ -89,16 +89,19 @@ const getExhibitById = asyncHandler(async (req, res) => {
   console.log('leave me alone')
  
   try {
-    const query = `select e.exhibit_id,e.title,
-    c.category_name as category,
-    r.room_name as room,
-    lt.location_type as location_type,
-    l.location_name as location,
-    asset_number,
-    manufacturer,
-    era,
-    e.exhibit_desc
-    from exhibits e
+    const query = `select 
+        e.exhibit_id,
+        e.title,
+        c.category_id,
+        c.category_name as category,
+        r.room_id,
+        r.room_name as room,
+        lt.id,
+        lt.location_type as location_type,
+        l.location_id,
+        l.location_name as location,
+        asset_number,manufacturer,era,e.exhibit_desc
+        from exhibits e
     left join category c on c.category_id=e.category_id and c.active_ind='Y'
     left join location l on l.location_id=e.location_id and l.active_ind='Y'
     left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
@@ -135,10 +138,16 @@ const createExhibit = asyncHandler(async (req, res) => {
     exhibit_desc
   } = req.body;
   
-  const era_int = era === '' ? null : parseInt(era, 10);
+
+  const c_id = category_id === '' || NaN ? null : parseInt(category_id, 10);
+  const r_id = room_id     === '' || NaN? null : parseInt(room_id, 10);
+  const lt_id = loctype_id  === '' || NaN? null : parseInt(loctype_id, 10);
+  const l_id = location_id === '' || NaN? null : parseInt(location_id, 10);
+
+  console.log(c_id,r_id,lt_id,l_id)
   try {
     const query = 'INSERT INTO exhibits (title, category_id, subcategory, room_id, loctype_id, location_id,  asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
-    const [results, fields] = await db.promise().query(query, [title, category_id, subcategory, room_id, loctype_id, location_id, asset_number, manufacturer, era_int, exhibit_desc,'Y']);
+    const [results, fields] = await db.promise().query(query, [title, c_id, subcategory, r_id, lt_id, l_id, asset_number, manufacturer, era, exhibit_desc,'Y']);
 
     if (results && results.affectedRows > 0) {
       const newExhibitId = results.insertId;
@@ -147,6 +156,7 @@ const createExhibit = asyncHandler(async (req, res) => {
       return res.status(401).json({ message: "Failed to create exhibit" });
     }
   } catch (err) {
+    console.log(err.message)
     return res.status(500).json({ message: err.message });
   }
 });

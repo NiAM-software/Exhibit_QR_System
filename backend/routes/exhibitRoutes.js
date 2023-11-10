@@ -30,12 +30,17 @@ import {
 import {getMaintenanceList,
   createCategory,
   updateCategory,
+  deleteCategory,
+  undoDeleteCategory,
   createLocation,
   updateLocation,
+  deleteLocation,
   createLocationType,
   updateLocationType,
+  deleteLocationType,
   createRoom,
-  updateRoom} from "../controllers/maintenanceController.js";
+  updateRoom,
+   deleteRoom} from "../controllers/maintenanceController.js";
 
 const router = express.Router();
 router.get("/next-asset-number", getNextAssetNumber);
@@ -43,12 +48,16 @@ router.get("/categories-and-location-types", getCategoriesAndLocationTypes);
 router.get("/maintenance", getMaintenanceList);
 router.post("/maintenance/category", createCategory);
 router.put("/maintenance/category", updateCategory);
+router.delete("/maintenance/category", protect, deleteCategory);
 router.post("/maintenance/location", createLocation);
 router.put("/maintenance/location", updateLocation);
+router.delete("/maintenance/location", protect, deleteLocation);
 router.post("/maintenance/location_type", createLocationType);
 router.put("/maintenance/location_type", updateLocationType);
+router.delete("/maintenance/location_type", protect, deleteLocationType);
 router.post("/maintenance/room", createRoom);
 router.put("/maintenance/room", updateRoom);
+router.delete("/maintenance/room", protect, deleteRoom);
 router.post("/generate-presigned-url", protect, generatePreSignedUrl);
 
 router.post(

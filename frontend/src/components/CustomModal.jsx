@@ -27,55 +27,54 @@ const CustomModal = ({ show, handleClose, data }) => {
 
   const { title, exhibit_id } = data[0];
   console.log(data[0]);
-  const exhibitUrl = `/product-page/${exhibit_id}`;
+  const exhibitUrl = `/UserScreen/${exhibit_id}`;
 
   return (
     <>
       {show && exhibit_id && (
         <Modal show={show} onHide={handleClose}>
-          
+
           <Modal.Header closeButton >
             <StyledModalTitle >{`QR Code for ${title}`}</StyledModalTitle>
           </Modal.Header>
           <Modal.Body ref={qrCodeRef}>
-          <Container>
-            <Row className="justify-content-center">
-              <Col xs={6}>
-                {/* Your centered element goes here */}
-                <div className="text-center">
+            <Container>
+              <Row className="justify-content-center">
+                <Col xs={6}>
+                  <div className="text-center">
                     <QRCode
-                  size={256}
-                  style={{ height: '200px', maxWidth: '200px', width: '200px' }}
-                  value={exhibitUrl}
-                  viewBox={`0 0 256 256`}
-                />
-                </div>
-              </Col>
-            </Row>
-          </Container>
-           
+                      size={256}
+                      style={{ height: '200px', maxWidth: '200px', width: '200px' }}
+                      value={exhibitUrl}
+                      viewBox={`0 0 256 256`}
+                    />
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+
           </Modal.Body>
           <Modal.Footer>
-          <Container>
-            <Row className="justify-content-center">
-              <Col xs={6}>
-                {/* Your centered element goes here */}
-                <div className="text-center">
-                <button className="btn-primary btn-primary-md" onClick={downloadQR}>
-                  Download
-                </button>
-                </div>
-              </Col>
-            </Row>
-          </Container>
-            
+            <Container>
+              <Row className="justify-content-center">
+                <Col xs={6}>
+                  {/* Your centered element goes here */}
+                  <div className="text-center">
+                    <button className="btn-primary btn-primary-md" onClick={downloadQR}>
+                      Download
+                    </button>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+
           </Modal.Footer>
         </Modal>
       )}
     </>
   );
 };
-const StyledModalTitle= styled(Modal.Title)`
+const StyledModalTitle = styled(Modal.Title)`
   font-size : 18px;
   font-family:'Poppins'; 
 
