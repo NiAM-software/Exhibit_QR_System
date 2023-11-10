@@ -1,12 +1,25 @@
+import dotenv from 'dotenv'
 import asyncHandler from '../middleware/asyncHandler.js';
 import generateToken from '../utils/generateToken.js';
 import { promisify } from 'util';
+import jwt, { decode } from 'jsonwebtoken';
 import  { authentiticatonDBConnection as db}from '../config/db.js'
 import bcrypt from 'bcryptjs';
 const { compare, genSalt, hash } = bcrypt;
 const genSaltAsync = promisify(genSalt);
 const hashAsync = promisify(hash);
-
+import cors from 'cors';
+import nodemailer from 'nodemailer'
+dotenv.config()
+var transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MY_EMAIL,
+    pass: process.env.MY_PASSWORD,
+  },
+});
+const keysecret = process.env.JWT_SECRET
+console.log(keysecret);
 
 // @desc    Auth user & get token
 // @route   POST /api/admin/login
@@ -96,26 +109,121 @@ const logoutUser = (req, res) => {
 };
 
 
-// @desc    forgot password
+// @desc    //send reset password link
 // @route   POST /api/admin/forgot-password
 // @access  Public
+const sendPasswordLink = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(401).json({ status: 401, message: "Enter Your Email" });
+  }
+
+  try {
+    const query = 'SELECT * FROM users WHERE email = ?';
+    const [results, fields] = await db.promise().query(query, [email]);
+
+    if (results == null || results.length < 1) {
+      res.status(401).json({ status: 401, message: "Invalid user" });
+    }
+    const userId = results[0]._id;
+    // token generate for reset password
+    const token = jwt.sign({ _id: userId }, keysecret, {
+      expiresIn: "1300s",
+    });
+
+    const expirationTime = new Date(Date.now() + 2 * 60 * 1000);
+    const updateQuery =
+      "UPDATE users SET token = ?, expiration_time = ? WHERE _id = ?";
+    const [updateResults, updateFields] = await db
+      .promise()
+      .query(updateQuery, [token, expirationTime, userId]);
+
+    if (updateResults) {
+      const mailOptions = {
+        from: process.env.MY_EMAIL,
+        to: email,
+        subject: "Sending Email For password Reset",
+        text: `This Link Valid For 2 MINUTES http://localhost:3000/reset-password/${userId}/${token}`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          res
+            .status(401)
+            .json({ status: 401, message: "Email not sent" });
+        } else {
+          console.log("Email sent", info.response);
+          res
+            .status(201)
+            .json({ status: 201, message: "Email sent successfully" });
+        }
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ status: 401, message: "Invalid user" });
+  }
+});
+
+
+//veridy token
 const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const {id,token} = req.params;
+  try {
+    const query = 'SELECT * FROM users WHERE _id = ? and token=?';
+    const [results, fields] = await db.promise().query(query, [id, token]);
+    if( results.length < 1){
+      res.status(401).json({status:401,message:"invalid user"});
+    }
+      const verifyToken = jwt.verify(token,keysecret);
 
-  res.send('forgot pw')
+      // console.log(verifyToken)
+      console.log(results);
+      if(results  && verifyToken._id){
+        console.log("HERE1");
+          res.status(201).json({status:201})
+      }else{
+        console.log("HERE2");
+          res.status(401).json({status:401,message:"user not exist"})
+      }
+
+  } catch (error) {
+    console.log(error);
+    console.log("HERE3");
+      res.status(401).json({status:401,error})
+  }
 });
 
 
-// @desc    forgot password
-// @route   POST /api/admin/forgot-password
-// @access  Public
-const resetPassword = asyncHandler(async (req, res) => {
-  const {id, token} = req.params
-  const { email } = req.body;
+//send reset password link
+const updatePassword = asyncHandler(async (req, res) => {
+  console.log("NEW PW");
+  const {id,token} = req.params;
 
-  res.send('reset pw')
+  const {password} = req.body;
+
+  try {
+    const query = 'SELECT * FROM users WHERE _id = ? and token=?';
+    const [results, fields] = await db.promise().query(query, [id, token]);
+         
+      const verifyToken = jwt.verify(token,keysecret);
+
+      if(results && verifyToken._id){
+          const newpassword = await encryptPassword(password);
+          // console.log("PW " + password);
+          // console.log("NEWPW " + newpassword);
+          const updateQuery = "UPDATE users SET password_hash= ? WHERE _id = ?"
+          const [updateResults, updateFields] = await db.promise().query(updateQuery, [ newpassword, id]);
+          res.status(201).json({status:201, message:updateResults[0]})
+
+      }else{
+          res.status(401).json({status:401,message:"user not exist"})
+      }
+  } catch (error) {
+      res.status(401).json({status:401,error})
+  }
 });
-
 
 const encryptPassword = async (password) => {
   const salt = await genSaltAsync(10);
@@ -123,11 +231,11 @@ const encryptPassword = async (password) => {
 };
 
 
-
 export {
   authUser,
   registerUser,
   logoutUser,
-  forgotPassword, 
-  resetPassword
+   forgotPassword,
+  sendPasswordLink, 
+  updatePassword
 };

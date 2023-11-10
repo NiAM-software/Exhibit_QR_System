@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 import bodyParser from 'body-parser';
 import {notFound, errorHandler} from './middleware/errorMiddleware.js'
 import cookieParser from 'cookie-parser';
-import  mysql from 'mysql2';
 import multer from 'multer'; 
 import path from 'path';
 //Routes
@@ -12,13 +11,14 @@ import exhibitRoutes from './routes/exhibitRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 var upload = multer()
 dotenv.config()
-const port = process.env.PORT || 5000
+const port = process.env.PORT 
 console.log(port);
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
 
 
 app.use('/api/admin/auth', authRoutes);

@@ -8,11 +8,11 @@ const protect = asyncHandler(async (req, res, next) => {
 
   // // Read JWT from the 'jwt' cookie
    token = req.cookies.jwt;
-  //  console.log(token);
+    console.log(req.cookies);
    if (token) {
     try {
       const decoded = jwt.verify(token, "ABC");
-
+      console.log(decoded)
       const query = 'SELECT * FROM users WHERE _id = ?'
       const [rows] =  await db.promise().query(query, [decoded.userId]);
       // console.log(rows[0]);

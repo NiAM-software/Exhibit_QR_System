@@ -26,7 +26,7 @@ import ProductScreen from './screens/productScreen.jsx';
 import RecycleBin from './screens/recylcebinScreen.jsx';
 import UserScreen from './screens/UserScreen.jsx';
 import MaintenanceScreen from './screens/Maintenancescreen.jsx';
-
+import PasswordReset from './screens/PasswordReset.jsx';
 import './assets/styles/bootstrap.custom.css';
 import './assets/styles/index.css'
 
@@ -37,6 +37,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<LoginScreen/>}/>
       <Route path="/register" element={<RegisterScreen/>}/>
       <Route path="/forgotpassword" element={<ForgotPasswordScreen/>}/>
+      <Route path="/reset-password/:id/:token" element={<PasswordReset />} />
       <Route path="/AddExhibitScreen" element={<AddExhibitScreen/>}></Route>
       <Route path="/EditExhibitScreen/:id" element={<EditExhibitScreen/>}></Route>
       <Route path="/ProductScreen/:id" element={<ProductScreen/>}></Route>
