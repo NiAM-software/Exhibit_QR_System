@@ -28,7 +28,8 @@ const CustomModal = ({ show, handleClose, data }) => {
   const { title, exhibit_id } = data[0];
   console.log(data[0]);
 
-  const exhibitUrl = `http://localhost:3000/UserScreen/${exhibit_id}`;
+  const exhibitUrl = `${window.location.origin}/UserScreen/${exhibit_id}`;
+  console.log("EXIBIT URL " + exhibitUrl);
 
   return (
     <>

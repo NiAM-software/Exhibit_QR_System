@@ -113,7 +113,7 @@ const logoutUser = (req, res) => {
 // @route   POST /api/admin/forgot-password
 // @access  Public
 const sendPasswordLink = asyncHandler(async (req, res) => {
-  const { email } = req.body;
+  const { email , baseUrl} = req.body;
 
   if (!email) {
     res.status(401).json({ status: 401, message: "Enter Your Email" });
@@ -138,13 +138,16 @@ const sendPasswordLink = asyncHandler(async (req, res) => {
     const [updateResults, updateFields] = await db
       .promise()
       .query(updateQuery, [token, expirationTime, userId]);
+     const url = `${baseUrl}/reset-password/${userId}/${token}`
+     console.log("FULL URL "+ url);
 
     if (updateResults) {
       const mailOptions = {
         from: process.env.MY_EMAIL,
         to: email,
         subject: "Sending Email For password Reset",
-        text: `This Link Valid For 2 MINUTES http://localhost:3000/reset-password/${userId}/${token}`,
+         text: `This Link Valid For 2 MINUTES.  ${baseUrl}/reset-password/${userId}/${token}`,
+  
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
