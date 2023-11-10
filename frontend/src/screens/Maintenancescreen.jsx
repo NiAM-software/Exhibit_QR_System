@@ -1,633 +1,814 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
-//import { response } from "express";
+import DataTable from "react-data-table-component";
+import { FaSearch, FaFilter } from "react-icons/fa";
+import styled from "styled-components";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Badge,
+  NavDropdown,
+  InputGroup,
+  Form,
+  Row,
+  Col,
+  Modal,
+} from "react-bootstrap";
 
-const inputContainer = {
-  display: "flex",
-  alignItems: "center",
-  margin: "10px 0",
-};
-
-const headingstyle = {
-  marginRight: "10px", // Add right margin to the label
-  paddingLeft: "20px",
-  marginTop: "40px",
-};
-
-const labelStyle = {
-  marginRight: "10px", // Add right margin to the label
-  paddingLeft: "20px",
-};
-
-const inputStyle = {
-  //flex: 2,
-  marginRight: "10px", // Add right margin to the input
+const TextInputStyle = {
   fontSize: '12px', // Adjust the font size as needed
   height: '35px', // Adjust the height as needed
-  width:'250px',
 };
 
-const buttonStyle = {
-  //flex: 1,
-  marginLeft: "10px",
-  marginTop: "8px",
-  fontSize: '12px', // Adjust the font size as needed
-  width: "120px",
-  height:'35px',
+const errorStyle = {
+  borderColor: 'red',
 };
-const TextInputStyle = {
-    fontSize: '12px', // Adjust the font size as needed
-    height: '35px', // Adjust the height as needed
-  };
 
-  const errorStyle = {
-    borderColor: 'red',
-  };
+const errorMessage = {
+  color: 'red',
+};
 
-  const errorMessage = {
-    color: 'red',
-  };
+const customStyles = {
+  rows: {
+    style: {
+      minHeight: "50px", // override the row height
+      fontSize: "12px",
+      fontFamily: "arial",
+    },
+  },
+  headCells: {
+    style: {
+      paddingLeft: "8px", // override the cell padding for head cells
+      paddingRight: "8px",
+    },
+  },
+  cells: {
+    style: {
+      paddingLeft: "8px", // override the cell padding for data cells
+      paddingRight: "8px",
+    },
+  },
+  headRow: {
+    style: {
+      minHeight: "52px",
+      borderBottomWidth: "1px",
+      borderBottomStyle: "solid",
+      fontSize: "14px",
+      fontFamily: "arial",
+    },
+    denseStyle: {
+      minHeight: "32px",
+    },
+  },
+  tableWrapper: {
+    style: {
+      fontSize: "18px",
+      fontFamily: "arial",
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Add box shadow here
+      margin: "auto",
+      marginBottom: "20px",
+    },
+  },
+};
+
 const Maintenancescreen = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [newCategory, setNewCategory] = useState("");
-  const [editCategory, setEditCategory] = useState("");
 
-  const [locations, setlocations] = useState([]);
-  const [selectedlocation, setSelectedlocation] = useState("");
-  const [newlocation, setNewlocation] = useState("");
-  const [editlocation, setEditlocation] = useState("");
+  const [formErrors, setFormErrors] = useState("");
+  const [activeTab, setActiveTab] = useState(null);
+  const [_data, setData] = useState([]); // Data for the DataTable
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [filterText, setFilterText] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [showeditModal, setShowEditModal] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [editText, setEditText] = useState("");
+  const [toggleCleared, setToggleCleared] = React.useState(false);
 
-  const [locationtypes, setlocationtypes] = useState([]);
-  const [selectedlocationtype, setSelectedlocationtype] = useState("");
-  const [newlocationtype, setNewlocationtype] = useState("");
-  const [editlocationtype, setEditlocationtype] = useState("");
-  const [formErrors, setFormErrors] = useState({});
 
-  const [rooms, setrooms] = useState([]);
-  const [selectedroom, setSelectedroom] = useState("");
-  const [newroom, setNewroom] = useState("");
-  const [editroom, setEditroom] = useState("");
+  const fetchDataForActiveTab = async () => {
+    try {
+      const fetch_response = await axios.get("/api/admin/exhibits/maintenance");
 
-  const fetchcategories=async()=>{
-    try{
-        const fetch_response= await axios.get("/api/admin/exhibits/maintenance");
-        //console.log(fetch_response.data);
-        setCategories(fetch_response.data.categories);
-        setlocations(fetch_response.data.locations);
-        setlocationtypes(fetch_response.data.locationTypes);
-        setrooms(fetch_response.data.rooms);
+      if (activeTab === "Categories") {
+        setData(fetch_response.data.categories);
+      } else if (activeTab === "Locations") {
+        setData(fetch_response.data.locations);
+      } else if (activeTab === "LocationTypes") {
+        setData(fetch_response.data.locationTypes);
+      } else if (activeTab === "Rooms") {
+        setData(fetch_response.data.rooms);
+      }
     }
-    catch(error){
-        console.error("Error while fetching maintenance fields:", error);
+    catch (error) {
+      console.error("Error while fetching maintenance fields:", error);
     }
 
   };
 
   useEffect(() => {
-    fetchcategories();
-  }, []);
+    // Fetch data for the DataTable based on the activeTab
+    fetchDataForActiveTab();
+  }, [activeTab]);
 
   const validateForm = () => {
     const errors = {};
-    if (!editCategory || !newCategory) {
-        errors.category = 'Category cannot be null';
-    }
-      if (!editlocation || !newlocation) {
-        errors.location = 'location cannot be null';
-      }
+    // if (!editCategory || !newCategory) {
+    //     errors.category = 'Category cannot be null';
+    // }
+    //   if (!editlocation || !newlocation) {
+    //     errors.location = 'location cannot be null';
+    //   }
   };
 
-  const handleAddCategory = async(e) => {
-    e.preventDefault();
-    //setFormErrors({});
-    const errors = validateForm();
-    if (newCategory) {
-        //console.log("newCategory:",newCategory);
-            const postresponse = await fetch(`/api/admin/exhibits/maintenance/category`, {
-                method: 'POST', // or 'PUT' or 'whatever is necessary'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({category:newCategory}),
-            });
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
 
-            if (postresponse.ok){
-                const postdata = await postresponse.json();
-                console.log("Category is added successfully:",postdata.message);
-                toast.success('New category is added successfully');
-                setCategories([...categories, { id: postdata.id, name: newCategory }]);
-                setNewCategory("");
-            }
-            else{
-                const data = await postresponse.json();
-                console.error('new category addition failed:', data.message);
-                if (data.message.includes('Duplicate entry')) {
-                    const errors = {};
-                    errors.category='Duplicate entries not allowed.';
-                    setFormErrors(errors);
-                    //toast.error('Category already exists.', { duration: 1000 });
-                  }
-                else{
-                toast.error('Failed to add new category');}
-                setNewCategory(""); 
-            }
+  const handleSelectedRowsChange = React.useCallback((state) => {
+    console.log(state.selectedRows);
+    setSelectedRows(state.selectedRows);
+    console.log(state.selectedRows);
+  }, []);
+
+  const columns = [
+    {
+      name: "Id",
+      selector: (row) => row.id,
+      sortable: true,
+      id: 2,
+    },
+    {
+      name: "Name",
+      selector: (row) => row.name,
+      sortable: true,
+      id: 1,
+    },
+  ];
+  const tableData = _data
+    ? _data
+      .filter(
+        (field) =>
+          field.name &&
+          field.name.toLowerCase().includes(filterText.toLowerCase())
+      )
+      .map((field) => {
+        const {
+          id,
+          name,
+        } = field;
+
+        return {
+          id,
+          name,
+        };
+      })
+    : [];
+
+  const handleModal = () => {
+    setShowModal(!showModal);
+    setInputText("");
+    setFormErrors("");
+  };
+  const handleEditModal = () => {
+    setShowEditModal(!showeditModal);
+    //setInputText("");
+    setFormErrors("");
+  };
+
+  const handleEditButtonClick = () => {
+    if (selectedRows.length === 1) {
+      const selectedRowData = selectedRows[0]; // Assuming the selectedRows is an array of objects
+      setEditText(selectedRowData.name); // Assuming 'name' is the property you want to edit
+      setShowEditModal(true);
+    } else {
+      toast.error("Multiple items can't be selected");
     }
   };
 
-  const handleEditCategory = async(e) => {
+  const handleOkClick = async (e) => {
     e.preventDefault();
-    if (selectedCategory && editCategory) {
-      // Find the category ID of the selected category
-      const selectedCategoryId = categories.find(
-        (category) => category.name === selectedCategory
-      )?.id;
-
-      if (selectedCategoryId) {
-        // Send a PUT request to update the category
-        const putresponse = await fetch(`/api/admin/exhibits/maintenance/category`, {
-            method: 'PUT', // or 'PUT' or 'whatever is necessary'
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({category:editCategory,id:selectedCategoryId}),
+    //setFormErrors("");
+    let hasErrors = false;
+    if (inputText) {
+      //const errors="";
+      console.log("formErrors", formErrors);
+      const errors = 'Duplicate entries not allowed.';
+      if (activeTab === "Categories") {
+        console.log(activeTab.toLowerCase());
+        const postresponse = await fetch(`/api/admin/exhibits/maintenance/category`, {
+          method: 'POST', // or 'PUT' or 'whatever is necessary'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ category: inputText }),
         });
 
-        if (putresponse.ok){
-            const putdata = await putresponse.json();
-            toast.success('Successfully updated category');
-            //console.log("putdata",putdata);
-            const updatedCategories = categories.map((category) =>
-              category.id === selectedCategoryId
-                ? { ...category, name:editCategory}
-                : category
-            );
-            setCategories(updatedCategories);
-            setSelectedCategory("");
-            setEditCategory("");
+        if (postresponse.ok) {
+          const postdata = await postresponse.json();
+          console.log("Category is added successfully:", postdata.message);
+          toast.success('New category is added successfully');
+          const newItem = {
+            id: postdata.id,
+            name: inputText,
+          };
+          setData([...tableData, newItem]);
+          setInputText("");
+          setFormErrors("");
         }
-        else{
-            const data = await putresponse.json();
-            console.error("Couldn't update the category", data.message);
-            toast.error('Failed to edit the category');
-            setSelectedCategory("");
-            setEditCategory("");
+        else {
+          const data = await postresponse.json();
+          console.error('new category addition failed:', data.message);
+          if (data.message.includes('Duplicate entry')) {
+            //const errors='Duplicate entries not allowed.';
+            setFormErrors(errors);
+            hasErrors = true;
+          }
+          else {
+            toast.error('Failed to add new category');
+          }
+          setInputText("");
         }
-      }
-    }
-  };
 
-  const handleAddlocation = async(e) => {
-    e.preventDefault();
-    //setFormErrors({});
-    const errors = validateForm();
-    if (newlocation) {
-        //console.log("newCategory:",newCategory);
-            const postresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
-                method: 'POST', // or 'PUT' or 'whatever is necessary'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({location:newlocation}),
-            });
 
-            if (postresponse.ok){
-                const postdata = await postresponse.json();
-                console.log("Location is added successfully:",postdata.message);
-                toast.success('New Location is added successfully');
-                setlocations([...locations, { id: postdata.id, name: newlocation }]);
-                setNewlocation("");
-            }
-            else{
-                const data = await postresponse.json();
-                console.error('new location addition failed:', data.message);
-                if (data.message.includes('Duplicate entry')) {
-                    const errors = {};
-                    errors.location='Duplicate entries not allowed.';
-                    setFormErrors(errors);
-                    //toast.error('Category already exists.', { duration: 1000 });
-                  }
-                else{
-                toast.error('Failed to add new location');}
-                setNewlocation(""); 
-            }
-    }
-  };
-
-  const handleEditlocation = async(e) => {
-    e.preventDefault();
-    if (selectedlocation && editlocation) {
-      // Find the category ID of the selected category
-      const selectedlocationId = locations.find(
-        (location) => location.name === selectedlocation
-      )?.id;
-
-      if (selectedlocationId) {
-        // Send a PUT request to update the category
-        const putresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
-            method: 'PUT', // or 'PUT' or 'whatever is necessary'
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({location:editlocation,id:selectedlocationId}),
+      } else if (activeTab === "Locations") {
+        const postresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
+          method: 'POST', // or 'PUT' or 'whatever is necessary'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ location: inputText }),
         });
 
-        if (putresponse.ok){
-            const putdata = await putresponse.json();
-            toast.success('Successfully updated location');
-            //console.log("putdata",putdata);
-            const updatedlocations = locations.map((location) =>
-            location.id === selectedlocationId
-                ? { ...location, name:editlocation}
-                : location
-            );
-            setlocations(updatedlocations);
-            setSelectedlocation("");
-            setEditlocation("");
+        if (postresponse.ok) {
+          const postdata = await postresponse.json();
+          console.log("Location is added successfully:", postdata.message);
+          toast.success('New Location is added successfully');
+          const newItem = {
+            id: postdata.id,
+            name: inputText,
+          };
+          setData([...tableData, newItem]);
+          setInputText("");
         }
-        else{
-            const data = await putresponse.json();
-            console.error("Couldn't update the location", data.message);
-            toast.error('Failed to edit the location');
-            setSelectedlocation("");
-            setEditlocation("");
+        else {
+          const data = await postresponse.json();
+          console.error('new location addition failed:', data.message);
+          if (data.message.includes('Duplicate entry')) {
+            //const errors = {};
+            //const errors='Duplicate entries not allowed.';
+            setFormErrors(errors);
+            hasErrors = true;
+            //toast.error('Category already exists.', { duration: 1000 });
+          }
+          else {
+            toast.error('Failed to add new location');
+          }
+          setInputText("");
         }
-      }
-    }
-  };
 
-  const handleAddlocationtype = async(e) => {
-    e.preventDefault();
-    //setFormErrors({});
-    const errors = validateForm();
-    if (newlocationtype) {
-        //console.log("newCategory:",newCategory);
-            const postresponse = await fetch(`/api/admin/exhibits/maintenance/location_type`, {
-                method: 'POST', // or 'PUT' or 'whatever is necessary'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({location_type:newlocationtype}),
-            });
-
-            if (postresponse.ok){
-                const postdata = await postresponse.json();
-                console.log("Locationtype is added successfully:",postdata.message);
-                toast.success('New Locationtype is added successfully');
-                setlocationtypes([...locationtypes, { id: postdata.id, name: newlocationtype }]);
-                setNewlocationtype("");
-            }
-            else{
-                const data = await postresponse.json();
-                console.error('new Locationtype addition failed:', data.message);
-                if (data.message.includes('Duplicate entry')) {
-                    const errors = {};
-                    errors.locationtype='Duplicate entries not allowed.';
-                    setFormErrors(errors);
-                    //toast.error('Category already exists.', { duration: 1000 });
-                  }
-                else{
-                toast.error('Failed to add new Locationtype');}
-                setNewlocationtype(""); 
-            }
-    }
-  };
-
-  const handleEditlocationtype = async(e) => {
-    e.preventDefault();
-    if (selectedlocationtype && editlocationtype) {
-      // Find the category ID of the selected category
-      const selectedlocationtypeId = locationtypes.find(
-        (location_type) => location_type.name === selectedlocationtype
-      )?.id;
-
-      if (selectedlocationtypeId) {
-        // Send a PUT request to update the category
-        const putresponse = await fetch(`/api/admin/exhibits/maintenance/location_type`, {
-            method: 'PUT', // or 'PUT' or 'whatever is necessary'
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({location_type:editlocationtype,id:selectedlocationtypeId}),
+      } else if (activeTab === "LocationTypes") {
+        const postresponse = await fetch(`/api/admin/exhibits/maintenance/location_type`, {
+          method: 'POST', // or 'PUT' or 'whatever is necessary'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ location_type: inputText }),
         });
 
-        if (putresponse.ok){
-            const putdata = await putresponse.json();
-            toast.success('Successfully updated locationtype');
-            //console.log("putdata",putdata);
-            const updatedlocationtypes = locationtypes.map((location_type) =>
-            location_type.id === selectedlocationtypeId
-                ? { ...location_type, name:editlocationtype}
-                : location_type
-            );
-            setlocationtypes(updatedlocationtypes);
-            setSelectedlocationtype("");
-            setEditlocationtype("");
+        if (postresponse.ok) {
+          const postdata = await postresponse.json();
+          console.log("Locationtype is added successfully:", postdata.message);
+          toast.success('New Locationtype is added successfully');
+          const newItem = {
+            id: postdata.id,
+            name: inputText,
+          };
+          setData([...tableData, newItem]);
+          setInputText("");
         }
-        else{
-            const data = await putresponse.json();
-            console.error("Couldn't update the location_type", data.message);
-            toast.error('Failed to edit the location_type');
-            setSelectedlocationtype("");
-            setEditlocationtype("");
+        else {
+          const data = await postresponse.json();
+          console.error('new Locationtype addition failed:', data.message);
+          if (data.message.includes('Duplicate entry')) {
+            // const errors = {};
+            // errors.locationtype='Duplicate entries not allowed.';
+            setFormErrors(errors);
+            hasErrors = true;
+            //toast.error('Category already exists.', { duration: 1000 });
+          }
+          else {
+            toast.error('Failed to add new Locationtype');
+          }
+          setInputText("");
         }
-      }
-    }
-  };
 
-  const handleAddroom = async(e) => {
-    e.preventDefault();
-    //setFormErrors({});
-    const errors = validateForm();
-    if (newroom) {
-        //console.log("newCategory:",newCategory);
-            const postresponse = await fetch(`/api/admin/exhibits/maintenance/room`, {
-                method: 'POST', // or 'PUT' or 'whatever is necessary'
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({room:newroom}),
-            });
-
-            if (postresponse.ok){
-                const postdata = await postresponse.json();
-                console.log("Room is added successfully:",postdata.message);
-                toast.success('New room is added successfully');
-                setrooms([...rooms, { id: postdata.id, name: newroom }]);
-                setNewroom("");
-            }
-            else{
-                const data = await postresponse.json();
-                console.error('new room addition failed:', data.message);
-                if (data.message.includes('Duplicate entry')) {
-                    const errors = {};
-                    errors.room='Duplicate entries not allowed.';
-                    setFormErrors(errors);
-                    //toast.error('Category already exists.', { duration: 1000 });
-                  }
-                else{
-                toast.error('Failed to add new room');}
-                setNewroom(""); 
-            }
-    }
-  };
-
-  const handleEditroom = async(e) => {
-    e.preventDefault();
-    if (selectedroom && editroom) {
-      // Find the category ID of the selected category
-      const selectedroomId = rooms.find(
-        (room) => room.name === selectedroom
-      )?.id;
-
-      if (selectedroomId) {
-        // Send a PUT request to update the category
-        const putresponse = await fetch(`/api/admin/exhibits/maintenance/room`, {
-            method: 'PUT', // or 'PUT' or 'whatever is necessary'
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({room:editroom,id:selectedroomId}),
+      } else if (activeTab === "Rooms") {
+        const postresponse = await fetch(`/api/admin/exhibits/maintenance/room`, {
+          method: 'POST', // or 'PUT' or 'whatever is necessary'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ room: inputText }),
         });
 
-        if (putresponse.ok){
-            const putdata = await putresponse.json();
-            toast.success('Successfully updated room');
-            //console.log("putdata",putdata);
-            const updatedrooms = rooms.map((room) =>
-            room.id === selectedroomId
-                ? { ...room, name:editroom}
-                : room
-            );
-            setrooms(updatedrooms);
-            setSelectedroom("");
-            setEditroom("");
+        if (postresponse.ok) {
+          const postdata = await postresponse.json();
+          console.log("Room is added successfully:", postdata.message);
+          toast.success('New room is added successfully');
+          const newItem = {
+            id: postdata.id,
+            name: inputText,
+          };
+          setData([...tableData, newItem]);
+          setInputText("");
         }
-        else{
-            const data = await putresponse.json();
-            console.error("Couldn't update the room", data.message);
-            toast.error('Failed to edit the room');
-            setSelectedroom("");
-            setEditroom("");
+        else {
+          const data = await postresponse.json();
+          console.error('new room addition failed:', data.message);
+          if (data.message.includes('Duplicate entry')) {
+            // const errors = {};
+            // errors.room='Duplicate entries not allowed.';
+            setFormErrors(errors);
+            hasErrors = true;
+            //toast.error('Category already exists.', { duration: 1000 });
+          }
+          else {
+            toast.error('Failed to add new room');
+          }
+          setInputText("");
         }
       }
+    }
+    if (!hasErrors) {
+      setShowModal(false);
+    }
+
+  };
+
+  const handleEditModalOkClick = async (e) => {
+    e.preventDefault();
+    setFormErrors("");
+    let errorscheck = false;
+    let errors = "";
+    if (editText) {
+      const selectedRowData = selectedRows[0];
+      const selecteddata = selectedRowData.name;
+      const selectedId = selectedRowData.id;
+      if (activeTab === "Categories") {
+        if (selecteddata && editText && (selecteddata != editText)) {
+          if (selectedId) {
+            // Send a PUT request to update the category
+            const putresponse = await fetch(`/api/admin/exhibits/maintenance/category`, {
+              method: 'PUT', // or 'PUT' or 'whatever is necessary'
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ category: editText, id: selectedId }),
+            });
+
+            if (putresponse.ok) {
+              const putdata = await putresponse.json();
+              toast.success('Successfully updated category');
+              //console.log("putdata",putdata);
+              const updatedtabledata = tableData.map((item) =>
+                item.id === selectedId
+                  ? { ...item, name: editText }
+                  : item
+              );
+              //setCategories(updatedtabledata);
+              setData(updatedtabledata);
+              console.log("updatedtabledata", updatedtabledata);
+              setSelectedRows([]);
+              setToggleCleared(!toggleCleared);
+              setEditText("");
+              setFormErrors("");
+            }
+            else {
+              const data = await putresponse.json();
+              console.error("Couldn't update the category", data.message);
+              toast.error('Failed to edit the category');
+              setSelectedRows([]);
+              setEditText("");
+            }
+          }
+        }
+        else if (selecteddata === editText) {
+          errors = 'Data already exists';
+          setFormErrors(errors);
+          errorscheck = true;
+        }
+      } else if (activeTab === "Locations") {
+        if (selecteddata && editText && (selecteddata != editText)) {
+          if (selectedId) {
+            // Send a PUT request to update the category
+            const putresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
+              method: 'PUT', // or 'PUT' or 'whatever is necessary'
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ location: editText, id: selectedId }),
+            });
+
+            if (putresponse.ok) {
+              const putdata = await putresponse.json();
+              toast.success('Successfully updated location');
+              //console.log("putdata",putdata);
+              const updatedtabledata = tableData.map((item) =>
+                item.id === selectedId
+                  ? { ...item, name: editText }
+                  : item
+              );
+              //setCategories(updatedtabledata);
+              setData(updatedtabledata);
+              console.log("updatedtabledata", updatedtabledata);
+              setSelectedRows([]);
+              setToggleCleared(!toggleCleared);
+              setEditText("");
+              setFormErrors("");
+            }
+            else {
+              const data = await putresponse.json();
+              console.error("Couldn't update the location", data.message);
+              toast.error('Failed to edit the location');
+              setSelectedRows([]);
+              setEditText("");
+            }
+          }
+        }
+        else if (selecteddata === editText) {
+          errors = 'Data already exists';
+          setFormErrors(errors);
+          errorscheck = true;
+        }
+      } else if (activeTab === "LocationTypes") {
+        if (selecteddata && editText && (selecteddata != editText)) {
+          if (selectedId) {
+            // Send a PUT request to update the category
+            const putresponse = await fetch(`/api/admin/exhibits/maintenance/location_type`, {
+              method: 'PUT', // or 'PUT' or 'whatever is necessary'
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ location_type: editText, id: selectedId }),
+            });
+
+            if (putresponse.ok) {
+              const putdata = await putresponse.json();
+              toast.success('Successfully updated location_type');
+              //console.log("putdata",putdata);
+              const updatedtabledata = tableData.map((item) =>
+                item.id === selectedId
+                  ? { ...item, name: editText }
+                  : item
+              );
+              //setCategories(updatedtabledata);
+              setData(updatedtabledata);
+              console.log("updatedtabledata", updatedtabledata);
+              setSelectedRows([]);
+              setToggleCleared(!toggleCleared);
+              setEditText("");
+              setFormErrors("");
+            }
+            else {
+              const data = await putresponse.json();
+              console.error("Couldn't update the location_type", data.message);
+              toast.error('Failed to edit the location_type');
+              setSelectedRows([]);
+              setEditText("");
+            }
+          }
+        }
+        else if (selecteddata === editText) {
+          errors = 'Data already exists';
+          setFormErrors(errors);
+          errorscheck = true;
+        }
+      } else if (activeTab === "Rooms") {
+        if (selecteddata && editText && (selecteddata != editText)) {
+          if (selectedId) {
+            // Send a PUT request to update the category
+            const putresponse = await fetch(`/api/admin/exhibits/maintenance/room`, {
+              method: 'PUT', // or 'PUT' or 'whatever is necessary'
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ room: editText, id: selectedId }),
+            });
+
+            if (putresponse.ok) {
+              const putdata = await putresponse.json();
+              toast.success('Successfully updated room');
+              //console.log("putdata",putdata);
+              const updatedtabledata = tableData.map((item) =>
+                item.id === selectedId
+                  ? { ...item, name: editText }
+                  : item
+              );
+              //setCategories(updatedtabledata);
+              setData(updatedtabledata);
+              console.log("updatedtabledata", updatedtabledata);
+              setSelectedRows([]);
+              setToggleCleared(!toggleCleared);
+              setEditText("");
+              setFormErrors("");
+            }
+            else {
+              const data = await putresponse.json();
+              console.error("Couldn't update the room", data.message);
+              toast.error('Failed to edit the room');
+              setSelectedRows([]);
+              setEditText("");
+            }
+          }
+        }
+        else if (selecteddata === editText) {
+          errors = 'Data already exists';
+          setFormErrors(errors);
+          errorscheck = true;
+        }
+      }
+    } else if (!editText) {
+      errors = 'Value cannot be null';
+      setFormErrors(errors);
+      errorscheck = true;
+    }
+    if (!errorscheck) {
+      setShowEditModal(false);
+    }
+  };
+
+  const handleDeleteButtonClick = async () => {
+    if (selectedRows.length > 0) {
+      const selectedIds = selectedRows.map((row) => row.id);
+
+      try {
+        let endpoint = "";
+        switch (activeTab) {
+          case "Categories":
+            endpoint = '/api/admin/exhibits/maintenance/category';
+            break;
+          case "Locations":
+            endpoint = '/api/admin/exhibits/maintenance/location';
+            break;
+          case "LocationTypes":
+            endpoint = '/api/admin/exhibits/maintenance/location_type';
+            break;
+          case "Rooms":
+            endpoint = '/api/admin/exhibits/maintenance/room';
+            break;
+          default:
+            // Handle default case if needed
+            break;
+        }
+
+        // const deleteResponse = await axios.delete(endpoint, {
+        //   data: { ids: selectedIds },
+        // });
+        const deleteResponse = await fetch(endpoint, {
+          method: 'DELETE', // or 'PUT' or 'whatever is necessary'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ids: selectedIds }),
+        });
+
+        if (deleteResponse.ok) {
+          // Handle successful deletion
+          toast.success('Selected items deleted successfully');
+          fetchDataForActiveTab(); // Refresh the data after deletion
+        } else {
+          const data = await deleteResponse.json();
+          console.error('Failed to delete items:', data.message);
+          toast.error('Failed to delete selected items');
+        }
+      } catch (error) {
+        console.error('Error during delete operation:', error);
+        toast.error('Error during delete operation');
+      }
+    } else {
+      toast.error('No items selected for deletion');
     }
   };
 
   return (
-    <div>
-        <div>
-        <h1 style={headingstyle}>Category</h1>
-
-        <div style={inputContainer}>
-            <label style={labelStyle}>Add New Category:</label>
-            <div>
-            <input
-            type="text"
-            placeholder="New category name"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={formErrors.category ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
-            />
-            {formErrors.category && (<div style={{ fontSize: '12px', ...errorMessage }}>{formErrors.category}</div>)}
-            </div>
-            <button onClick={handleAddCategory} style={buttonStyle}>
-            Add Category
-            </button>
-        </div>
-
-        <div style={inputContainer}>
-            <label style={labelStyle}>Edit Category:</label>
-            <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
+    <div className="exhibits-list-wrapper">
+      <h1 className="text-center">Maintenance</h1>
+      <div style={{ display: "flex" }}>
+        {/* <button className="btn-primary-sm" onClick={() => handleTabClick("Categories")}>Categories</button>
+        <span style={{ marginLeft: "10px" }}></span>
+        <button className="btn-primary-sm" onClick={() => handleTabClick("Locations")}>Locations</button>
+        <span style={{ marginLeft: "10px" }}></span>
+        <button className="btn-primary-sm" onClick={() => handleTabClick("LocationTypes")}>Location Types</button>
+        <span style={{ marginLeft: "10px" }}></span>
+        <button className="btn-primary-sm" onClick={() => handleTabClick("Rooms")}>Rooms</button> */}
+        <Nav variant="tabs">
+          <Nav.Item>
+            <Nav.Link
+              eventKey="Categories"
+              active={activeTab === "Categories"}
+              onClick={() => handleTabClick("Categories")}
             >
-            <option value="">Select a category to edit</option>
-            {categories.map((category) => (
-                <option 
-                key={category.id} 
-                value={category.name}
-                data-category-id={category.id}>
-                {category.name}
-                </option>
-            ))}
-            </select>
-            <input
-            type="text"
-            placeholder="Edited category name"
-            value={editCategory}
-            onChange={(e) => setEditCategory(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-            />
-            <button onClick={handleEditCategory} style={buttonStyle}>
-            Edit Category
-            </button>
-        </div>
+              Categories
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="Locations"
+              active={activeTab === "Locations"}
+              onClick={() => handleTabClick("Locations")}
+            >
+              Locations
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="LocationTypes"
+              active={activeTab === "LocationTypes"}
+              onClick={() => handleTabClick("LocationTypes")}
+            >
+              Location Types
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              eventKey="Rooms"
+              active={activeTab === "Rooms"}
+              onClick={() => handleTabClick("Rooms")}
+            >
+              Rooms
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+        {activeTab && (
+          <div style={{ marginLeft: "auto" }}>
+            <button className="btn-primary-sm" onClick={handleModal}>Create</button>
+            <Modal show={showModal} onHide={handleModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Create New Item</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div>
+                  <label>Enter Text:</label>
+                  <div>
+                    <input
+                      type="text"
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      style={formErrors ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                    />
+                    {formErrors && (<div style={{ fontSize: '12px', ...errorMessage }}>{formErrors}</div>)}
+                  </div>
+                </div>
+              </Modal.Body>
+              <Modal.Footer>
+                <button className="float-end"
+                  style={{
+                    //backgroundColor: "white",
+                    //color: "black",
+                    padding: "8px 16px",
+                    fontSize: "12px",
+                    width: "100px",
+                    height: "25px",
+                    marginRight: "20px",
+                    marginTop: "-1px",
+                    //marginBottom: '50px',
+                    //outline: "1px solid black",
+                  }}
 
-        </div>
+                  onClick={handleOkClick}>
+                  OK
+                </button>
+                <button
+                  className="float-end"
+                  style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    padding: "8px 16px",
+                    fontSize: "12px",
+                    width: "100px",
+                    height: "25px",
+                    marginRight: "20px",
+                    marginTop: "-1px",
+                    //marginBottom: '50px',
+                    outline: "1px solid black",
+                  }}
+                  onClick={handleModal}>
+                  Cancel
+                </button>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        )}
+      </div>
+      {activeTab && (
         <div>
-        <h1 style={headingstyle}>Locations</h1>
-        <div style={inputContainer}>
-        <label style={labelStyle}>Add New location:</label>
-        <div>
-        <input
-            type="text"
-            placeholder="New location name"
-            value={newlocation}
-            onChange={(e) => setNewlocation(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={formErrors.location ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
-        />
-        {formErrors.location && (<div style={{ fontSize: '12px', ...errorMessage }}>{formErrors.location}</div>)}
-        </div>
-        <button onClick={handleAddlocation} style={buttonStyle}>
-            Add location
-        </button>
-        </div>
+          <Navbar expand="sm" className="table-header">
+            <Container>
+              <Nav className="w-100 justify-content-between">
+                {/* <h1>{activeTab}</h1> */}
+                <InputGroup style={{ marginLeft: "auto", width: "250px" }}>
+                  <StyledFormControl
+                    placeholder="Search.."
+                    value={filterText}
+                    onChange={(e) => setFilterText(e.target.value)}
+                  />
+                  <InputGroup.Text id="basic-addon1">
+                    <FaSearch />
+                  </InputGroup.Text>
+                </InputGroup>
+              </Nav>
+            </Container>
+          </Navbar>
 
-        <div style={inputContainer}>
-        <label style={labelStyle}>Edit location:</label>
-        <select
-            value={selectedlocation}
-            onChange={(e) => setSelectedlocation(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-        >
-            <option value="">Select a location to edit</option>
-            {locations.map((location) => (
-            <option 
-            key={location.id} 
-            value={location.name}
-            data-location-id={location.id}>
-            {location.name}
-            </option>
-            ))}
-        </select>
-        <input
-            type="text"
-            placeholder="Edited location name"
-            value={editlocation}
-            onChange={(e) => setEditlocation(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-        />
-        <button onClick={handleEditlocation} style={buttonStyle}>
-            Edit location
-        </button>
-        </div>
+          <DataTable
+            columns={columns}
+            data={tableData}
+            pagination
+            customStyles={customStyles}
+            selectableRows
+            onSelectedRowsChange={handleSelectedRowsChange}
+            clearSelectedRows={toggleCleared}
+            fixedHeader
+            fixedHeaderScrollHeight="400px"
+          />
+          {selectedRows.length > 0 && (
+            <div style={{ display: "flex", marginTop: "10px" }} className="btn-menu d-flex justify-content-end">
+              <button className="btn-primary-sm" onClick={handleEditButtonClick}>Edit</button>
+              <Modal show={showeditModal} onHide={() => setShowEditModal(false)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Edit Item</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <label>Edit Text:</label>
+                  <div>
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      style={formErrors ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                    />
+                    {formErrors && (<div style={{ fontSize: '12px', ...errorMessage }}>{formErrors}</div>)}
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <button className="float-end"
+                    style={{
+                      //backgroundColor: "white",
+                      //color: "black",
+                      padding: "8px 16px",
+                      fontSize: "12px",
+                      width: "100px",
+                      height: "25px",
+                      marginRight: "20px",
+                      marginTop: "-1px",
+                      //marginBottom: '50px',
+                      //outline: "1px solid black",
+                    }}
 
-        </div>
-        <div>
-        <h1 style={headingstyle}>LocationTypes</h1>
-        <div style={inputContainer}>
-        <label style={labelStyle}>Add New locationtype:</label>
-        <div>
-        <input
-            type="text"
-            placeholder="New locationtype name"
-            value={newlocationtype}
-            onChange={(e) => setNewlocationtype(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={formErrors.locationtype ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
-        />
-        {formErrors.locationtype && (<div style={{ fontSize: '12px', ...errorMessage }}>{formErrors.locationtype}</div>)}
-        </div>
-        <button onClick={handleAddlocationtype} style={buttonStyle}>
-            Add locationtype
-        </button>
-        </div>
-
-        <div style={inputContainer}>
-        <label style={labelStyle}>Edit locationtype:</label>
-        <select
-            value={selectedlocationtype}
-            onChange={(e) => setSelectedlocationtype(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-        >
-            <option value="">Select a locationtype to edit</option>
-            {locationtypes.map((locationtype) => (
-            <option 
-            key={locationtype.id} 
-            value={locationtype.name}
-            data-locationtype-id={locationtype.id}>
-            {locationtype.name}
-            </option>
-            ))}
-        </select>
-        <input
-            type="text"
-            placeholder="Edited locationtype name"
-            value={editlocationtype}
-            onChange={(e) => setEditlocationtype(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-        />
-        <button onClick={handleEditlocationtype} style={buttonStyle}>
-            Edit locationtype
-        </button>
-        </div>
+                    onClick={handleEditModalOkClick}>
+                    OK
+                  </button>
+                  <button
+                    className="float-end"
+                    style={{
+                      backgroundColor: "white",
+                      color: "black",
+                      padding: "8px 16px",
+                      fontSize: "12px",
+                      width: "100px",
+                      height: "25px",
+                      marginRight: "20px",
+                      marginTop: "-1px",
+                      //marginBottom: '50px',
+                      outline: "1px solid black",
+                    }}
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditText(""); // Clear the edit text on modal close
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </Modal.Footer>
+              </Modal>
+              <button className="btn-primary-sm" style={{ marginLeft: "10px" }} onClick={handleDeleteButtonClick}>
+                Delete
+              </button>
+            </div>)}
 
         </div>
-        <div>
-        <h1 style={headingstyle}>Rooms</h1>
-        <div style={inputContainer}>
-        <label style={labelStyle}>Add New room:</label>
-        <div>
-        <input
-            type="text"
-            placeholder="New room name"
-            value={newroom}
-            onChange={(e) => setNewroom(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={formErrors.room ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
-        />
-        {formErrors.room && (<div style={{ fontSize: '12px', ...errorMessage }}>{formErrors.room}</div>)}
-        </div>
-        <button onClick={handleAddroom} style={buttonStyle}>
-            Add Room
-        </button>
-        </div>
+      )}
 
-        <div style={inputContainer}>
-        <label style={labelStyle}>Edit Room:</label>
-        <select
-            value={selectedroom}
-            onChange={(e) => setSelectedroom(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-        >
-            <option value="">Select a room to edit</option>
-            {rooms.map((room) => (
-            <option 
-            key={room.id} 
-            value={room.name}
-            data-room-id={room.id}>
-            {room.name}
-            </option>
-            ))}
-        </select>
-        <input
-            type="text"
-            placeholder="Edited room name"
-            value={editroom}
-            onChange={(e) => setEditroom(e.target.value)}
-            //style={{ flex: 2, marginRight: "10px" }}
-            style={inputStyle}
-        />
-        <button onClick={handleEditroom} style={buttonStyle}>
-            Edit room
-        </button>
-        </div>
-
-        </div>       
     </div>
   );
 };
 
+const StyledFormControl = styled(Form.Control)`
+  // margin: 0px 0;
+  height: 32px;
+  width: 80px;
+  font-size: 13px;
+`;
 export default Maintenancescreen;

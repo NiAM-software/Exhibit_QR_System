@@ -336,7 +336,7 @@ const HomeScreen = () => {
                     Add New Exhibit{" "}
                   </button>
                 </Link>
-                <span style={{ marginLeft: "10px" }}></span>
+                {/* <span style={{ marginLeft: "10px" }}></span>
                 <Link to="/MaintenanceScreen">
                   <button className="btn-primary-sm maintenance-btn">
                     Maintenance{" "}
@@ -347,7 +347,7 @@ const HomeScreen = () => {
                   <button className="btn-primary-sm maintenance-btn">
                     RecycleBin{" "}
                   </button>
-                </Link>
+                </Link> */}
               </Nav>
             </Navbar.Collapse>
           </Container>
