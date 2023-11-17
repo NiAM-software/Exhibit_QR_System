@@ -1,4 +1,4 @@
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import React, { useState, useContext, useEffect } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ const AddExhibitScreen = () => {
   const [rooms, setrooms] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     Axios.get('/api/admin/exhibits/next-asset-number')
@@ -100,10 +101,17 @@ const AddExhibitScreen = () => {
 
   const handleChange_category = (e) => {
     const { name, value } = e.target;
+    //console.log("name,value",name,value);
     const selectedCategoryId = categories.find(
-      (category) => category.name === value
+      (item) => item.name === value
     )?.id;
-    setFormData({ ...formData, [name]: selectedCategoryId });
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedCategoryId, // Update category_id
+      category: value, // Update category
+    }));
+
   };
 
   const handleChange_location = (e) => {
@@ -111,15 +119,24 @@ const AddExhibitScreen = () => {
     const selectedlocationId = locations.find(
       (location) => location.name === value
     )?.id;
-    setFormData({ ...formData, [name]: selectedlocationId });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedlocationId, // Update category_id
+      location: value, // Update category
+    }));
+
   };
 
   const handleChange_locationtype = (e) => {
     const { name, value } = e.target;
     const selectedlocationtypeId = locationTypes.find(
-      (locationType) => locationType.name === value
+      (location_type) => location_type.name === value
     )?.id;
-    setFormData({ ...formData, [name]: selectedlocationtypeId });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedlocationtypeId, // Update category_id
+      location_type: value, // Update category
+    }));
   };
 
   const handleChange_room = (e) => {
@@ -127,7 +144,11 @@ const AddExhibitScreen = () => {
     const selectedroomId = rooms.find(
       (room) => room.name === value
     )?.id;
-    setFormData({ ...formData, [name]: selectedroomId });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: selectedroomId, // Update category_id
+      room: value, // Update category
+    }));
   };
 
   const handleCancelClick = () => {
@@ -184,10 +205,12 @@ const AddExhibitScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    window.scrollTo(0, 0);
     setFormErrors({});
     const errors = validateForm();
 
     if (Object.keys(errors).length === 0) {
+      setIsLoading(true);
 
       try {
         // First API call to your server
@@ -250,6 +273,7 @@ const AddExhibitScreen = () => {
             });
 
             if (dbResponse.ok) {
+              setIsLoading(false);
               toast.success('Form data submitted successfully');
               setFormSubmitted(true);
               setTimeout(() => {
@@ -257,6 +281,7 @@ const AddExhibitScreen = () => {
               }, 2000);
             }
             else {
+              setIsLoading(false);
               const data = await dbResponse.json();
               console.error('Third API Call to DB Failed:', data.message);
               toast.error('Failed to insert related exhibits');
@@ -264,12 +289,14 @@ const AddExhibitScreen = () => {
           }
 
           else {
+            setIsLoading(false);
             console.error('Second API Call to S3 Failed:', s3Response.statusText);
             toast.error('Failed to upload to S3');
           }
         }
 
         else {
+          setIsLoading(false);
           const data = await response.json();
           console.error('First API Call Failed:', data.message);
 
@@ -367,6 +394,15 @@ const AddExhibitScreen = () => {
 
   return (
     <Container className="AddExhibit">
+      {isLoading && (
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+          <p>Uploading...</p>
+          {/* You can also add a loading spinner or any other loading UI here */}
+        </div>
+      )}
       <Row>
         <Col>
           <h1 style={h1Style}>Create New Exhibit</h1>

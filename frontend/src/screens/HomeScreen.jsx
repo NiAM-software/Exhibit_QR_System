@@ -277,11 +277,27 @@ const HomeScreen = () => {
 
   const tableData = data
     ? data
-      .filter(
-        (exhibit) =>
-          exhibit.title &&
-          exhibit.title.toLowerCase().includes(filterText.toLowerCase())
-      )
+      // .filter(
+      //   (exhibit) =>
+      //     exhibit.title &&
+      //     exhibit.title.toLowerCase().includes(filterText.toLowerCase())
+      // )
+      .filter((exhibit) => {
+        const valuesToSearch = [
+          exhibit.title,
+          exhibit.room,
+          exhibit.asset_number,
+          exhibit.category,
+          exhibit.subcategory,
+          exhibit.era,
+          exhibit.exhibit_id,
+        ];
+
+        return valuesToSearch
+          .map((value) => String(value)) // Convert each value to a string
+          .filter(Boolean) // Filter out undefined or falsy values
+          .some((value) => value.toLowerCase().includes(filterText.toLowerCase()));
+      })
       .map((exhibit) => {
         const {
           title,
@@ -325,9 +341,6 @@ const HomeScreen = () => {
                 <FaSearch />
               </InputGroup.Text>
             </InputGroup>
-            <InputGroup.Text className="filter-icon">
-              <FaFilter />
-            </InputGroup.Text>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ms-auto">

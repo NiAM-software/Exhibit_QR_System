@@ -127,12 +127,13 @@ const getExhibitById = asyncHandler(async (req, res) => {
 // @route   POST /api/exhibits
 // @access  Private/Admin
 const createExhibit = asyncHandler(async (req, res) => {
+  // console.log(req.body)
   const {
     title, 
     category_id, 
     subcategory, 
     room_id, 
-    loctype_id, 
+    id, 
     location_id, 
     asset_number,
     manufacturer,
@@ -143,9 +144,10 @@ const createExhibit = asyncHandler(async (req, res) => {
 
   const c_id = category_id === '' || NaN ? null : parseInt(category_id, 10);
   const r_id = room_id     === '' || NaN? null : parseInt(room_id, 10);
-  const lt_id = loctype_id  === '' || NaN? null : parseInt(loctype_id, 10);
+  const lt_id = id  === '' || NaN? null : parseInt(id, 10);
   const l_id = location_id === '' || NaN? null : parseInt(location_id, 10);
 
+  // console.log(c_id,r_id,lt_id,l_id)
   try {
     const query = 'INSERT INTO exhibits (title, category_id, subcategory, room_id, loctype_id, location_id,  asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
     const [results, fields] = await db.promise().query(query, [title, c_id, subcategory, r_id, lt_id, l_id, asset_number, manufacturer, era, exhibit_desc,'Y']);

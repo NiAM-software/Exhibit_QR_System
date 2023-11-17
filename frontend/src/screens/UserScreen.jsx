@@ -80,7 +80,6 @@ const UserScreen = () => {
 
     const responsive = {
         superLargeDesktop: {
-            // the naming can be any, depends on you.
             breakpoint: { max: 4000, min: 3000 },
             items: 5
         },
@@ -114,7 +113,7 @@ const UserScreen = () => {
         width: 'auto',
         height: 'auto',
         maxWidth: '100%',
-        maxHeight: '18vw',
+        maxHeight: '100%',
         objectFit: 'contain',
         margin: 'auto',
         display: 'block',
@@ -124,7 +123,7 @@ const UserScreen = () => {
         width: 'auto',
         height: 'auto',
         maxWidth: '100%',
-        maxHeight: '60vw',
+        maxHeight: '100%',
         objectFit: 'contain',
         margin: 'auto',
         display: 'block',
@@ -158,9 +157,9 @@ const UserScreen = () => {
         background: 'rgba(0, 0, 0, 0.3)',
         border: 'none',
         color: 'white',
-        fontSize: '1vw',
-        width: '2vw',
-        height: '2vw',
+        fontSize: '16px', // fixed font size
+        width: '30px', // fixed width
+        height: '30px',
         cursor: 'pointer',
         transform: 'translateY(-50%)',
     };
@@ -243,7 +242,7 @@ const UserScreen = () => {
             console.log("relatedExhibitsPathsArray", relatedExhibitsPathsArray)
 
             const generateRelatedExhibitsPresignedUrlResponse = await fetch(
-                "/api/admin/exhibits/generate-presigned-url",
+                "/api/user/generate-presigned-url",
                 {
                     method: "POST",
                     headers: {

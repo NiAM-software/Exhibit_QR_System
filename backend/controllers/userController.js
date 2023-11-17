@@ -78,7 +78,21 @@ const getRelatedExhibits = asyncHandler(async (req, res) => {
 });
 
 
+const generatePreSignedUrl = asyncHandler(async (req, res) => {
+  try {
+    const objectKeys = req.body // Parse the request body properly
+    console.log(objectKeys);
+    const presignedURLS = await getPresignedUrlsUtils(objectKeys);
+    console.log(presignedURLS)
+    res.status(200).json({data:presignedURLS});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 export {
   getExhibitForUser,
-  getRelatedExhibits
+  getRelatedExhibits,
+  generatePreSignedUrl
 };

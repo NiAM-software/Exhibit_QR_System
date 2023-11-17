@@ -124,7 +124,7 @@ const ProductScreen = () => {
     width: 'auto',
     height: 'auto',
     maxWidth: '100%',
-    maxHeight: '18vw',
+    maxHeight: '100%',
     objectFit: 'contain',
     margin: 'auto',
     display: 'block',
@@ -134,7 +134,7 @@ const ProductScreen = () => {
     width: 'auto',
     height: 'auto',
     maxWidth: '100%',
-    maxHeight: '60vw',
+    maxHeight: '100%',
     objectFit: 'contain',
     margin: 'auto',
     display: 'block',
@@ -173,9 +173,12 @@ const ProductScreen = () => {
     background: 'rgba(0, 0, 0, 0.3)',
     border: 'none',
     color: 'white',
-    fontSize: '1vw',
-    width: '2vw',
-    height: '2vw',
+    fontSize: '16px', // fixed font size
+    width: '30px', // fixed width
+    height: '30px',
+    // fontSize: '1vw',
+    // width: '2vw',
+    // height: '2vw',
     cursor: 'pointer',
     transform: 'translateY(-50%)',
   };
@@ -365,6 +368,7 @@ const ProductScreen = () => {
     window.scrollTo(0, 0);
     navigate(`/ProductScreen/${exhibitId}`);
   };
+
 
 
   const videoRef = useRef(null);

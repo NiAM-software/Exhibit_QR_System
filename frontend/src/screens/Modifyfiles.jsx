@@ -5,6 +5,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined } from '@ant-design/icons';
 import { EyeOutlined } from '@ant-design/icons';
+import dummyImageUrl from '../assets/dummy-image-square.jpg';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -26,12 +27,13 @@ const Modifyfiles = ({
   nCancel,
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
+  const [previewFile, setPreviewFile] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [fileList, setFileList] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const [initialFileList, setInitialFileList] = useState([]);
   const [newlyAddedFiles, setNewlyAddedFiles] = useState([]);
+  const [previewFileType, setPreviewFileType] = useState('');
 
   const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
 
@@ -85,6 +87,7 @@ const Modifyfiles = ({
         })
         .filter(Boolean);
 
+      console.log('newFileList', newFileList);
       //console.log(newFileList);
       setFileList(newFileList);
       setInitialFileList(newFileList);
@@ -125,18 +128,35 @@ const Modifyfiles = ({
   };
 
   const handlePreview = async (file) => {
-    console.log("PRECIEW");
-    console.log(file);
+    const isImage = typeof file.type === 'string' && file.type.startsWith('image/');
+    const isVideo = /\.(mp4|webm)(\?|$)/i.test(file.name);
+
+
     if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-      console.log("KKK");
+      if (isImage) {
+        // For image files
+        file.preview = await getBase64(file.originFileObj);
+      } else if (isVideo) {
+        // For video files, create an object URL for preview
+        file.preview = URL.createObjectURL(file.originFileObj);
+      }
     }
-    setPreviewImage(file.url || file.preview);
+    console.log('FILE', file);
+    setPreviewFile(file.url || file.preview);
+    setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
+    setPreviewFileType(isVideo ? 'video' : 'image');
     setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
-    );
+
   };
+
+  useEffect(() => {
+    // Clean up function to revoke object URLs
+    return () => {
+      if (previewFileType === 'video') {
+        URL.revokeObjectURL(previewFile);
+      }
+    };
+  }, [previewFile, previewFileType]);
 
   const renderItem = (originNode, file, fileList, actions) => {
     const thumbnailStyle = {
@@ -154,7 +174,15 @@ const Modifyfiles = ({
     };
 
     console.log('fil', file);
-    const isVideo = /\.(mp4|webm)(\?|$)/i.test(file.url);
+    const isLocalFile = file.originFileObj && !file.url;
+    const isVideo = /\.(mp4|webm)(\?|$)/i.test(file.name);
+
+    // Create a URL for preview if the file is local
+    if (isLocalFile && !file.preview) {
+      file.preview = URL.createObjectURL(file.originFileObj);
+    }
+    const filePreviewUrl = file.url || file.preview;
+
     return (
       <div className="ant-upload-list-item">
         <div style={thumbnailStyle}>
@@ -162,11 +190,11 @@ const Modifyfiles = ({
             <video
               style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
               controls
-              src={file.url}
+              src={filePreviewUrl}
             />
           ) : (
             <img
-              src={file.url}
+              src={filePreviewUrl}
               alt={file.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
@@ -195,6 +223,36 @@ const Modifyfiles = ({
     );
   };
 
+  const [unsupportedFiles, setUnsupportedFiles] = useState([]);
+
+  const beforeUpload = (file) => {
+    const allowedFormats = [
+      'image/jpeg',
+      'image/png',
+      'video/mp4',
+      'video/quicktime',
+    ];
+    const isSupported = allowedFormats.includes(file.type);
+
+    if (!isSupported) {
+      // Display error message
+      message.error(`Unsupported file format: ${file.name}`);
+      setUnsupportedFiles([...unsupportedFiles, file.type]); // Add the unsupported format to the list
+      return false; // Return false to prevent the file from being uploaded
+    }
+
+    // Check if all selected files are supported and reset unsupportedFiles state if needed
+    const allFilesSupported = fileList.every((item) =>
+      allowedFormats.includes(item.type)
+    );
+
+    if (!allFilesSupported) {
+      setUnsupportedFiles([]); // Reset unsupportedFiles state
+    }
+
+    return true; // Allow the file to be uploaded if it's of an allowed format
+  };
+
   const handleChange = ({ fileList: newFileList, file }) => {
     const allowedFormats = [
       "image/jpeg",
@@ -210,20 +268,12 @@ const Modifyfiles = ({
     //   message.error("Duplicate files are not allowed");
     //   return;
     // }
+
+
     const filteredFileList = newFileList.filter((item) => {
       if (item.status === "done" || allowedFormats.includes(item.type)) {
         return true;
-      } else if (!allowedFormats.includes(item.type)) {
-        message.error(
-          "You can only upload image and video files (JPEG, PNG, MP4, QuickTime)!"
-        );
-        //return false;
-      } else if (item.status === "error") {
-        message.error(`Error uploading ${item.name}: ${item.response}`);
-        //return false;
       }
-      //return true; // Exclude files with disallowed formats or errors
-      //filterconditions(item);
     });
 
     if (file.status === "removed") {
@@ -317,7 +367,7 @@ const Modifyfiles = ({
     <div style={{ position: 'relative' }}>
       <div style={{ paddingTop: '8px', paddingBottom: '4px' }}>
         <Upload
-          beforeUpload={() => false}
+          beforeUpload={beforeUpload}
           listType="picture-card"
           fileList={fileList}
           onPreview={handlePreview}
@@ -329,13 +379,13 @@ const Modifyfiles = ({
         </Upload>
       </div>
       <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
-        {isVideoLink(previewImage) ? (
+        {previewFileType === 'video' ? (
           <video style={{ width: '100%' }} controls>
-            <source src={previewImage} type="video/mp4" />
+            <source src={previewFile} type="video/mp4" />
             Your browser does not support HTML video.
           </video>
         ) : (
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          <img alt="example" style={{ width: '100%' }} src={previewFile} />
         )}
       </Modal>
     </div>

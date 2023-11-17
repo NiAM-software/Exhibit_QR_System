@@ -40,19 +40,44 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     setPreviewOpen(true);
   };
 
+  const [unsupportedFiles, setUnsupportedFiles] = useState([]);
+
+  const beforeUpload = (file) => {
+    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime']; // Add more formats as needed
+    const isSupported = allowedFormats.includes(file.type);
+
+    if (!isSupported) {
+      // Display error message
+      message.error(`Unsupported file format: ${file.name}`);
+      setUnsupportedFiles([...unsupportedFiles, file.type]); // Add the unsupported format to the list
+      return false; // Return false to prevent the file from being uploaded
+    }
+
+    // Check if all selected files are supported and reset unsupportedFiles state if needed
+    const allFilesSupported = fileList.every((item) => allowedFormats.includes(item.type));
+
+    if (!allFilesSupported) {
+      setUnsupportedFiles([]); // Reset unsupportedFiles state
+    }
+
+    return true; // Allow the file to be uploaded if it's of an allowed format
+  };
+
 
 
   const handleChange = ({ fileList: newFileList, file }) => {
-
     const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime']; // Add more formats as needed
-    if (!allowedFormats.includes(file.type)) {
-      message.error('You can only upload image and video files (JPEG, PNG, MP4, QuickTime)!');
-      return;
-    }
 
-    setFileList(newFileList);
-    setFiles(newFileList);
+    // Filter out unsupported files from the newFileList
+    const filteredFileList = newFileList.filter((item) => {
+      if (item.status === 'error' || allowedFormats.includes(item.type)) {
+        return true; // Keep the file in the list if it's either an allowed format or has an error status
+      }
+      return false; // Exclude unsupported files from the list
+    });
 
+    setFileList(filteredFileList);
+    setFiles(filteredFileList);
   };
 
   const handleOKbutton = () => {
@@ -154,7 +179,7 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
         <p>Attachments</p>
 
         <Upload
-          beforeUpload={() => false}
+          beforeUpload={beforeUpload}
           listType="picture-card"
           fileList={fileList}
           onPreview={handlePreview}

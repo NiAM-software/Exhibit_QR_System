@@ -136,7 +136,7 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                     // Handle the error when the image is not found (status code 404)
                     console.error('Error fetching exhibit photo:', error);
                     setSelectedExhibitName(query);
-                    setExhibitPhotoURL('https://picsum.photos/200');
+                    setExhibitPhotoURL(dummyImageUrl);
                     // Set a default dummy image in case of error
                 }
             }
@@ -144,25 +144,36 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
             console.error('Error fetching exhibit:', error);
         }
     };
+    // const isDuplicateExhibit = () => {
+    //     // Check if the selected exhibit is already in the linkList
+    //     return linkList.some((link) => link.name === selectedExhibitName);
+    //   };
 
     const handlePlusIconClick = (link) => {
         if (selectedExhibitName === searchQuery.trim() && exhibitId !== null) {
-            console.log(link);
+            //console.log(link);
             console.log("+is clicked");
 
-            // Add the selected link to the linkList
-            const newLink = {
-                uid: `${exhibitId}`,
-                name: selectedExhibitName,
-                status: 'done',
-                url: exhibitPhotoURL,
-            };
+            const isDuplicateExhibit = newlyaddedlinks.some((item) => item.name === selectedExhibitName) ||
+                linkList.some((item) => item.name === selectedExhibitName);
 
-            console.log(newLink);
-            setLinkList([...linkList, newLink]);
-            setnewlyaddedlinks([...newlyaddedlinks, newLink]);
-            setLinks([...newlyaddedlinks, newLink]);
-            setSearchQuery("");
+            if (!isDuplicateExhibit) {
+                // Add the selected link to the linkList
+                const newLink = {
+                    uid: `${exhibitId}`,
+                    name: selectedExhibitName,
+                    status: 'done',
+                    url: exhibitPhotoURL,
+                };
+
+                console.log(newLink);
+                setLinkList([...linkList, newLink]);
+                setnewlyaddedlinks([...newlyaddedlinks, newLink]);
+                setLinks([...newlyaddedlinks, newLink]);
+                setSearchQuery("");
+            } else {
+                message.error("Exhibit is already in the list.");
+            }
         }
     };
 

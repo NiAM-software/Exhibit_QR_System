@@ -1,4 +1,4 @@
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useHistory } from "react-router-dom";
 import Axios from "axios";
@@ -22,6 +22,8 @@ const EditExhibitScreen = () => {
   const [locationTypes, setLocationTypes] = useState([]);
   const [locations, setlocations] = useState([]);
   const [rooms, setrooms] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isformLoading, setIsformLoading] = useState(false);
 
   const fetchCategoriesAndLocationTypes = async () => {
     try {
@@ -106,35 +108,47 @@ const EditExhibitScreen = () => {
   });
 
   useEffect(() => {
-    Axios.get(`/api/admin/exhibits/${id}`)
-      .then((response) => {
-        console.log("response.data", response.data);
-        setFormData(response.data); // Store data in state for prepopulation
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    const fetchData = async () => {
+      try {
+        setIsformLoading(true);
 
-    fetchCategoriesAndLocationTypes();
-    Axios.get("/api/admin/exhibits/next-asset-number")
-      .then((newresponse) => {
-        const maxAssetNumber = newresponse.data.asset_number;
-        const nextAssetNumber = maxAssetNumber + 1;
+        // First API call
+        const exhibitResponse = await Axios.get(`/api/admin/exhibits/${id}`);
+        console.log("response.data", exhibitResponse.data);
+        setFormData(exhibitResponse.data); // Store data in state for prepopulation
+        console.log("formdata", SubmitData);
 
-        // Update the formData with the nextAssetNumber only if response.data.asset_number is null
-        if (SubmitData.asset_number === null || SubmitData.asset_number === "") {
-          setFormData({
-            ...SubmitData,
+        fetchCategoriesAndLocationTypes(); // Assuming this is a synchronous function
+
+        if (!exhibitResponse.data.asset_number) {
+          // Second API call based on the data from the first API call
+          const response2 = await fetch(`/api/admin/exhibits/next-asset-number`);
+          const data2 = await response2.json();
+
+          const maxAssetNumber = data2.asset_number;
+          const nextAssetNumber = maxAssetNumber + 1;
+
+          // Update the formData with the nextAssetNumber only if asset_number is null
+          setFormData((prevData) => ({
+            ...prevData,
             asset_number: nextAssetNumber.toString(),
-          });
+          }));
+
+          // Continue with any other logic based on the data from the second API call
         }
 
-      })
-      .catch((error) => {
-        console.error("Error fetching next asset number:", error);
-        toast.error("Error fetching next asset number");
-      });
+        setIsformLoading(false);
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsformLoading(false);
+      }
+    };
+
+    fetchData(); // Invoke the function
+
   }, [id]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -232,12 +246,13 @@ const EditExhibitScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    window.scrollTo(0, 0);
     setFormErrors({});
     const errors = validateForm();
     console.log("formData.title", SubmitData.category_id);
 
     if (Object.keys(errors).length === 0) {
-
+      setIsLoading(true);
       try {
 
         console.log("formData", SubmitData);
@@ -303,6 +318,7 @@ const EditExhibitScreen = () => {
             );
             if (modifylinkres.ok) {
               //console.log('Thrid API Call to S3 Successful:', parsedLinkList);
+              setIsLoading(false);
               toast.success('Form data submitted successfully');
               setFormSubmitted(true);
               setTimeout(() => {
@@ -311,6 +327,7 @@ const EditExhibitScreen = () => {
             }
             else {
               const data = await modifylinkres.json();
+              setIsLoading(false);
               console.error('Third API Call to DB Failed:', data.message);
               toast.error('Failed to insert related exhibits');
             }
@@ -318,12 +335,14 @@ const EditExhibitScreen = () => {
           }
           else {
             const data = await res.json();
+            setIsLoading(false);
             console.error('Call to s3 failed :', data.message);
             toast.error('Failed to update files');
           }
         }
         else {
           const data = await response.json();
+          setIsLoading(false);
           console.error('First API Call Failed:', data.message);
 
           if (data.message.includes('Duplicate entry')) {
@@ -415,8 +434,24 @@ const EditExhibitScreen = () => {
     color: "red",
   };
 
+  if (isformLoading) {
+    return (
+      <div>
+        <h1>Loading..</h1>
+      </div>); // Render a loading indicator
+  }
+
   return (
     <Container className="EditExhibit">
+      {isLoading && (
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+          <p>Uploading...</p>
+          {/* You can also add a loading spinner or any other loading UI here */}
+        </div>
+      )}
       <Row>
         <Col>
           <h1 style={h1Style}>Edit Exhibit</h1>
@@ -687,6 +722,7 @@ const EditExhibitScreen = () => {
           </Col> */}
         <Row>
           <Col md={12}>
+            <p>Attachments</p>
             <Modifyfiles
               files={fileList}
               setFiles={handleupdatedfiles}
@@ -702,6 +738,7 @@ const EditExhibitScreen = () => {
         </Row>
         <Row>
           <Col md={12}>
+            <p>Related Exhibits </p>
             <Modifylinks
               links={linkList}
               setLinks={handleupdatedlinks}
@@ -747,6 +784,7 @@ const EditExhibitScreen = () => {
       </Form>
 
       <Toaster />
+
     </Container>
   );
 };

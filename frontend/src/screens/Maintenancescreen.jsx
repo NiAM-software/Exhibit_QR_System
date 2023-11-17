@@ -76,7 +76,7 @@ const customStyles = {
 const Maintenancescreen = () => {
 
   const [formErrors, setFormErrors] = useState("");
-  const [activeTab, setActiveTab] = useState(null);
+  const [activeTab, setActiveTab] = useState("Categories");
   const [_data, setData] = useState([]); // Data for the DataTable
   const [selectedRows, setSelectedRows] = useState([]);
   const [filterText, setFilterText] = useState("");

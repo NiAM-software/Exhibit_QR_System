@@ -38,6 +38,8 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
 
   const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
 
+
+
   useEffect(() => {
     const fetchSearchResults = async () => {
       try {
@@ -91,22 +93,31 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     }
   };
 
+  const isDuplicateExhibit = () => {
+    // Check if the selected exhibit is already in the linkList
+    return linkList.some((link) => link.name === selectedExhibitName);
+  };
+
   const handlePlusIconClick = (link) => {
     if (selectedExhibitName === searchQuery.trim() && exhibitId !== null) {
       console.log(link);
       console.log("+is clicked");
 
-      const newLink = {
-        uid: `${exhibitId}`,
-        name: selectedExhibitName,
-        status: "done",
-        url: exhibitPhotoURL,
-      };
+      if (!isDuplicateExhibit()) {
+        const newLink = {
+          uid: `${exhibitId}`,
+          name: selectedExhibitName,
+          status: "done",
+          url: exhibitPhotoURL,
+        };
 
-      console.log(newLink);
-      setLinkList([...linkList, newLink]);
-      setLinks([...linkList, newLink]);
-      setSearchQuery("");
+        console.log(newLink);
+        setLinkList([...linkList, newLink]);
+        setLinks([...linkList, newLink]);
+        setSearchQuery("");
+      } else {
+        message.error("Exhibit is already in the list.");
+      }
     }
   };
 
