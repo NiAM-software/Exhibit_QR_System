@@ -208,6 +208,8 @@ const UserScreen = () => {
     const fetchExhibitData = async (Id) => {
         await axios.get(`/api/user/exhibit/${Id}`)
             .then(response => {
+
+                setExhibitData(response.data);
                 const exhibitMediaUrls = response.data.attachmentURLS.map((item) => item.url).filter(Boolean);
                 console.log("MediaUrls", exhibitMediaUrls)
 
@@ -215,7 +217,8 @@ const UserScreen = () => {
                     throw new Error('No image URLs found.'); // Throw an error
                 }
                 setMediaUrls(exhibitMediaUrls);
-                setExhibitData(response.data); // Store data in state for prepopulation
+                console.log('Hi', response.data);
+                // Store data in state for prepopulation
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
