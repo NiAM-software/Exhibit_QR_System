@@ -208,7 +208,7 @@ const UserScreen = () => {
     const fetchExhibitData = async (Id) => {
         await axios.get(`/api/user/exhibit/${Id}`)
             .then(response => {
-
+                console.log('Hi', response.data);
                 setExhibitData(response.data);
                 const exhibitMediaUrls = response.data.attachmentURLS.map((item) => item.url).filter(Boolean);
                 console.log("MediaUrls", exhibitMediaUrls)

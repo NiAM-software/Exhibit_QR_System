@@ -13,20 +13,19 @@ dotenv.config();
 // @access  Public
 const getExhibitForUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log('everything will be fine')
+  // console.log('Hi, everything will be fine')
 
   try {
     const query = "SELECT title, exhibit_desc FROM exhibits WHERE exhibit_id=? and active_ind='Y'";
     const [results, fields] = await db.promise().query(query, [id]);
-    // console.log('desc:',results[0].exhibit_desc)
+    // console.log('desc:',results[0])
     if (results && results.length > 0) {
       const attachments = await getAttachmentsUtils(id);
-      // console.log(attachments)
-      const objectKeys = attachments.data.map((attachment) => ({
+
+      const objectKeys = attachments.data ? attachments.data.map((attachment) => ({
         folderName: attachment.file_location,
         fileName: attachment.file_name,
-      }));
-      // console.log(objectKeys)
+      })) : [];
       const presignedURLS = await getPresignedUrlsUtils(objectKeys); 
       res.status(200).json({
         title: results[0].title,
