@@ -18,7 +18,8 @@ import {
   getNextAssetNumber,
   getCategoriesAndLocationTypes,
   getRelatedExhibits,
-  modifiedRelatedExhibits
+  modifiedRelatedExhibits,
+  exportDataAsCSV
 } from "../controllers/exhibitController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 import { deleteObjectsFromS3 } from "../utils/uploadFile.js";
@@ -43,6 +44,7 @@ import {getMaintenanceList,
    deleteRoom} from "../controllers/maintenanceController.js";
 
 const router = express.Router();
+router.get("/export", exportDataAsCSV);
 router.get("/next-asset-number", getNextAssetNumber);
 router.get("/categories-and-location-types", getCategoriesAndLocationTypes);
 router.get("/maintenance", getMaintenanceList);

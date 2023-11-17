@@ -16,6 +16,10 @@ import {
   deleteRelatedExhibitsUtils
 } from '../utils/attachmentUtils.js';
 
+import fastcsv from "fast-csv";
+import fs from "fs";
+
+
 // @desc    Fetch all exhibits
 // @route   GET /api/exhibits
 // @access  Private/Admin
@@ -506,6 +510,56 @@ const getCategoriesAndLocationTypes = async (req, res) => {
 };
 
 
+const exportDataAsCSV = asyncHandler(async (req, res) => {
+  const keyword = req.query.keyword
+    ? `WHERE e.title LIKE '%${req.query.keyword}%' AND e.active_ind='Y'`
+    : 'WHERE e.active_ind="Y"';
+
+  const exhibitsQuery = `
+    SELECT e.exhibit_id, e.title,
+      c.category_name AS category,
+      e.subcategory,
+      r.room_name AS room,
+      lt.location_type AS location_type,
+      l.location_name AS location,
+      asset_number, manufacturer, era, e.exhibit_desc
+    FROM exhibits e
+      LEFT JOIN category c ON c.category_id = e.category_id AND c.active_ind='Y'
+      LEFT JOIN location l ON l.location_id = e.location_id AND l.active_ind='Y'
+      LEFT JOIN location_type lt ON lt.id = e.loctype_id AND lt.active_ind='Y'
+      LEFT JOIN room r ON r.room_id = e.room_id AND r.active_ind='Y' ${keyword}`;
+
+  try {
+    const [exhibitsResults] = await db.promise().query(exhibitsQuery);
+    const exhibits = exhibitsResults;
+    const jsonData = JSON.parse(JSON.stringify(exhibits));
+
+    // CSV
+    const ws = fs.createWriteStream('exhibits.csv');
+    fastcsv
+      .write(jsonData, { headers: true })
+      .on('data', function (data) {
+        console.log('Writing data:', data);
+      })
+      .on('end', function () {
+        console.log('Write to exhibits.csv successfully!');
+        // Set headers for CSV download
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');
+        // Pipe the CSV file to the response stream
+        fs.createReadStream('exhibits.csv').pipe(res);
+
+        // Close the write stream
+        ws.close();
+      })
+      .pipe(ws);
+  } catch (err) {
+    console.error('Error fetching exhibits:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 
 export {
    getExhibits,
@@ -525,5 +579,5 @@ export {
    getNextAssetNumber,
    getCategoriesAndLocationTypes, 
    getRelatedExhibits, 
-
+   exportDataAsCSV
 };

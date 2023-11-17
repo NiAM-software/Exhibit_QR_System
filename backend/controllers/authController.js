@@ -122,6 +122,7 @@ const sendPasswordLink = asyncHandler(async (req, res) => {
   try {
     const query = 'SELECT * FROM users WHERE email = ?';
     const [results, fields] = await db.promise().query(query, [email]);
+    console.log(results)
 
     if (results == null || results.length < 1) {
       res.status(401).json({ status: 401, message: "Invalid user" });

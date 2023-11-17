@@ -202,6 +202,30 @@ const HomeScreen = () => {
     }
   };
 
+  const generateCSV = async () => {
+    console.log("Generate CSV button clicked");
+
+    try {
+      const response = await fetch("/api/admin/exhibits/export", {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "exhibits.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error exporting CSV:", error.message);
+    }
+  };
+
   const showPreview = async () => {
     const selectedRowId = selectedRows.map(row => row.exhibit_id);
     console.log('selectedRowId:', selectedRowId)
@@ -349,6 +373,14 @@ const HomeScreen = () => {
                     Add New Exhibit{" "}
                   </button>
                 </Link>
+                <button
+                  className="btn-primary-sm"
+                  onClick={generateCSV}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Generate CSV
+                </button>
+
                 {/* <span style={{ marginLeft: "10px" }}></span>
                 <Link to="/MaintenanceScreen">
                   <button className="btn-primary-sm maintenance-btn">

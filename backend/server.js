@@ -9,6 +9,8 @@ import path from 'path';
 import authRoutes from './routes/authRoutes.js'
 import exhibitRoutes from './routes/exhibitRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import cors from 'cors';
+
 var upload = multer()
 dotenv.config()
 const port = process.env.PORT 
@@ -16,6 +18,7 @@ console.log("PORT" + port)
 console.log(port);
 const app = express();
 
+app.use(cors({ origin : '*'}))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
