@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8000",
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
@@ -32,6 +32,7 @@
     "react-table-component": "^0.9.8",
     "react-toastify": "^9.1.3",
     "styled-components": "^6.0.8",
+    "swiper": "^11.0.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

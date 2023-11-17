@@ -1,38 +1,55 @@
-import  mysql from 'mysql2';
-import dotenv from 'dotenv'
-dotenv.config()
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
 
-const authentiticatonDBConnection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: "authentication"
-});
+dotenv.config();
 
-const iventoryDBConnection = mysql.createConnection({
+// Create connection pools
+const authentiticatonDBConnection = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: "museum_inventory"
+  database: "authentication",
+  waitForConnections: true,
+  connectionLimit: 10, 
+  queueLimit: 0
 });
-  
-authentiticatonDBConnection.connect((err) => {
-  if (!err) {
-    console.log("auth db Connected");
+
+const iventoryDBConnection = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: "museum_inventory",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// Use the connection pools
+authentiticatonDBConnection.getConnection((err, connection) => {
+  if (err) {
+    console.error("Authentication DB Connection Failed", err);
   } else {
-    console.log("auth db Connection Failed");
+    console.log("Authentication DB Connected");
+    // Use the connection for your queries
+
+    // Don't forget to release the connection when done
+    connection.release();
   }
 });
 
-iventoryDBConnection.connect((err) => {
-  if (!err) {
-    console.log("inventory Connected");
+iventoryDBConnection.getConnection((err, connection) => {
+  if (err) {
+    console.error("Inventory DB Connection Failed", err);
   } else {
-    console.log("inventory Connection Failed");
+    console.log("Inventory DB Connected");
+    // Use the connection for your queries
+
+    // Don't forget to release the connection when done
+    connection.release();
   }
 });
-  
-export{
-  authentiticatonDBConnection, 
-  iventoryDBConnection
-}
+
+export {
+  iventoryDBConnection,
+  authentiticatonDBConnection
+};

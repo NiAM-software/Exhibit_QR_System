@@ -1,12 +1,8 @@
 import {Container} from 'react-bootstrap'
 import React from 'react'
 import Header from './components/Header'
-import Footer from './components/Footer'
-import HomeScreen from './screens/HomeScreen'
 import toast, { Toaster } from "react-hot-toast";
-import styled from 'styled-components';
 import {Outlet,useLocation} from 'react-router-dom'
-// import necessary dependencies
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 // create a new QueryClient

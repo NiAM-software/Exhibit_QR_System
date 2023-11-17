@@ -12,6 +12,7 @@ import userRoutes from './routes/userRoutes.js'
 var upload = multer()
 dotenv.config()
 const port = process.env.PORT 
+console.log("PORT" + port)
 console.log(port);
 const app = express();
 
