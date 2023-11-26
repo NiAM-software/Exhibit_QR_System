@@ -18,15 +18,9 @@ import LoginScreen from './screens/LoginScreen.jsx';
 import RegisterScreen from './screens/RegisterScreen.jsx';
 import AdminRoute from './components/AdminRoute.jsx'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
-import AddExhibitScreen  from './screens/AddExhibitsScreen.jsx';
-import EditExhibitScreen from './screens/EditExhibitsScreen.jsx';
-import ProductScreen from './screens/productScreen.jsx';
-import RecycleBin from './screens/recylcebinScreen.jsx';
-import UserScreen from './screens/UserScreen.jsx';
-import MaintenanceScreen from './screens/Maintenancescreen.jsx';
 import PasswordReset from './screens/PasswordReset.jsx';
-import './assets/styles/bootstrap.custom.css';
-import './assets/styles/index.css'
+// import './assets/styles/bootstrap.custom.css';
+// import './assets/styles/index.css'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -39,14 +33,9 @@ const router = createBrowserRouter(
       {/* admin routes */}
       <Route path='' element={<AdminRoute />}>
       <Route index={true} path="/" element={<HomeScreen/>}/>
-        <Route path="/AddExhibitScreen" element={<AddExhibitScreen/>}></Route>
-        <Route path="/EditExhibitScreen/:id" element={<EditExhibitScreen/>}></Route>
-        <Route path="/ProductScreen/:id" element={<ProductScreen/>}></Route>
-        <Route path="/RecycleBin" element={<RecycleBin/>}></Route>
-        <Route path="/MaintenanceScreen" element={<MaintenanceScreen/>}></Route>
       </Route>
 
-      <Route path="/UserScreen/:id" element={<UserScreen/>}></Route>
+      {/* <Route path="/UserScreen/:id" element={<UserScreen/>}></Route> */}
     </Route>
   )
 )

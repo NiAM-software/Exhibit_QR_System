@@ -7,28 +7,11 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 
 // create a new QueryClient
 const queryClient = new QueryClient();
-const excludeHeaderRoutes = ['/UserScreen'];
 
 const App = () => {
-  const location = useLocation();
-  const currentPath = location.pathname;
+ 
 
-  const shouldExcludeHeader = excludeHeaderRoutes.some(route => {
-    return currentPath.startsWith(route);
-  });
-
-  if (shouldExcludeHeader) {
-    return (
-      <>
-        <Toaster />
-        <main className='py-1'>
-          <QueryClientProvider client={queryClient}>
-            <Outlet />
-          </QueryClientProvider>
-        </main>
-      </>
-    );
-  } else{
+  
   return (
    <>
        <Toaster/>
@@ -41,7 +24,6 @@ const App = () => {
      
    </>
   )
-}
 };
 // const CustomToast = styled(ToastContainer)`
 //  height:60px; 
