@@ -227,28 +227,21 @@ const HomeScreen = () => {
   };
 
   const showPreview = async () => {
-    const selectedRowId = selectedRows.map(row => row.exhibit_id);
-    console.log('selectedRowId:', selectedRowId)
+    const selectedRowId = selectedRows.map((row) => row.exhibit_id);
+    console.log("selectedRowId:", selectedRowId);
     if (selectedRows.length > 1) {
       toast.error("Multiple exhibits can't be selected");
-    }
-
-    else if (selectedRows.length == 0) {
+    } else if (selectedRows.length == 0) {
       toast.error("You need to select at least 1 exhibit");
-    }
-
-    else if (selectedRowId) {
+    } else if (selectedRowId) {
       const selectedRow = selectedRows[0];
       const exhibitId = selectedRow.exhibit_id;
-      console.log('exhibitId:', exhibitId)
+      console.log("exhibitId:", exhibitId);
       navigate(`/ProductScreen/${exhibitId}`);
-
+    } else {
+      console.error("No valid ID provided for editing.");
     }
-    else {
-      console.error('No valid ID provided for editing.');
-    }
-
-  }
+  };
 
   const showQRHandler = () => {
     if (selectedRows.length > 1) {
@@ -301,48 +294,50 @@ const HomeScreen = () => {
 
   const tableData = data
     ? data
-      // .filter(
-      //   (exhibit) =>
-      //     exhibit.title &&
-      //     exhibit.title.toLowerCase().includes(filterText.toLowerCase())
-      // )
-      .filter((exhibit) => {
-        const valuesToSearch = [
-          exhibit.title,
-          exhibit.room,
-          exhibit.asset_number,
-          exhibit.category,
-          exhibit.subcategory,
-          exhibit.era,
-          exhibit.exhibit_id,
-        ];
+        // .filter(
+        //   (exhibit) =>
+        //     exhibit.title &&
+        //     exhibit.title.toLowerCase().includes(filterText.toLowerCase())
+        // )
+        .filter((exhibit) => {
+          const valuesToSearch = [
+            exhibit.title,
+            exhibit.room,
+            exhibit.asset_number,
+            exhibit.category,
+            exhibit.subcategory,
+            exhibit.era,
+            exhibit.exhibit_id,
+          ];
 
-        return valuesToSearch
-          .map((value) => String(value)) // Convert each value to a string
-          .filter(Boolean) // Filter out undefined or falsy values
-          .some((value) => value.toLowerCase().includes(filterText.toLowerCase()));
-      })
-      .map((exhibit) => {
-        const {
-          title,
-          room,
-          asset_number,
-          category,
-          subcategory,
-          era,
-          exhibit_id,
-        } = exhibit;
+          return valuesToSearch
+            .map((value) => String(value)) // Convert each value to a string
+            .filter(Boolean) // Filter out undefined or falsy values
+            .some((value) =>
+              value.toLowerCase().includes(filterText.toLowerCase())
+            );
+        })
+        .map((exhibit) => {
+          const {
+            title,
+            room,
+            asset_number,
+            category,
+            subcategory,
+            era,
+            exhibit_id,
+          } = exhibit;
 
-        return {
-          title,
-          room,
-          asset_number,
-          category,
-          subcategory,
-          era,
-          exhibit_id,
-        };
-      })
+          return {
+            title,
+            room,
+            asset_number,
+            category,
+            subcategory,
+            era,
+            exhibit_id,
+          };
+        })
     : [];
 
   //console.log(tableData);
@@ -410,7 +405,7 @@ const HomeScreen = () => {
           pagination
           customStyles={customStyles}
           fixedHeader
-          fixedHeaderScrollHeight="400px"
+          fixedHeaderScrollHeight="50%"
         />
 
         {selectedRows.length > 0 && (
