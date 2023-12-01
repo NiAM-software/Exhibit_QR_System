@@ -226,7 +226,11 @@ const HomeScreen = () => {
       },
       data: formData, // Use 'data' instead of 'body'
     })
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+        toast.success('Data loaded Successfully')
+        window.location.reload()
+      })
       .catch((err) => console.log(err));
   };
 
@@ -282,7 +286,7 @@ const HomeScreen = () => {
 
   if (isError) return <h1>{error.message}</h1>;
 
-  if (isLoading) return <h1>Loading...</h1>;
+  // if (isLoading) return <h1>Loading...</h1>;
 
   const columns = [
     {
@@ -410,12 +414,20 @@ const HomeScreen = () => {
         </Navbar>
         <Navbar expand="sm" collapseOnSelect className="table-header">
           <Nav className="ms-auto">
-            <input type="file" name="file" onChange={handleFileChange} />
-            <button className="btn-primary-sm" onClick={handleUpload}>
-              Upload
-            </button>
+            <div className="input-group">
+              <div className="custom-file">
+                <input type="file" className="custom-file-input" id="inputGroupFile04" onChange={handleFileChange} />
+                <label className="custom-file-label" htmlFor="inputGroupFile04">Choose file</label>
+              </div>
+              <div className="input-group-append">
+                <button className="btn btn-primary btn-sm" type="button" onClick={handleUpload}>Upload</button>
+              </div>
+            </div>
           </Nav>
         </Navbar>
+
+
+
         {/* <form>
           <TextField type="file" />
           <Button variant="contained" color="primary" component="span">

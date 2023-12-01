@@ -88,8 +88,10 @@ router.post("/import-csv", localUpload.single("file"), async (req, res) => {
         const loadQuery = `
           LOAD DATA LOCAL INFILE '${filePath}'
           INTO TABLE exhibits_dummy 
-          FIELDS TERMINATED BY ',' 
+          FIELDS OPTIONALLY ENCLOSED BY '"'
+          TERMINATED BY ',' 
           LINES TERMINATED BY '\\n' 
+          
           (title, category, room, location_type, location, asset_number, manufacturer, era)
           SET asset_number = NULLIF(@asset_number, '');
         `;
