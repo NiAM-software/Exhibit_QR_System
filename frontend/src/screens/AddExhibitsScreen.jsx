@@ -19,7 +19,6 @@ const AddExhibitScreen = () => {
   const [parsedLinkList, setParsedLinkList] = useState([]);
   const [categories, setCategories] = useState([]);
   const [locationTypes, setLocationTypes] = useState([]);
-  const [locations, setlocations] = useState([]);
   const [rooms, setrooms] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
@@ -86,7 +85,6 @@ const AddExhibitScreen = () => {
     room: "",
     id: "",
     location_type: "",
-    location_id: "",
     location: "",
     asset_number: "",
     manufacturer: "",
@@ -110,19 +108,6 @@ const AddExhibitScreen = () => {
       ...prevData,
       [name]: selectedCategoryId, // Update category_id
       category: value, // Update category
-    }));
-
-  };
-
-  const handleChange_location = (e) => {
-    const { name, value } = e.target;
-    const selectedlocationId = locations.find(
-      (location) => location.name === value
-    )?.id;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: selectedlocationId, // Update category_id
-      location: value, // Update category
     }));
 
   };
@@ -165,7 +150,6 @@ const AddExhibitScreen = () => {
         //console.log("data",data);
         setCategories(data.categories);
         setLocationTypes(data.locationTypes);
-        setlocations(data.locations);
         setrooms(data.rooms);
       } else {
         console.error("Failed to fetch maintenance fields");
@@ -192,12 +176,6 @@ const AddExhibitScreen = () => {
     } else if (formData.asset_number < 0) {
       errors.asset_number = 'Asset number cannot be negative';
     }
-
-    // if (formData.era !== '' && isNaN(formData.era)) {
-    //   errors.era = 'Era must be an integer';
-    // } else if (formData.era < 0) {
-    //   errors.asset_number = 'Era cannot be negative';
-    // }
 
     return errors;
   };
@@ -400,7 +378,6 @@ const AddExhibitScreen = () => {
             <span className="visually-hidden">Loading...</span>
           </Spinner>
           <p>Uploading...</p>
-          {/* You can also add a loading spinner or any other loading UI here */}
         </div>
       )}
       <Row>
@@ -460,20 +437,13 @@ const AddExhibitScreen = () => {
               <Form.Group controlId="Location" className="mb-3">
                 <Form.Label style={formLabelStyle}>Location</Form.Label>
                 <Form.Control
-                  as="select"
                   type="text"
-                  name="location_id"
-                  list="locations"
+                  name="location"
                   value={formData.location}
-                  onChange={handleChange_location}
+                  onChange={handleChange}
+                  placeholder="Enter the location"
                   style={TextInputStyle}
                 >
-                  <option value="">Select a location</option>
-                  {locations.map((location) => (
-                    <option key={location.id} value={location.name}>
-                      {location.name}
-                    </option>
-                  ))}
                 </Form.Control>
               </Form.Group>
             </Form>
@@ -542,10 +512,10 @@ const AddExhibitScreen = () => {
                   name="era"
                   value={formData.era}
                   onChange={handleChange}
+                  placeholder="Enter the Era"
                   //style={formErrors.era ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
                   style={TextInputStyle}
                 />
-                {/* {formErrors.era && <div style={errorMessage}>{formErrors.era}</div>} */}
               </Form.Group>
             </Form>
           </Col>
@@ -556,7 +526,7 @@ const AddExhibitScreen = () => {
             <Form style={formElementSpacing}>
               <Form.Group controlId="category" className="mb-3">
                 <Form.Label style={formLabelStyle}>
-                  Category
+                  Item Type
                 </Form.Label>
                 <Form.Control
                   as="select"
@@ -567,7 +537,7 @@ const AddExhibitScreen = () => {
                   onChange={handleChange_category}
                   style={TextInputStyle}
                 >
-                  <option value="">Select a category</option>
+                  <option value="">Select a Item Type</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.name}>
                       {category.name}
@@ -588,6 +558,7 @@ const AddExhibitScreen = () => {
                   name="subcategory"
                   value={formData.subcategory}
                   onChange={handleChange}
+                  placeholder="Enter the Sub-Category"
                   style={TextInputStyle}
                 />
               </Form.Group>
@@ -622,6 +593,7 @@ const AddExhibitScreen = () => {
                   name="manufacturer"
                   value={formData.manufacturer}
                   onChange={handleChange}
+                  placeholder="Enter the Manufacturer"
                   style={TextInputStyle}
                 />
               </Form.Group>
@@ -629,91 +601,7 @@ const AddExhibitScreen = () => {
           </Col>
         </Row>
 
-
-
-        {/* <Col md={6} className="mb-4">
-              <Form style={formElementSpacing}>
-                  <Form.Group controlId="Description" className="mb-3">
-                      <Form.Label style={formLabelStyle}>Description</Form.Label>
-                      <Form.Control 
-                        type="text" as="textarea" 
-                        placeholder="Enter Description"
-                        name="exhibit_desc"
-                        value={formData.exhibit_desc}
-                        onChange={handleChange}
-                        style={descriptionInputStyle}/>
-                  </Form.Group>
-              </Form>
-            </Col> */}
-
-        {/* 
-          <Row>
-            <Col md={6}>
-              <div className="float-start" style={buttonContainerStyle}>
-                <label style={labelStyle}>Images/Videos</label>
-                <button type="button" style={buttonStyle} onClick={showModal}>Add Files</button>
-                <Modal
-                  title="ADDFILES"
-                  visible={isModalVisible}
-                  onOk={handleOk}
-                  onCancel={handleCancel}
-                  closable={false}
-                  footer={null}
-                  style={{ height: '1200px', width: '1200px' }}
-  
-                // okButtonProps={{ style: { background: 'blue', borderColor: 'black',width:'80px' } }}
-                // cancelButtonProps={{ style: { background: 'white', borderColor: 'black',width:'80px' } }}
-  
-                >
-                  {isModalVisible &&
-                    <Addfiles
-                      files={fileList}
-                      setFiles={handleupdatedfiles}
-                      formSubmitted={formSubmitted}
-                      resetFormSubmitted={() => setFormSubmitted(false)}
-                      nOK={handleOk}
-                      nCancel={handleCancel} />}
-                </Modal>
-  
-              </div>
-  
-              <div className="float-start" style={buttonContainerStyle}>
-                <label style={labelStyle}>Related Exhibits</label>
-                <button type="button" style={buttonStyle} onClick={showLinksModal}>
-                  Add Links
-                </button>
-                <AddLinks
-                  links={linkList}
-                  setLinks={handleupdatedlinks}
-                  visible={isLinksModalVisible}
-                  onSubmit={handleLinkSubmit}
-                  onCancel={handleLinksCancel}
-                />
-              </div>
-            </Col>
-  
-            <Col md={6}>
-              <div className="d-flex justify-content-end" style={rightButtonContainerStyle}>
-                <button className="float-end" style={{
-                  backgroundColor: 'white',
-                  color: 'black',
-                  padding: '8px 16px',
-                  fontSize: '12px',
-                  width: '100px',
-                  height: '25px',
-                  marginRight: '15px',
-                  marginTop: '-1px',
-                  outline: '1px solid black',
-                }} onClick={handleCancelClick}>Cancel</button>
-  
-                <button className="float-end" style={buttonStyle}>Submit</button>
-              </div>
-            </Col>
-          </Row>
-        </Form> */}
-
         <Row>
-
           <Addfiles
             files={fileList}
             setFiles={handleupdatedfiles}
@@ -724,10 +612,7 @@ const AddExhibitScreen = () => {
           />
         </Row>
         <Row>
-          {/* <Col md={6}>
-              <div className="float-start" style={buttonContainerStyle}> */}
-          {/* <label style={labelStyle}>Related Exhibits</label>
-             */}
+
           <p>Related Exhibits </p>
           <AddLinks
             links={linkList}
@@ -736,10 +621,7 @@ const AddExhibitScreen = () => {
             // onSubmit={handleLinkSubmit}
             onCancel={handleLinksCancel}
           />
-          {/* </div>
-            </Col> */}
         </Row>
-
         <Row>
           <Col md={12}>
             <div className="d-flex justify-content-end" style={rightButtonContainerStyle}>

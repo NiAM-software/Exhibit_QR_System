@@ -264,7 +264,7 @@ const HomeScreen = () => {
       id: 2,
     },
     {
-      name: "Category",
+      name: "Item Type",
       selector: (row) => row.category,
       sortable: true,
       // sortFunction: customSortFunction,

@@ -173,6 +173,7 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                 setSearchQuery("");
             } else {
                 message.error("Exhibit is already in the list.");
+                setSearchQuery("");
             }
         }
     };

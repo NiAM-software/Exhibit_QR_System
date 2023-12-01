@@ -93,8 +93,6 @@ const Maintenancescreen = () => {
 
       if (activeTab === "Categories") {
         setData(fetch_response.data.categories);
-      } else if (activeTab === "Locations") {
-        setData(fetch_response.data.locations);
       } else if (activeTab === "LocationTypes") {
         setData(fetch_response.data.locationTypes);
       } else if (activeTab === "Rooms") {
@@ -111,16 +109,6 @@ const Maintenancescreen = () => {
     // Fetch data for the DataTable based on the activeTab
     fetchDataForActiveTab();
   }, [activeTab]);
-
-  const validateForm = () => {
-    const errors = {};
-    // if (!editCategory || !newCategory) {
-    //     errors.category = 'Category cannot be null';
-    // }
-    //   if (!editlocation || !newlocation) {
-    //     errors.location = 'location cannot be null';
-    //   }
-  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -231,44 +219,45 @@ const Maintenancescreen = () => {
           setInputText("");
         }
 
+      } 
+      // else if (activeTab === "Locations") {
+      //   const postresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
+      //     method: 'POST', // or 'PUT' or 'whatever is necessary'
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({ location: inputText }),
+      //   });
 
-      } else if (activeTab === "Locations") {
-        const postresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
-          method: 'POST', // or 'PUT' or 'whatever is necessary'
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ location: inputText }),
-        });
+      //   if (postresponse.ok) {
+      //     const postdata = await postresponse.json();
+      //     console.log("Location is added successfully:", postdata.message);
+      //     toast.success('New Location is added successfully');
+      //     const newItem = {
+      //       id: postdata.id,
+      //       name: inputText,
+      //     };
+      //     setData([...tableData, newItem]);
+      //     setInputText("");
+      //   }
+      //   else {
+      //     const data = await postresponse.json();
+      //     console.error('new location addition failed:', data.message);
+      //     if (data.message.includes('Duplicate entry')) {
+      //       //const errors = {};
+      //       //const errors='Duplicate entries not allowed.';
+      //       setFormErrors(errors);
+      //       hasErrors = true;
+      //       //toast.error('Category already exists.', { duration: 1000 });
+      //     }
+      //     else {
+      //       toast.error('Failed to add new location');
+      //     }
+      //     setInputText("");
+      //   }
 
-        if (postresponse.ok) {
-          const postdata = await postresponse.json();
-          console.log("Location is added successfully:", postdata.message);
-          toast.success('New Location is added successfully');
-          const newItem = {
-            id: postdata.id,
-            name: inputText,
-          };
-          setData([...tableData, newItem]);
-          setInputText("");
-        }
-        else {
-          const data = await postresponse.json();
-          console.error('new location addition failed:', data.message);
-          if (data.message.includes('Duplicate entry')) {
-            //const errors = {};
-            //const errors='Duplicate entries not allowed.';
-            setFormErrors(errors);
-            hasErrors = true;
-            //toast.error('Category already exists.', { duration: 1000 });
-          }
-          else {
-            toast.error('Failed to add new location');
-          }
-          setInputText("");
-        }
-
-      } else if (activeTab === "LocationTypes") {
+      // } 
+      else if (activeTab === "LocationTypes") {
         const postresponse = await fetch(`/api/admin/exhibits/maintenance/location_type`, {
           method: 'POST', // or 'PUT' or 'whatever is necessary'
           headers: {
@@ -390,50 +379,8 @@ const Maintenancescreen = () => {
               console.error("Couldn't update the category", data.message);
               toast.error('Failed to edit the category');
               setSelectedRows([]);
-              setEditText("");
-            }
-          }
-        }
-        else if (selecteddata === editText) {
-          errors = 'Data already exists';
-          setFormErrors(errors);
-          errorscheck = true;
-        }
-      } else if (activeTab === "Locations") {
-        if (selecteddata && editText && (selecteddata != editText)) {
-          if (selectedId) {
-            // Send a PUT request to update the category
-            const putresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
-              method: 'PUT', // or 'PUT' or 'whatever is necessary'
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ location: editText, id: selectedId }),
-            });
-
-            if (putresponse.ok) {
-              const putdata = await putresponse.json();
-              toast.success('Successfully updated location');
-              //console.log("putdata",putdata);
-              const updatedtabledata = tableData.map((item) =>
-                item.id === selectedId
-                  ? { ...item, name: editText }
-                  : item
-              );
-              //setCategories(updatedtabledata);
-              setData(updatedtabledata);
-              console.log("updatedtabledata", updatedtabledata);
-              setSelectedRows([]);
               setToggleCleared(!toggleCleared);
               setEditText("");
-              setFormErrors("");
-            }
-            else {
-              const data = await putresponse.json();
-              console.error("Couldn't update the location", data.message);
-              toast.error('Failed to edit the location');
-              setSelectedRows([]);
-              setEditText("");
             }
           }
         }
@@ -442,7 +389,53 @@ const Maintenancescreen = () => {
           setFormErrors(errors);
           errorscheck = true;
         }
-      } else if (activeTab === "LocationTypes") {
+      } 
+      // else if (activeTab === "Locations") {
+      //   if (selecteddata && editText && (selecteddata != editText)) {
+      //     if (selectedId) {
+      //       // Send a PUT request to update the category
+      //       const putresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
+      //         method: 'PUT', // or 'PUT' or 'whatever is necessary'
+      //         headers: {
+      //           'Content-Type': 'application/json',
+      //         },
+      //         body: JSON.stringify({ location: editText, id: selectedId }),
+      //       });
+
+      //       if (putresponse.ok) {
+      //         const putdata = await putresponse.json();
+      //         toast.success('Successfully updated location');
+      //         //console.log("putdata",putdata);
+      //         const updatedtabledata = tableData.map((item) =>
+      //           item.id === selectedId
+      //             ? { ...item, name: editText }
+      //             : item
+      //         );
+      //         //setCategories(updatedtabledata);
+      //         setData(updatedtabledata);
+      //         console.log("updatedtabledata", updatedtabledata);
+      //         setSelectedRows([]);
+      //         setToggleCleared(!toggleCleared);
+      //         setEditText("");
+      //         setFormErrors("");
+      //       }
+      //       else {
+      //         const data = await putresponse.json();
+      //         console.error("Couldn't update the location", data.message);
+      //         toast.error('Failed to edit the location');
+      //         setSelectedRows([]);
+      //         setToggleCleared(!toggleCleared);
+      //         setEditText("");
+      //       }
+      //     }
+      //   }
+      //   else if (selecteddata === editText) {
+      //     errors = 'Data already exists';
+      //     setFormErrors(errors);
+      //     errorscheck = true;
+      //   }
+      // } 
+      else if (activeTab === "LocationTypes") {
         if (selecteddata && editText && (selecteddata != editText)) {
           if (selectedId) {
             // Send a PUT request to update the category
@@ -476,6 +469,7 @@ const Maintenancescreen = () => {
               console.error("Couldn't update the location_type", data.message);
               toast.error('Failed to edit the location_type');
               setSelectedRows([]);
+              setToggleCleared(!toggleCleared);
               setEditText("");
             }
           }
@@ -519,6 +513,7 @@ const Maintenancescreen = () => {
               console.error("Couldn't update the room", data.message);
               toast.error('Failed to edit the room');
               setSelectedRows([]);
+              setToggleCleared(!toggleCleared);
               setEditText("");
             }
           }
@@ -549,9 +544,9 @@ const Maintenancescreen = () => {
           case "Categories":
             endpoint = '/api/admin/exhibits/maintenance/category';
             break;
-          case "Locations":
-            endpoint = '/api/admin/exhibits/maintenance/location';
-            break;
+          // case "Locations":
+          //   endpoint = '/api/admin/exhibits/maintenance/location';
+          //   break;
           case "LocationTypes":
             endpoint = '/api/admin/exhibits/maintenance/location_type';
             break;
@@ -578,6 +573,8 @@ const Maintenancescreen = () => {
           // Handle successful deletion
           toast.success('Selected items deleted successfully');
           fetchDataForActiveTab(); // Refresh the data after deletion
+          setSelectedRows([]);
+          setToggleCleared(!toggleCleared);
         } else {
           const data = await deleteResponse.json();
           console.error('Failed to delete items:', data.message);
@@ -596,13 +593,7 @@ const Maintenancescreen = () => {
     <div className="exhibits-list-wrapper">
       <h1 className="text-center">Maintenance</h1>
       <div style={{ display: "flex" }}>
-        {/* <button className="btn-primary-sm" onClick={() => handleTabClick("Categories")}>Categories</button>
-        <span style={{ marginLeft: "10px" }}></span>
-        <button className="btn-primary-sm" onClick={() => handleTabClick("Locations")}>Locations</button>
-        <span style={{ marginLeft: "10px" }}></span>
-        <button className="btn-primary-sm" onClick={() => handleTabClick("LocationTypes")}>Location Types</button>
-        <span style={{ marginLeft: "10px" }}></span>
-        <button className="btn-primary-sm" onClick={() => handleTabClick("Rooms")}>Rooms</button> */}
+
         <Nav variant="tabs">
           <Nav.Item>
             <Nav.Link
@@ -610,16 +601,7 @@ const Maintenancescreen = () => {
               active={activeTab === "Categories"}
               onClick={() => handleTabClick("Categories")}
             >
-              Categories
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link
-              eventKey="Locations"
-              active={activeTab === "Locations"}
-              onClick={() => handleTabClick("Locations")}
-            >
-              Locations
+              Item Type
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
