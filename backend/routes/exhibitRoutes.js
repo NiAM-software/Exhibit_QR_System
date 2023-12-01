@@ -1,6 +1,6 @@
 import express from "express";
 import { upload, getPresignedUrl } from "../utils/uploadFile.js";
-import { iventoryDBConnection as db } from "../config/db.js";
+import { iventoryDBConnection as db} from "../config/db.js";
 import {
   getExhibitById,
   getDeletedExhibits,
@@ -28,6 +28,19 @@ import {
   deleteAttachmentsUtils,
   deleteMultipleAttachmentsUtils
 } from '../utils/attachmentUtils.js';
+import queries from '../sql_queries/queries.js';
+import drop_queries from '../sql_queries/drop_queries.js';
+import multer from 'multer';
+// const storage = multer.diskStorage({
+//   destination: function(req, file, cb) {
+//     cb(null, '../uploads/')
+//   },
+//   filename: function(req, file, cb) {
+//     cb(null, 'data.csv')
+//   }
+// });
+
+const localUpload = multer({ dest: 'uploads/' });
 
 import {getMaintenanceList,
   createCategory,
@@ -43,8 +56,68 @@ import {getMaintenanceList,
   updateRoom,
    deleteRoom} from "../controllers/maintenanceController.js";
 
+
 const router = express.Router();
+
+
+router.post("/import-csv", localUpload.single("file"), async (req, res) => {
+  db.getConnection(async (err, connection) => {
+    if (err) {
+      console.error("Inventory DB Connection Failed", err);
+      return res.status(500).json({ message: "Database connection failed" });
+    }
+
+    try {
+      // Start using the connection
+      const file = req.file;
+      if (!file) {
+        connection.release();
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const filePath = file.path;
+       connection.beginTransaction();
+
+      try {
+        // Drop tables if they exist
+        for (const query of drop_queries) {
+           connection.execute(query);
+        }
+
+        // // Load CSV data into exhibits_dummy table
+        const loadQuery = `
+          LOAD DATA LOCAL INFILE '${filePath}'
+          INTO TABLE exhibits_dummy 
+          FIELDS TERMINATED BY ',' 
+          LINES TERMINATED BY '\\n' 
+          (title, category, room, location_type, location, asset_number, manufacturer, era)
+          SET asset_number = NULLIF(@asset_number, '');
+        `;
+         connection.query(loadQuery); // Use `query` instead of `execute`
+
+        // Execute other queries
+        for (const query of queries) {
+           connection.execute(query);
+        }
+         connection.commit();
+        res.status(201).json({ message: 'All queries executed successfully in transaction' });
+      } catch (error) {
+         connection.rollback();
+        console.error('Transaction failed:', error);
+        res.status(500).json({ message: 'Transaction failed', error: error.message });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ message: 'Error occurred', error: error.message });
+    } finally {
+      connection.release();
+    }
+  });
+});
+
+
 router.get("/export", exportDataAsCSV);
+
 router.get("/next-asset-number", getNextAssetNumber);
 router.get("/categories-and-location-types", getCategoriesAndLocationTypes);
 router.get("/maintenance", getMaintenanceList);

@@ -14,6 +14,10 @@ import {
   Col,
   Modal,
 } from "react-bootstrap";
+// import Button from "@material-ui/core/Button";
+// import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+// import TextField from "@material-ui/core/TextField";
+
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import DataTable from "react-data-table-component";
@@ -75,7 +79,11 @@ const HomeScreen = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState();
   const [notificationMessage2, setNotificationMessage2] = useState();
+  const [csvFile, setCsvFile] = useState();
 
+  const handleFileChange = (e) => {
+    setCsvFile(e.target.files[0]);
+  };
   const handleClose = () => {
     setShow(false);
     console.log("click");
@@ -202,6 +210,27 @@ const HomeScreen = () => {
     }
   };
 
+  //@import csv
+  const handleUpload = () => {
+    const formData = new FormData();
+    formData.append("name", "FILENAME");
+    formData.append("file", csvFile);
+
+    const url = "/api/admin/exhibits/import-csv";
+
+    axios({
+      method: "POST",
+      url: url,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      data: formData, // Use 'data' instead of 'body'
+    })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+
+  // export csv
   const generateCSV = async () => {
     console.log("Generate CSV button clicked");
 
@@ -227,28 +256,21 @@ const HomeScreen = () => {
   };
 
   const showPreview = async () => {
-    const selectedRowId = selectedRows.map(row => row.exhibit_id);
-    console.log('selectedRowId:', selectedRowId)
+    const selectedRowId = selectedRows.map((row) => row.exhibit_id);
+    console.log("selectedRowId:", selectedRowId);
     if (selectedRows.length > 1) {
       toast.error("Multiple exhibits can't be selected");
-    }
-
-    else if (selectedRows.length == 0) {
+    } else if (selectedRows.length == 0) {
       toast.error("You need to select at least 1 exhibit");
-    }
-
-    else if (selectedRowId) {
+    } else if (selectedRowId) {
       const selectedRow = selectedRows[0];
       const exhibitId = selectedRow.exhibit_id;
-      console.log('exhibitId:', exhibitId)
+      console.log("exhibitId:", exhibitId);
       navigate(`/ProductScreen/${exhibitId}`);
-
+    } else {
+      console.error("No valid ID provided for editing.");
     }
-    else {
-      console.error('No valid ID provided for editing.');
-    }
-
-  }
+  };
 
   const showQRHandler = () => {
     if (selectedRows.length > 1) {
@@ -320,7 +342,9 @@ const HomeScreen = () => {
         return valuesToSearch
           .map((value) => String(value)) // Convert each value to a string
           .filter(Boolean) // Filter out undefined or falsy values
-          .some((value) => value.toLowerCase().includes(filterText.toLowerCase()));
+          .some((value) =>
+            value.toLowerCase().includes(filterText.toLowerCase())
+          );
       })
       .map((exhibit) => {
         const {
@@ -380,24 +404,24 @@ const HomeScreen = () => {
                 >
                   Generate CSV
                 </button>
-
-                {/* <span style={{ marginLeft: "10px" }}></span>
-                <Link to="/MaintenanceScreen">
-                  <button className="btn-primary-sm maintenance-btn">
-                    Maintenance{" "}
-                  </button>
-                </Link>
-                <span style={{ marginLeft: "10px" }}></span>
-                <Link to="/RecycleBin">
-                  <button className="btn-primary-sm maintenance-btn">
-                    RecycleBin{" "}
-                  </button>
-                </Link> */}
               </Nav>
             </Navbar.Collapse>
           </Container>
         </Navbar>
-
+        <Navbar expand="sm" collapseOnSelect className="table-header">
+          <Nav className="ms-auto">
+            <input type="file" name="file" onChange={handleFileChange} />
+            <button className="btn-primary-sm" onClick={handleUpload}>
+              Upload
+            </button>
+          </Nav>
+        </Navbar>
+        {/* <form>
+          <TextField type="file" />
+          <Button variant="contained" color="primary" component="span">
+            Upload
+          </Button>
+        </form> */}
         <DataTable
           columns={columns}
           data={tableData}
@@ -410,7 +434,7 @@ const HomeScreen = () => {
           pagination
           customStyles={customStyles}
           fixedHeader
-          fixedHeaderScrollHeight="400px"
+          fixedHeaderScrollHeight="50%"
         />
 
         {selectedRows.length > 0 && (

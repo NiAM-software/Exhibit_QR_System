@@ -33,11 +33,10 @@ const getExhibits = asyncHandler(async (req, res) => {
         e.subcategory,
         r.room_name as room,
         lt.location_type as location_type,
-        l.location_name as location,
+        e.location,
         asset_number,manufacturer,era,e.exhibit_desc
         from exhibits e
         left join category c on c.category_id=e.category_id and c.active_ind='Y'
-        left join location l on l.location_id=e.location_id and l.active_ind='Y'
         left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
         left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
 
@@ -67,11 +66,10 @@ const getDeletedExhibits = asyncHandler(async (req, res) => {
         e.subcategory,
         r.room_name as room,
         lt.location_type as location_type,
-        l.location_name as location,
+        e.location,
         asset_number,manufacturer,era,e.exhibit_desc
         from exhibits e
         left join category c on c.category_id=e.category_id and c.active_ind='Y'
-        left join location l on l.location_id=e.location_id and l.active_ind='Y'
         left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
         left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
 
@@ -104,12 +102,10 @@ const getExhibitById = asyncHandler(async (req, res) => {
         r.room_name as room,
         lt.id as loctype_id,
         lt.location_type as location_type,
-        l.location_id,
-        l.location_name as location,
+        location,
         asset_number,manufacturer,era,e.exhibit_desc
         from exhibits e
     left join category c on c.category_id=e.category_id and c.active_ind='Y'
-    left join location l on l.location_id=e.location_id and l.active_ind='Y'
     left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
     left join room r on r.room_id=e.room_id and r.active_ind='Y'
      WHERE exhibit_id=? and e.active_ind='Y'`;
@@ -138,7 +134,7 @@ const createExhibit = asyncHandler(async (req, res) => {
     subcategory, 
     room_id, 
     id, 
-    location_id, 
+    location, 
     asset_number,
     manufacturer,
     era, 
@@ -149,12 +145,11 @@ const createExhibit = asyncHandler(async (req, res) => {
   const c_id = category_id === '' || NaN ? null : parseInt(category_id, 10);
   const r_id = room_id     === '' || NaN? null : parseInt(room_id, 10);
   const lt_id = id  === '' || NaN? null : parseInt(id, 10);
-  const l_id = location_id === '' || NaN? null : parseInt(location_id, 10);
 
   // console.log(c_id,r_id,lt_id,l_id)
   try {
-    const query = 'INSERT INTO exhibits (title, category_id, subcategory, room_id, loctype_id, location_id,  asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
-    const [results, fields] = await db.promise().query(query, [title, c_id, subcategory, r_id, lt_id, l_id, asset_number, manufacturer, era, exhibit_desc,'Y']);
+    const query = 'INSERT INTO exhibits (title, category_id, subcategory, room_id, loctype_id, location,  asset_number, manufacturer, era, exhibit_desc, active_ind) VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)';
+    const [results, fields] = await db.promise().query(query, [title, c_id, subcategory, r_id, lt_id, location, asset_number, manufacturer, era, exhibit_desc,'Y']);
 
     if (results && results.affectedRows > 0) {
       const newExhibitId = results.insertId;
@@ -182,7 +177,7 @@ const updateExhibit = asyncHandler(async (req, res) => {
         subcategory, 
         room_id, 
         loctype_id, 
-        location_id, 
+        location, 
         asset_number,
         manufacturer,
         era, 
@@ -199,14 +194,14 @@ const updateExhibit = asyncHandler(async (req, res) => {
         subcategory, 
         room_id, 
         loctype_id, 
-        location_id, 
+        location, 
         asset_number,
         manufacturer,
         era, 
         exhibit_desc,
         id
       ];
-      const updateQuery ="UPDATE exhibits SET title=?, category_id=?, subcategory=?, room_id=?, loctype_id=?, location_id=?, asset_number=?,manufacturer=?, era=?, exhibit_desc=? WHERE exhibit_id=? and active_ind='Y'";
+      const updateQuery ="UPDATE exhibits SET title=?, category_id=?, subcategory=?, room_id=?, loctype_id=?, location=?, asset_number=?,manufacturer=?, era=?, exhibit_desc=? WHERE exhibit_id=? and active_ind='Y'";
       const [updateResults, updateFields] = await db.promise().query(updateQuery, values);
 
       if (updateResults.affectedRows > 0) {
@@ -337,11 +332,10 @@ const getExhibitsFiltered = asyncHandler(async (req, res) => {
         e.subcategory,
         r.room_name as room,
         lt.location_type as location_type,
-        l.location_name as location,
+        location,
         asset_number,manufacturer,era,e.exhibit_desc
         from exhibits e
         left join category c on c.category_id=e.category_id and c.active_ind='Y'
-        left join location l on l.location_id=e.location_id and l.active_ind='Y'
         left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
         left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
 
@@ -527,11 +521,10 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
       e.subcategory,
       r.room_name AS room,
       lt.location_type AS location_type,
-      l.location_name AS location,
+      location,
       asset_number, manufacturer, era, e.exhibit_desc
     FROM exhibits e
       LEFT JOIN category c ON c.category_id = e.category_id AND c.active_ind='Y'
-      LEFT JOIN location l ON l.location_id = e.location_id AND l.active_ind='Y'
       LEFT JOIN location_type lt ON lt.id = e.loctype_id AND lt.active_ind='Y'
       LEFT JOIN room r ON r.room_id = e.room_id AND r.active_ind='Y' ${keyword}`;
 

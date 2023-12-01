@@ -1,5 +1,6 @@
 import mysql from 'mysql2';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -11,7 +12,8 @@ const authentiticatonDBConnection = mysql.createPool({
   database: "authentication",
   waitForConnections: true,
   connectionLimit: 10, 
-  queueLimit: 0
+  queueLimit: 0,
+  local_infile: true 
 });
 
 const iventoryDBConnection = mysql.createPool({
@@ -21,7 +23,9 @@ const iventoryDBConnection = mysql.createPool({
   database: "museum_inventory",
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  local_infile: true,
+  infileStreamFactory: path => fs.createReadStream(path)
 });
 
 // Use the connection pools
