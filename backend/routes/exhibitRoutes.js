@@ -17,6 +17,7 @@ import {
   getAttachments,
   getNextAssetNumber,
   getCategoriesAndLocationTypes,
+  getExhibitsFiltered,
   getRelatedExhibits,
   modifiedRelatedExhibits,
   exportDataAsCSV
@@ -32,7 +33,6 @@ import {getMaintenanceList,
   createCategory,
   updateCategory,
   deleteCategory,
-  undoDeleteCategory,
   createLocation,
   updateLocation,
   deleteLocation,
@@ -121,18 +121,22 @@ router.post(
   upload.array("photos", 25),
   async function (req, res, next) {
     const { exhibit_id } = req.params;
+    
   
     for (const file of req.files) {
+      console.log('HI'+file.size);
       const name = file.key;
+      const fileSize = file.size
+      const fileType = file.mimetype.split("/")[0];
       const folderName = `exhibit_${req.params.exhibit_id}`;
       const fileName = name.split("/")[1];
 
       try {
         const query =
-          "INSERT INTO attachments (exhibit_id, file_name, file_location) VALUES (?, ?, ?)";
+          "INSERT INTO attachments (exhibit_id, file_name, file_size, file_type, file_location) VALUES (?, ?,?, ?, ?)";
         const [results, fields] = await db
           .promise()
-          .query(query, [exhibit_id, fileName, folderName]);
+          .query(query, [exhibit_id, fileName,fileSize,fileType, folderName]);
 
         if (results && results.affectedRows > 0) {
           console.log("Exhibit attachment created successfully");
@@ -151,6 +155,7 @@ router.post(
       .json({ message: "All exhibit attachments created successfully" });
   }
 );
+router.get('/filtered/:id', getExhibitsFiltered)
 router.get('/related-exhibits/:id', getRelatedExhibits)
 router.post("/add-related-exhibits/:id", addRelatedExhibits);
 router.get("/preview-image/:id", previewImage);

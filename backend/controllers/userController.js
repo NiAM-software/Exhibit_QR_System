@@ -55,7 +55,7 @@ const getRelatedExhibits = asyncHandler(async (req, res) => {
       row_number() over (partition by img.related_exhibit_id order by atch.file_name) as rn
       FROM  attachments atch
       right join (
-        select distinct related_exhibit_id, related_exhibit_title
+        select distinct related_exhibit_id, e.title as related_exhibit_title
         from related_exhibits re
         inner join exhibits e on re.related_exhibit_id = e.exhibit_id and e.active_ind = 'Y'
         where re.exhibit_id = ?

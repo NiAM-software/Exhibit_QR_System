@@ -76,17 +76,39 @@ const getMaintenanceList = async (req, res) => {
 // @access  Private/Admin
 const createCategory = asyncHandler(async (req, res) => {
     const {category}= req.body;
+    console.log(category)
     try {
-      const query = 'Insert into category(category_name,active_ind) VALUES(?, ?)';
-      const [results, fields] = await db.promise().query(query,[category,'Y']);
-  
-      if (results && results.affectedRows > 0) {
-        const newCategoryId = results.insertId;
-        res.status(201).json({ message: 'Category created successfully' , id : newCategoryId});
-      } else {
-        return res.status(401).json({ message: "Failed to create category" });
-      }
+        const selectQuery = "SELECT * FROM category WHERE category_name=? AND active_ind='N'";
+        const [selectResults, selectFields] = await db.promise().query(selectQuery, [category]);
+    
+        if (selectResults && selectResults.length > 0) {
+          const updateQuery = "UPDATE category SET active_ind='Y' WHERE category_name IN (?)";
+          const [updateResults, updateFields] = await db.promise().query(updateQuery, [category]);
+        
+          if (updateResults.affectedRows > 0) {
+            const fetchUpdatedRowQuery = "SELECT category_id FROM category WHERE category_name = ?";
+            const [fetchResults, fetchFields] = await db.promise().query(fetchUpdatedRowQuery, [category]);
+            if (fetchResults.length > 0) {
+                const updatedCategoryId = fetchResults[0].category_id;
+                return res.status(201).json({ message: 'Category created successfully', id: updatedCategoryId });
+            } else {
+              console.log(res)
+              return res.status(401).json({ message: "Failed to create category" });
+            }
+        }
+      } else{
+            const query = 'Insert into category(category_name,active_ind) VALUES(?, ?)';
+            const [results, fields] = await db.promise().query(query,[category,'Y']);
+        
+            if (results && results.affectedRows > 0) {
+              const newCategoryId = results.insertId;
+              return res.status(201).json({ message: 'Category created successfully' , id : newCategoryId});
+            } else {
+              return res.status(401).json({ message: "Failed to create category" });
+            }
+        }
     } catch (err) {
+      console.log(err.message)
       return res.status(500).json({ message: err.message });
     }
   });
@@ -98,19 +120,20 @@ const createCategory = asyncHandler(async (req, res) => {
   const updateCategory = asyncHandler(async (req, res) => {
     const {category,id}= req.body;
     try {
-      const selectQuery = "SELECT * FROM Category WHERE category_id=? AND active_ind='Y'";
-      const [selectResults, selectFields] = await db.promise().query(selectQuery, [id]);
-  
-      if (selectResults && selectResults.length > 0) {
-        const updateQuery ="UPDATE category SET category_name=? WHERE category_id=? and active_ind='Y'";
-        const [updateResults, updateFields] = await db.promise().query(updateQuery, [category,id]);
-  
-        if (updateResults.affectedRows > 0) {
-          return res.status(200).json({ message: "Successfully updated category" }); // wrong status code for dev env
-        } else {
-          return res.status(500).json({ message: "Couldn't update category" });
-        }
+        const selectQuery = "SELECT * FROM category WHERE category_id=? AND active_ind='Y'";
+        const [selectResults, selectFields] = await db.promise().query(selectQuery, [id]);
+    
+        if (selectResults && selectResults.length > 0) {        
+          const updateQuery ="UPDATE category SET category_name=? WHERE category_id=? and active_ind='Y'";
+          const [updateResults, updateFields] = await db.promise().query(updateQuery, [category,id]);
+          if (updateResults.affectedRows > 0) {
+            return res.status(200).json({ message: "Successfully updated category" }); // wrong status code for dev env
+          } else {
+            console.log(res)
+            return res.status(500).json({ message: "Couldn't update category" });
+          } 
       } else {
+        console.log(res)
         return res.status(404).json({ message: "Category doesn't exist" });
       }
     } catch (err) {
@@ -147,37 +170,7 @@ const deleteCategory = asyncHandler(async (req, res) => {
 });
 
 
-// @desc    Undo delete category
-// @route   PUT /api/exhibits/maintenance/category
-// @access  Private/Admin
-const undoDeleteCategory = asyncHandler(async (req, res) => {
-
-  const { ids } = req.body.data;
-  
-  try { // UPDATE exhibits SET active_ind='N' WHERE exhibit_id IN (?)
-    const selectQuery = "SELECT * FROM category WHERE category_id IN (?) AND active_ind='N'";
-    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
-
-    if (selectResults && selectResults.length > 0) {
-      const updateQuery = "UPDATE category SET active_ind='Y' WHERE category_id IN (?)";
-      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
-
-      if (updateResults.affectedRows > 0) {
-     
-        return res.status(200).json({ message: "Successfully restored categories" }); // Successfully deleted, no content to send
-      } else {
-        return res.status(500).json({ message: "Couldn't restore categories" });
-      }
-    } else {
-      return res.status(404).json({ message: "Categories doesn't exist" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-});
-
-
-  // @desc    Create new location
+// @desc    Create new location
 // @route   POST /api/exhibits/maintenance/location
 // @access  Private/Admin
 const createLocation = asyncHandler(async (req, res) => {
@@ -410,7 +403,6 @@ const deleteRoom = asyncHandler(async (req, res) => {
      createCategory,
      updateCategory,
      deleteCategory,
-     undoDeleteCategory,
      createLocation,
      updateLocation,
      deleteLocation,

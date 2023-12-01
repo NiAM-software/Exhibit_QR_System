@@ -122,14 +122,12 @@ const addRelatedExhibitsUtils = async (exhibitId, relatedExhibitsInfo) => {
       if (existenceResults && existenceResults.length === 0) {
         // Insert a new relationship if it doesn't already exist
         const insertRelationshipQuery =
-        'INSERT INTO related_exhibits (exhibit_id, related_exhibit_id, related_exhibit_title) VALUES (?, ?, ?)';
+        'INSERT INTO related_exhibits (exhibit_id, related_exhibit_id) VALUES (?, ?)';
 
         const [insertResult] = await db.promise().query(insertRelationshipQuery, [
           exhibitId,
-         related_exhibit_id, 
-         related_exhibit_title
+         related_exhibit_id
         ]);
-
         insertedRelationshipIds.push(insertResult.insertId);
       }
     }

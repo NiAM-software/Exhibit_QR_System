@@ -119,7 +119,7 @@ const getExhibitById = asyncHandler(async (req, res) => {
       res.status(200).json(results[0])
       
     } else {
-      return res.status(404).json({ message: "Exhibit doesn't exist" });
+      return res.status(404).json({ message: "Exhibit doesn't exst" });
     }
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -189,7 +189,7 @@ const updateExhibit = asyncHandler(async (req, res) => {
         exhibit_desc
       } = req.body;
 
-      console.log(req.body)
+      // console.log(req.body)
 
       // const era_int = era === '' ? null : parseInt(era, 10);
       
@@ -312,7 +312,6 @@ const addRelatedExhibits = asyncHandler(async (req, res) => {
   const  {related_exhibits_ids}  = req.body;
   try {
     const insertResult = await addRelatedExhibitsUtils(exhibit_id, related_exhibits_ids);
-
     return res.status(200).json({
       message: "Successfully inserted relationships",
       insertedRelationships: insertResult,
@@ -322,6 +321,40 @@ const addRelatedExhibits = asyncHandler(async (req, res) => {
   }
 });
 
+
+// @desc    Fetch all exhibits
+// @route   GET /api/exhibits/filtered/:id
+// @access  Private/Admin
+const getExhibitsFiltered = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const keyword = req.query.keyword
+  ? `WHERE e.title LIKE '%${req.query.keyword}%' AND e.exhibit_id<>${id} AND e.active_ind='Y'`
+  : `WHERE  e.exhibit_id<>${id} AND e.active_ind="Y"`;
+  console.log('id'+id);
+
+  const exhibitsQuery = `select e.exhibit_id,e.title,
+        c.category_name as category,
+        e.subcategory,
+        r.room_name as room,
+        lt.location_type as location_type,
+        l.location_name as location,
+        asset_number,manufacturer,era,e.exhibit_desc
+        from exhibits e
+        left join category c on c.category_id=e.category_id and c.active_ind='Y'
+        left join location l on l.location_id=e.location_id and l.active_ind='Y'
+        left join location_type lt on lt.id=e.loctype_id and lt.active_ind='Y'
+        left join room r on r.room_id=e.room_id and r.active_ind='Y' ${keyword}`;
+
+  try {
+    const [exhibitsResults] = await db.promise().query(exhibitsQuery);
+    const exhibits = exhibitsResults;
+    console.log(exhibits.length);
+    res.json({ exhibits }); 
+  } catch (err) {
+    console.error('Error fetching exhibits:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 // @desc    get related exhibits -> images, urls 
 // @route   POST /api/exhibits/get-related-exhibit
@@ -335,10 +368,10 @@ const getRelatedExhibits = asyncHandler(async (req, res) => {
     select related_exhibit_id, related_exhibit_title, file_name, file_location 
     from (
       select img.related_exhibit_id, img.related_exhibit_title, atch.file_name, atch.file_location,
-      row_number() over (partition by img.related_exhibit_id order by atch.file_name) as rn
+      row_number() over (partition by img.related_exhibit_id order by file_size asc) as rn
       FROM  attachments atch
       right join (
-        select distinct related_exhibit_id, related_exhibit_title
+        select distinct related_exhibit_id, e.title as related_exhibit_title
         from related_exhibits re
         inner join exhibits e on re.related_exhibit_id = e.exhibit_id and e.active_ind = 'Y'
         where re.exhibit_id = ?
@@ -366,10 +399,9 @@ const modifiedRelatedExhibits = asyncHandler(async (req, res) => {
   const { id:exhibit_id } = req.params;
   const { exhibitsToBeDeleted, exhibitsToBeAdded } = req.body;
   try {
-   
-
     const deletionResult = await deleteRelatedExhibitsUtils(exhibit_id, exhibitsToBeDeleted);
     const insertResult = await addRelatedExhibitsUtils(exhibit_id, exhibitsToBeAdded);
+
     return res.status(200).json({
       message: 'Exhibits modified successfully',
       insertedRelationships: insertResult,
@@ -388,7 +420,7 @@ const previewImage = asyncHandler(async (req, res) => {
   const {id} = req.params // exhibit_id
   // console.log(id)
   try {
-    const query = "SELECT * FROM attachments WHERE exhibit_id=? limit 1"; 
+    const query = "SELECT * FROM attachments WHERE exhibit_id=? order by file_size limit 1"; 
     const [results, fields] = await db.promise().query(query, [id]);
     
     if (results && results.length > 0) {
@@ -420,32 +452,6 @@ const rollbackAttachment = asyncHandler(async (req, res) => {
     res.status(500).json({ message: err.message }); // Send an error response
   }
 });
-
-
-// const deleteObjectsFromS3 = async (req, res) => {
-//   try {
-//     const { objectKeys } = req.body;
-
-//     if (!Array.isArray(objectKeys)) {
-//       return res.status(400).json({ error: 'Invalid input. objectKeys should be an array.' });
-//     }
-
-//     const bucket = process.env.S3_BUCKET;
-
-//     // Delete each object in parallel
-//     await Promise.all(objectKeys.map(async (objectKey) => {
-//       const { folderName, fileName } = objectKey;
-//       const key = fileName.length > 0 ? `${folderName}/${fileName}` : folderName;
-//       console.log(key);
-//       await deleteObjectFromS3(bucket, key);
-//     }));
-
-//     return res.status(200).json('All objects deleted successfully.');
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-
 
 
 
@@ -578,6 +584,7 @@ export {
    getAttachments, 
    getNextAssetNumber,
    getCategoriesAndLocationTypes, 
+   getExhibitsFiltered,
    getRelatedExhibits, 
    exportDataAsCSV
 };

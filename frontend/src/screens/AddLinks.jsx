@@ -117,6 +117,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         setSearchQuery("");
       } else {
         message.error("Exhibit is already in the list.");
+        setSearchQuery("");
       }
     }
   };

@@ -20,7 +20,6 @@ const EditExhibitScreen = () => {
   const [deletelinks, setdeletelinks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [locationTypes, setLocationTypes] = useState([]);
-  const [locations, setlocations] = useState([]);
   const [rooms, setrooms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isformLoading, setIsformLoading] = useState(false);
@@ -34,7 +33,6 @@ const EditExhibitScreen = () => {
         const data = await response.json();
         setCategories(data.categories);
         setLocationTypes(data.locationTypes);
-        setlocations(data.locations);
         setrooms(data.rooms);
       } else {
         console.error("Failed to fetch maintenance");
@@ -99,7 +97,6 @@ const EditExhibitScreen = () => {
     room: "",
     loctype_id: "",
     location_type: "",
-    location_id: "",
     location: "",
     asset_number: "",
     manufacturer: "",
@@ -166,19 +163,6 @@ const EditExhibitScreen = () => {
       ...prevData,
       [name]: selectedCategoryId, // Update category_id
       category: value, // Update category
-    }));
-
-  };
-
-  const handleChange_location = (e) => {
-    const { name, value } = e.target;
-    const selectedlocationId = locations.find(
-      (location) => location.name === value
-    )?.id;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: selectedlocationId, // Update category_id
-      location: value, // Update category
     }));
 
   };
@@ -449,7 +433,6 @@ const EditExhibitScreen = () => {
             <span className="visually-hidden">Loading...</span>
           </Spinner>
           <p>Uploading...</p>
-          {/* You can also add a loading spinner or any other loading UI here */}
         </div>
       )}
       <Row>
@@ -507,19 +490,6 @@ const EditExhibitScreen = () => {
                       : TextInputStyle
                   }
                 />
-                {/* {nextAvailableAssetNumber && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "0",
-                      right: "0",
-                      color: "green",
-                      fontSize: "12px",
-                    }}
-                  >
-                    Suggested: {nextAvailableAssetNumber}
-                  </div>
-                )} */}
                 {formErrors.asset_number && (
                   <div style={errorMessage}>{formErrors.asset_number}</div>
                 )}
@@ -534,20 +504,13 @@ const EditExhibitScreen = () => {
               <Form.Group controlId="Location" className="mb-3">
                 <Form.Label style={formLabelStyle}>Location</Form.Label>
                 <Form.Control
-                  as="select"
                   type="text"
-                  name="location_id"
-                  list="locations"
+                  name="location"
                   value={SubmitData.location}
-                  onChange={handleChange_location}
+                  onChange={handleChange}
+                  placeholder="Enter the location"
                   style={TextInputStyle}
                 >
-                  <option value="">Select a location</option>
-                  {locations.map((location) => (
-                    <option key={location.id} value={location.name}>
-                      {location.name}
-                    </option>
-                  ))}
                 </Form.Control>
               </Form.Group>
             </Form>
@@ -615,16 +578,9 @@ const EditExhibitScreen = () => {
                   name="era"
                   value={SubmitData.era}
                   onChange={handleChange}
-                  // style={
-                  //   formErrors.era
-                  //     ? { ...TextInputStyle, ...errorStyle }
-                  //     : TextInputStyle
-                  // }
+                  placeholder="Enter the Era"
                   style={TextInputStyle}
                 />
-                {/* {formErrors.era && (
-                  <div style={errorMessage}>{formErrors.era}</div>
-                )} */}
               </Form.Group>
             </Form>
           </Col>
@@ -634,7 +590,7 @@ const EditExhibitScreen = () => {
           <Col md={4} className=" mb-3">
             <Form style={formElementSpacing}>
               <Form.Group controlId="category" className="mb-3">
-                <Form.Label style={formLabelStyle}>Category</Form.Label>
+                <Form.Label style={formLabelStyle}>Item Type</Form.Label>
                 <Form.Control
                   as="select"
                   type="text"
@@ -644,7 +600,7 @@ const EditExhibitScreen = () => {
                   onChange={handleChange_category}
                   style={TextInputStyle}
                 >
-                  <option value="">Select a category</option>
+                  <option value="">Select a Item Type</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.name}>
                       {category.name}
@@ -665,6 +621,7 @@ const EditExhibitScreen = () => {
                   name="subcategory"
                   value={SubmitData.subcategory}
                   onChange={handleChange}
+                  placeholder="Enter the Sub-Category"
                   style={TextInputStyle}
                 />
               </Form.Group>
@@ -699,27 +656,13 @@ const EditExhibitScreen = () => {
                   name="manufacturer"
                   value={SubmitData.manufacturer}
                   onChange={handleChange}
+                  placeholder="Enter the Manufacturer"
                   style={TextInputStyle}
                 />
               </Form.Group>
             </Form>
           </Col>
         </Row>
-
-        {/* <Col md={6} className="mb-4"> 
-            <Form style={formElementSpacing}>
-                <Form.Group controlId="Description" className="mb-3">
-                    <Form.Label style={formLabelStyle}>Description</Form.Label>
-                    <Form.Control 
-                      type="text" as="textarea" 
-                    //   placeholder="Enter Description"
-                      name="exhibit_desc"
-                      value={formData.exhibit_desc}
-                      onChange={handleChange}
-                      style={descriptionInputStyle}/>
-                </Form.Group>
-            </Form>
-          </Col> */}
         <Row>
           <Col md={12}>
             <p>Attachments</p>

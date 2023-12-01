@@ -100,7 +100,7 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
     useEffect(() => {
         const fetchSearchResults = async () => {
             try {
-                const response = await axios.get("/api/admin/exhibits");
+                const response = await axios.get(`/api/admin/exhibits/filtered/${link_id}`);
 
                 if (response.data && response.data.exhibits) {
                     const data = response.data.exhibits;
@@ -173,6 +173,7 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                 setSearchQuery("");
             } else {
                 message.error("Exhibit is already in the list.");
+                setSearchQuery("");
             }
         }
     };
