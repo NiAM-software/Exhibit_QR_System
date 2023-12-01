@@ -61,6 +61,9 @@ const UserScreen = () => {
     const location = useLocation();
     const [mediaUrls, setMediaUrls] = useState([]);
     const [relatedExhibits, setRelatedExhibits] = useState([]);
+    const videoRef = useRef(null);
+    // const audioRef = useRef(null);
+    const audioRef = useRef([]);
 
     const [exhibitData, setExhibitData] = useState({
         title: '',
@@ -303,7 +306,6 @@ const UserScreen = () => {
         navigate(`/UserScreen/${exhibitId}`);
     };
 
-    const videoRef = useRef(null);
 
     const handleFullScreen = (event) => {
         event.preventDefault();
@@ -316,78 +318,77 @@ const UserScreen = () => {
         }
     };
 
-    const renderMedia = (media, index) => {
-        const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
-        const style = isVideo ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+    const handleSlideChange = () => {
+        audioRef.current.forEach(audio => {
+            if (audio && !audio.paused) {
+                audio.pause();
+            }
+        });
 
-
-        return (
-            <div key={index}>
-                {isVideo ? (
-                    <video ref={videoRef} controls style={style}>
-                        <source src={media} type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                ) : (
-                    <img src={media} alt={`Media ${isVideo ? 'Video' : 'Image'} ${index}`} style={style} />
-                )}
-            </div>
-        );
+        if (videoRef.current && !videoRef.current.paused) {
+            videoRef.current.pause();
+        }
     };
 
-    return (
-        <>
+    const renderMedia = (media, index) => {
+        const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
+        const isAudio = /\.(mp3|audio|mpeg|wav|ogg)(\?|$)/i.test(media);
+        const style = isVideo || isAudio ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+        console.log("media...................................................", media)
 
-            <header className='__header'>
-
-                <Navbar expand='sm' collapseOnSelect>
-                    <Container>
-                        <Navbar.Brand>
-                            <a href="https://niagaraaerospacemuseum.org" target="_blank" rel="noopener noreferrer">
-                                <img src={logo} alt='Museum' />
-                            </a>
-                        </Navbar.Brand>
-                        <Navbar.Toggle aria-controls='basic-navbar-nav' />
-                        <Navbar.Collapse id='basic-navbar-nav'>
-                            <Navbar.Brand className="ms-auto">
-                                <a href="https://niagaraaerospacemuseum.org" target="_blank" rel="noopener noreferrer">
-                                    Home
-                                </a>
-                            </Navbar.Brand>
-
-
-
-
-
-                            {/* <Nav className='ms-auto'> */}
-
-                            {/* (
-                    <>
-                        <LinkContainer to='/' className='home'>
-                        <Navbar.Brand>
-                            Home
-                        </Navbar.Brand>
-                        </LinkContainer>
-                    </>
-                    )
-                </Nav> */}
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
-            </header>
-
-            <div>
-                <div>
-                    <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
-
+        if (isVideo) {
+            return (
+                <video key={index} ref={videoRef} controls style={style}>
+                    <source src={media} type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            );
+        } else if (isAudio) {
+            return (
+                <div key={index} style={{ width: '100%' }}>
+                    <audio
+                        controls
+                        ref={(element) => {
+                            audioRef.current[index] = element; // Store a ref for each audio element
+                        }}
+                    >
+                        <source src={media} type="audio/mpeg" />
+                        Your browser does not support the audio element.
+                    </audio>
                 </div>
-                {windowWidth <= 600 ? (
-                    <ProductCarouselColumn>
+            );
+
+        } else {
+            return (
+                <img key={index} src={media} alt={`Media Image ${index}`} style={style} />
+            );
+        }
+    };
+
+
+
+    return (
+        <div>
+            <div>
+                <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
+                <div style={{ textAlign: 'right', marginBottom: '10px', paddingRight: '20px' }}>
+                    {exhibitData.era && (
+                        <p><strong>Era:</strong> {exhibitData.era}</p>
+                    )}
+                    {exhibitData.manufacturer && (
+                        <p><strong>Manufacturer:</strong> {exhibitData.manufacturer}</p>
+                    )}
+                </div>
+            </div>
+            {windowWidth <= 600 ? (
+                <ProductCarouselColumn>
+                    {mediaUrls.length > 0 && (
                         <CarouselContainerColumn>
                             <ResponsiveCarousel
                                 showArrows={true}
                                 dynamicHeight={true}
                                 showThumbs={false}
+                                onChange={handleSlideChange} // Add this prop
                                 renderArrowPrev={(onClickHandler, hasPrev) =>
                                     hasPrev && (
                                         <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
@@ -406,19 +407,22 @@ const UserScreen = () => {
                                 {mediaUrls.map((media, index) => renderMedia(media, index))}
                             </ResponsiveCarousel>
                         </CarouselContainerColumn>
-                        <DescriptionContainer>
-                            <p style={descriptionStyle}>
-                                {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
-                            </p>
-                        </DescriptionContainer>
-                    </ProductCarouselColumn>
-                ) : (
-                    <ProductCarouselRow>
+                    )}
+                    <DescriptionContainer>
+                        <p style={descriptionStyle}>
+                            {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+                        </p>
+                    </DescriptionContainer>
+                </ProductCarouselColumn>
+            ) : (
+                <ProductCarouselRow>
+                    {mediaUrls.length > 0 && (
                         <CarouselContainerRow>
                             <ResponsiveCarousel
                                 showArrows={true}
                                 dynamicHeight={true}
                                 showThumbs={false}
+                                onChange={handleSlideChange}
                                 renderArrowPrev={(onClickHandler, hasPrev) =>
                                     hasPrev && (
                                         <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
@@ -437,63 +441,63 @@ const UserScreen = () => {
                                 {mediaUrls.map((media, index) => renderMedia(media, index))}
                             </ResponsiveCarousel>
                         </CarouselContainerRow>
-                        <DescriptionContainer>
-                            <p style={descriptionStyle}>
-                                {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
-                            </p>
-                        </DescriptionContainer>
-                    </ProductCarouselRow>
-                )}
+                    )}
+                    <DescriptionContainer>
+                        <p style={descriptionStyle}>
+                            {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+                        </p>
+                    </DescriptionContainer>
+                </ProductCarouselRow>
+            )}
 
 
 
-                {relatedExhibits.length > 0 && (
-                    <div>
-                        <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
-                        <Carousel
-                            responsive={responsive}
-                            arrows={true}
-                            showDots={true}
-                            focusOnSelect={true}
-                            infinite={true}
-                            customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
-                            customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
-                        >
-                            {
-                                relatedExhibits.map((exhibit, index) => (
-                                    <div className="container" key={index}>
-                                        <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
-                                            <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
-                                                <img
-                                                    src={exhibit.imageUrl}
-                                                    alt={exhibit.title}
-                                                    style={{
-                                                        maxWidth: '80%',
-                                                        maxHeight: '200px',
-                                                        height: 'auto',
-                                                        marginLeft: '10%',
-                                                        marginRight: '10%',
-                                                    }}
-                                                />
-                                            </div>
-                                            <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
-                                                {exhibit.title}
-                                            </div>
-                                        </Link>
-                                    </div>
-                                ))
-                            }
-                        </Carousel>
-                    </div>
-                )
-                }
+            {relatedExhibits.length > 0 && (
+                <div>
+                    <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
+                    <Carousel
+                        responsive={responsive}
+                        arrows={true}
+                        showDots={true}
+                        focusOnSelect={true}
+                        infinite={false}
+                        customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
+                        customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
+                    >
+                        {
+                            relatedExhibits.map((exhibit, index) => (
+                                <div className="container" key={index}>
+                                    <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
+                                        <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                                            <img
+                                                src={exhibit.imageUrl}
+                                                alt={exhibit.title}
+                                                style={{
+                                                    maxWidth: '80%',
+                                                    maxHeight: '200px',
+                                                    height: 'auto',
+                                                    marginLeft: '10%',
+                                                    marginRight: '10%',
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
+                                            {exhibit.title}
+                                        </div>
+                                    </Link>
+                                </div>
+                            ))
+                        }
+                    </Carousel>
+                </div>
+            )
+            }
 
 
 
 
-            </div >
-
-        </>
+        </div >
     );
 };
+
 export default UserScreen;

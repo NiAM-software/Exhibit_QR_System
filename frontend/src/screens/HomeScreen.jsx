@@ -25,6 +25,7 @@ import { FaSearch, FaFilter } from "react-icons/fa";
 import styled from "styled-components";
 import CustomModal from "../components/CustomModal";
 import ButtonsContainer from "../components/ButtonsContainer";
+// import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
 
 const customStyles = {
   rows: {
@@ -413,17 +414,26 @@ const HomeScreen = () => {
           </Container>
         </Navbar>
         <Navbar expand="sm" collapseOnSelect className="table-header">
-          <Nav className="ms-auto">
-            <div className="input-group">
-              <div className="custom-file">
-                <input type="file" className="custom-file-input" id="inputGroupFile04" onChange={handleFileChange} />
-                <label className="custom-file-label" htmlFor="inputGroupFile04">Choose file</label>
-              </div>
-              <div className="input-group-append">
-                <button className="btn btn-primary btn-sm" type="button" onClick={handleUpload}>Upload</button>
-              </div>
-            </div>
-          </Nav>
+          <Container>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="ms-auto">
+                <input
+                  type="file"
+                  name="file"
+                  onChange={handleFileChange}
+                  style={{ marginRight: "0px" }} // Adjust margin as needed
+                />
+                <button
+                  className="btn-primary-sm"
+                  style={{ margin: "0px" }}
+                  onClick={handleUpload}
+                >
+                  Upload
+                </button>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
         </Navbar>
 
 
