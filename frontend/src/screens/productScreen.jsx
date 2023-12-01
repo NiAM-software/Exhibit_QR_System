@@ -69,6 +69,9 @@ const ProductScreen = () => {
   const location = useLocation();
   const [mediaUrls, setMediaUrls] = useState([]);
   const [relatedExhibits, setRelatedExhibits] = useState([]);
+  const videoRef = useRef(null);
+  // const audioRef = useRef(null);
+  const audioRef = useRef([]);
 
   //const dummyImageUrl = "https://picsum.photos/200";
   const [exhibitData, setExhibitData] = useState({
@@ -285,8 +288,8 @@ const ProductScreen = () => {
         console.error('horror fetching exhibit images:', error);
 
         // If there's an error, you can set some default images or handle the error as needed
-        const defaultImages = [dummyImageUrl];
-        setMediaUrls(defaultImages);
+        // const defaultImages = [dummyImageUrl];
+        // setMediaUrls(defaultImages);
       }
     };
 
@@ -371,8 +374,7 @@ const ProductScreen = () => {
 
 
 
-  const videoRef = useRef(null);
-
+  
   const handleFullScreen = (event) => {
     event.preventDefault();
     if (videoRef.current) {
@@ -384,37 +386,77 @@ const ProductScreen = () => {
     }
   };
 
-  const renderMedia = (media, index) => {
-    const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
-    const style = isVideo ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+  const handleSlideChange = () => {
+    audioRef.current.forEach(audio => {
+      if (audio && !audio.paused) {
+        audio.pause();
+      }
+    });
 
+    if (videoRef.current && !videoRef.current.paused) {
+      videoRef.current.pause();
+    }
+  };
+  
+  const renderMedia = (media, index) => {
+  const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
+  const isAudio = /\.(mp3|audio|mpeg|wav|ogg)(\?|$)/i.test(media);
+  const style = isVideo || isAudio ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+    console.log("media...................................................",media)
+
+  if (isVideo) {
     return (
-      <div key={index}>
-        {isVideo ? (
-          <video ref={videoRef} controls style={style}>
-            <source src={media} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        ) : (
-          <img src={media} alt={`Media ${isVideo ? 'Video' : 'Image'} ${index}`} style={style} />
-        )}
+      <video key={index} ref={videoRef} controls style={style}>
+        <source src={media} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    );
+  } else if (isAudio) {
+    return (
+      <div key={index} style={{ width: '100%' }}>
+        <audio
+          controls
+          ref={(element) => {
+            audioRef.current[index] = element; // Store a ref for each audio element
+          }}
+        >
+          <source src={media} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
       </div>
     );
-  };
+    
+  } else {
+    return (
+      <img key={index} src={media} alt={`Media Image ${index}`} style={style} />
+    );
+  }
+};
+
+  
 
   return (
     <div>
       <div>
         <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
-
+        <div style={{ textAlign: 'right', marginBottom: '10px', paddingRight: '20px' }}>
+          {exhibitData.era && (
+            <p><strong>Era:</strong> {exhibitData.era}</p>
+          )}
+          {exhibitData.manufacturer && (
+            <p><strong>Manufacturer:</strong> {exhibitData.manufacturer}</p>
+          )}
+        </div>
       </div>
       {windowWidth <= 600 ? (
         <ProductCarouselColumn>
+          {mediaUrls.length > 0 && (
           <CarouselContainerColumn>
             <ResponsiveCarousel
               showArrows={true}
               dynamicHeight={true}
               showThumbs={false}
+              onChange={handleSlideChange} // Add this prop
               renderArrowPrev={(onClickHandler, hasPrev) =>
                 hasPrev && (
                   <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
@@ -433,6 +475,7 @@ const ProductScreen = () => {
               {mediaUrls.map((media, index) => renderMedia(media, index))}
             </ResponsiveCarousel>
           </CarouselContainerColumn>
+          )}
           <DescriptionContainer>
             <p style={descriptionStyle}>
               {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
@@ -441,11 +484,13 @@ const ProductScreen = () => {
         </ProductCarouselColumn>
       ) : (
         <ProductCarouselRow>
+          {mediaUrls.length > 0 && (
           <CarouselContainerRow>
             <ResponsiveCarousel
               showArrows={true}
               dynamicHeight={true}
               showThumbs={false}
+              onChange={handleSlideChange}
               renderArrowPrev={(onClickHandler, hasPrev) =>
                 hasPrev && (
                   <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
@@ -464,6 +509,7 @@ const ProductScreen = () => {
               {mediaUrls.map((media, index) => renderMedia(media, index))}
             </ResponsiveCarousel>
           </CarouselContainerRow>
+          )}
           <DescriptionContainer>
             <p style={descriptionStyle}>
               {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
@@ -482,7 +528,7 @@ const ProductScreen = () => {
             arrows={true}
             showDots={true}
             focusOnSelect={true}
-            infinite={true}
+            infinite={false}
             customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
             customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
           >
