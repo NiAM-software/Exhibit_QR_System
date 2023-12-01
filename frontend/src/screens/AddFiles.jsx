@@ -20,12 +20,23 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
   const [previewTitle, setPreviewTitle] = useState('');
   const [previewFileType, setPreviewFileType] = useState('');
   const [fileList, setFileList] = useState([]);
+  const [unsupportedFiles, setUnsupportedFiles] = useState([]);
 
-  const handleCancel = () => setPreviewOpen(false);
+  const handleCancel = () => {
+    // Stop the media playback if it's a video or audio
+    if (previewFileType === 'video' || previewFileType === 'audio') {
+        const previewElement = document.getElementById('media-preview');
+        if (previewElement) {
+            previewElement.pause();
+            previewElement.currentTime = 0; // Reset the playback to the start
+        }
+    }
+    setPreviewOpen(false);
+  };
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith('image/') || file.type.startsWith('audio/')) {
         // For image files
         file.preview = await getBase64(file.originFileObj);
       } else if (file.type.startsWith('video/')) {
@@ -36,37 +47,33 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     console.log('FILE', file);
     setPreviewImage(file.url || file.preview);
     setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
-    setPreviewFileType(file.type.startsWith('video/') ? 'video' : 'image');
+    setPreviewFileType(file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : 'image');
     setPreviewOpen(true);
   };
-
-  const [unsupportedFiles, setUnsupportedFiles] = useState([]);
-
+  
   const beforeUpload = (file) => {
-    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime']; // Add more formats as needed
+    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime', 'audio/mpeg', 'audio/wav']; // Add audio formats
     const isSupported = allowedFormats.includes(file.type);
-
+  
     if (!isSupported) {
-      // Display error message
       message.error(`Unsupported file format: ${file.name}`);
-      setUnsupportedFiles([...unsupportedFiles, file.type]); // Add the unsupported format to the list
-      return false; // Return false to prevent the file from being uploaded
+      setUnsupportedFiles([...unsupportedFiles, file.type]);
+      return false;
     }
-
-    // Check if all selected files are supported and reset unsupportedFiles state if needed
+  
     const allFilesSupported = fileList.every((item) => allowedFormats.includes(item.type));
-
+  
     if (!allFilesSupported) {
-      setUnsupportedFiles([]); // Reset unsupportedFiles state
+      setUnsupportedFiles([]);
     }
-
-    return true; // Allow the file to be uploaded if it's of an allowed format
+  
+    return true;
   };
 
 
 
   const handleChange = ({ fileList: newFileList, file }) => {
-    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime']; // Add more formats as needed
+    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime', 'audio/mpeg', 'audio/wav']; // Add more formats as needed
 
     // Filter out unsupported files from the newFileList
     const filteredFileList = newFileList.filter((item) => {
@@ -140,6 +147,12 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
               controls
               src={file.url || URL.createObjectURL(file.originFileObj)}
             />
+          ) : file.type.startsWith('audio/') ? (
+            <audio
+              style={{ width: '100%' }}
+              controls
+              src={file.url || URL.createObjectURL(file.originFileObj)}
+            />
           ) : (
             <img
               src={file.url || file.thumbUrl}
@@ -190,16 +203,22 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
           {uploadButton}
         </Upload>
       </div>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
-        {previewFileType === 'video' ? (
-          <video style={{ width: '100%' }} controls>
-            <source src={previewImage} type="video/mp4" />
-            Your browser does not support HTML video.
-          </video>
-        ) : (
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        )}
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+          {previewFileType === 'video' ? (
+              <video id="media-preview" style={{ width: '100%' }} controls>
+                  <source src={previewImage} type="video/mp4" />
+                  Your browser does not support HTML video.
+              </video>
+          ) : previewFileType === 'audio' ? (
+              <audio id="media-preview" style={{ width: '100%' }} controls>
+                  <source src={previewImage} type="audio/mpeg" />
+                  Your browser does not support HTML audio.
+              </audio>
+          ) : (
+              <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          )}
       </Modal>
+
 
 
     </div>

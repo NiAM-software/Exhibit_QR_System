@@ -135,6 +135,7 @@ const upload = multer({
 
         // Set the key with folder name and file name
         const fileName = `${folderName}_${Date.now().toString()}${getFileTypeExtension(file.mimetype)}`;
+        console.log(fileName);
         const key = `${folderName}/${fileName}`;
         cb(null, key);
       } catch (err) {
@@ -153,7 +154,8 @@ const getFileTypeExtension = (mimeType) => {
       return '.png';
     case 'video/mp4':
       return '.mp4';
-    // Add more cases as needed
+    case 'audio/mp3': return '.mp3';
+    case 'audio/mpeg': return '.mpeg';
     default:
       return '';
   }
