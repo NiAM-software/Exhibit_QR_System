@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Modal, Upload, message, Button } from "antd";
 import axios from "axios";
@@ -118,7 +118,15 @@ const Modifyfiles = ({
     setNewlyAddedFiles([]);
   };
 
-  const handleCancel = () => setPreviewOpen(false);
+  const mediaRef = useRef(null); // Add a ref for the media element
+
+  const handleCancel = () => {
+    if (mediaRef.current) {
+      mediaRef.current.pause();
+      mediaRef.current.currentTime = 0;
+    }
+    setPreviewOpen(false);
+  };
 
   const buttonContainerStyle = {
     display: "flex",
@@ -130,13 +138,14 @@ const Modifyfiles = ({
   const handlePreview = async (file) => {
     const isImage = typeof file.type === 'string' && file.type.startsWith('image/');
     const isVideo = /\.(mp4|webm)(\?|$)/i.test(file.name);
+    const isAudio = /\.(mpeg|mp3|wav)(\?|$)/i.test(file.name); // Add check for audio files
 
 
     if (!file.url && !file.preview) {
       if (isImage) {
         // For image files
         file.preview = await getBase64(file.originFileObj);
-      } else if (isVideo) {
+      } else if (isVideo || isAudio) {
         // For video files, create an object URL for preview
         file.preview = URL.createObjectURL(file.originFileObj);
       }
@@ -144,7 +153,7 @@ const Modifyfiles = ({
     console.log('FILE', file);
     setPreviewFile(file.url || file.preview);
     setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
-    setPreviewFileType(isVideo ? 'video' : 'image');
+    setPreviewFileType(isVideo ? 'video' : isAudio ? 'audio' : 'image'); // Update to include audio
     setPreviewOpen(true);
 
   };
@@ -152,7 +161,7 @@ const Modifyfiles = ({
   useEffect(() => {
     // Clean up function to revoke object URLs
     return () => {
-      if (previewFileType === 'video') {
+      if (previewFileType === 'video' || previewFileType === 'audio') {
         URL.revokeObjectURL(previewFile);
       }
     };
@@ -176,6 +185,7 @@ const Modifyfiles = ({
     console.log('fil', file);
     const isLocalFile = file.originFileObj && !file.url;
     const isVideo = /\.(mp4|webm)(\?|$)/i.test(file.name);
+    const isAudio = /\.(mp3|mpeg|wav)(\?|$)/i.test(file.name); // Add check for audio files
 
     // Create a URL for preview if the file is local
     if (isLocalFile && !file.preview) {
@@ -189,6 +199,12 @@ const Modifyfiles = ({
           {isVideo ? (
             <video
               style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              controls
+              src={filePreviewUrl}
+            />
+          ) : isAudio ? (
+            <audio
+              style={{ width: '100%' }}
               controls
               src={filePreviewUrl}
             />
@@ -231,6 +247,8 @@ const Modifyfiles = ({
       'image/png',
       'video/mp4',
       'video/quicktime',
+      'audio/mpeg',
+      'audio/wav',
     ];
     const isSupported = allowedFormats.includes(file.type);
 
@@ -259,6 +277,8 @@ const Modifyfiles = ({
       "image/png",
       "video/mp4",
       "video/quicktime",
+      'audio/mpeg',
+      'audio/wav',
     ];
     // Filter out files with disallowed formats and update the file list
 
@@ -378,16 +398,22 @@ const Modifyfiles = ({
           {uploadButton}
         </Upload>
       </div>
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
-        {previewFileType === 'video' ? (
-          <video style={{ width: '100%' }} controls>
-            <source src={previewFile} type="video/mp4" />
-            Your browser does not support HTML video.
-          </video>
-        ) : (
-          <img alt="example" style={{ width: '100%' }} src={previewFile} />
-        )}
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+          {previewFileType === 'video' ? (
+              <video ref={mediaRef} style={{ width: '100%' }} controls>
+                  <source src={previewFile} type="video/mp4" />
+                  Your browser does not support HTML video.
+              </video>
+          ) : previewFileType === 'audio' ? (
+              <audio ref={mediaRef} style={{ width: '100%' }} controls>
+                  <source src={previewFile} type="audio/mpeg" />
+                  Your browser does not support HTML audio.
+              </audio>
+          ) : (
+              <img alt="example" style={{ width: '100%' }} src={previewFile} />
+          )}
       </Modal>
+
     </div>
 
   );
