@@ -127,15 +127,16 @@ async function helperProcessData(filePath, file_name) {
     }
     const processedData  = processData(data);
     const { headers, filePath: outputFilePath } = writeDataToCSV(processedData);
+    // console.log(headers)
     return { headers, filePath: outputFilePath };
 }
 
 // Example usage
-const file_name='sample.xlsx';
-const filePath = '/Users/srivenkat/Documents/test/Exhibit_QR_System/sample.xlsx'; // or .xlsx
-helperProcessData(filePath,file_name).then(outputFilePath => {
-    // console.log("success")
-    console.log(outputFilePath);
-});
+// const file_name='exhibits.csv';
+// const filePath = '/Users/srivenkat/Documents/test/Exhibit_QR_System/exhibits.csv'; // or .xlsx
+// helperProcessData(filePath,file_name).then(outputFilePath => {
+//     // console.log("success")
+//     console.log(outputFilePath);
+// });
 
 export  {helperProcessData};
