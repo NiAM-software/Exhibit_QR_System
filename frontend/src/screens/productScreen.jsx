@@ -29,13 +29,14 @@ const CarouselContainerRow = styled.div`
   display: flex; // Added for vertical centering
   justify-content: center; // Center horizontally
   align-items: center;
+  
   `;
 
 // Define a styled component for the column layout
 const CarouselContainerColumn = styled.div`
   width: 100%; 
   height: 60vw;
-  margin-bottom: 20px;
+  margin-bottom: 20px;  
   overflow: hidden;
   display: flex; /* Use flexbox for centering vertically */
   justify-content: center; /* Center vertically */
@@ -374,7 +375,7 @@ const ProductScreen = () => {
 
 
 
-  
+
   const handleFullScreen = (event) => {
     event.preventDefault();
     if (videoRef.current) {
@@ -397,43 +398,46 @@ const ProductScreen = () => {
       videoRef.current.pause();
     }
   };
-  
+
   const renderMedia = (media, index) => {
-  const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
-  const isAudio = /\.(mp3|audio|mpeg|wav|ogg)(\?|$)/i.test(media);
-  const style = isVideo || isAudio ? mediaStyleRow : (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
-    console.log("media...................................................",media)
+    const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
+    const isAudio = /\.(mp3|audio|mpeg|wav|ogg)(\?|$)/i.test(media);
+    const containerStyle = isVideo || isAudio ?
+      { ...mediaStyleRow, height: 'auto', display: 'flex', overflow: 'visible', justifyContent: 'center', alignItems: 'center' } :
+      (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
 
-  if (isVideo) {
-    return (
-      <video key={index} ref={videoRef} controls style={style}>
-        <source src={media} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    );
-  } else if (isAudio) {
-    return (
-      <div key={index} style={{ width: '100%' }}>
-        <audio
-          controls
-          ref={(element) => {
-            audioRef.current[index] = element; // Store a ref for each audio element
-          }}
-        >
-          <source src={media} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-    );
-    
-  } else {
-    return (
-      <img key={index} src={media} alt={`Media Image ${index}`} style={style} />
-    );
-  }
-};
+    if (isVideo) {
+      return (
+        <div key={index} style={{ width: '100%', height: windowWidth <= 600 ? '60vw' : '18vw', overflow: 'hidden' }}>
+          <video controls style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} ref={videoRef}>
+            <source src={media} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      );
+    } else if (isAudio) {
+      return (
+        <div key={index} style={{ width: '100%' }}>
+          <audio
+            controls
+            ref={(element) => {
+              audioRef.current[index] = element; // Store a ref for each audio element
+            }}
+          >
+            <source src={media} type="audio/mpeg" />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+      );
 
-  
+    } else {
+      return (
+        <img key={index} src={media} alt={`Media Image ${index}`} style={containerStyle} />
+      );
+    }
+  };
+
+
 
   return (
     <div>
@@ -451,30 +455,30 @@ const ProductScreen = () => {
       {windowWidth <= 600 ? (
         <ProductCarouselColumn>
           {mediaUrls.length > 0 && (
-          <CarouselContainerColumn>
-            <ResponsiveCarousel
-              showArrows={true}
-              dynamicHeight={true}
-              showThumbs={false}
-              onChange={handleSlideChange} // Add this prop
-              renderArrowPrev={(onClickHandler, hasPrev) =>
-                hasPrev && (
-                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                    <LeftOutlined />
-                  </button>
-                )
-              }
-              renderArrowNext={(onClickHandler, hasNext) =>
-                hasNext && (
-                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                    <RightOutlined />
-                  </button>
-                )
-              }
-            >
-              {mediaUrls.map((media, index) => renderMedia(media, index))}
-            </ResponsiveCarousel>
-          </CarouselContainerColumn>
+            <CarouselContainerColumn>
+              <ResponsiveCarousel
+                showArrows={true}
+                dynamicHeight={true}
+                showThumbs={false}
+                onChange={handleSlideChange} // Add this prop
+                renderArrowPrev={(onClickHandler, hasPrev) =>
+                  hasPrev && (
+                    <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                      <LeftOutlined />
+                    </button>
+                  )
+                }
+                renderArrowNext={(onClickHandler, hasNext) =>
+                  hasNext && (
+                    <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                      <RightOutlined />
+                    </button>
+                  )
+                }
+              >
+                {mediaUrls.map((media, index) => renderMedia(media, index))}
+              </ResponsiveCarousel>
+            </CarouselContainerColumn>
           )}
           <DescriptionContainer>
             <p style={descriptionStyle}>
@@ -485,30 +489,30 @@ const ProductScreen = () => {
       ) : (
         <ProductCarouselRow>
           {mediaUrls.length > 0 && (
-          <CarouselContainerRow>
-            <ResponsiveCarousel
-              showArrows={true}
-              dynamicHeight={true}
-              showThumbs={false}
-              onChange={handleSlideChange}
-              renderArrowPrev={(onClickHandler, hasPrev) =>
-                hasPrev && (
-                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                    <LeftOutlined />
-                  </button>
-                )
-              }
-              renderArrowNext={(onClickHandler, hasNext) =>
-                hasNext && (
-                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                    <RightOutlined />
-                  </button>
-                )
-              }
-            >
-              {mediaUrls.map((media, index) => renderMedia(media, index))}
-            </ResponsiveCarousel>
-          </CarouselContainerRow>
+            <CarouselContainerRow>
+              <ResponsiveCarousel
+                showArrows={true}
+                dynamicHeight={true}
+                showThumbs={false}
+                onChange={handleSlideChange}
+                renderArrowPrev={(onClickHandler, hasPrev) =>
+                  hasPrev && (
+                    <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                      <LeftOutlined />
+                    </button>
+                  )
+                }
+                renderArrowNext={(onClickHandler, hasNext) =>
+                  hasNext && (
+                    <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                      <RightOutlined />
+                    </button>
+                  )
+                }
+              >
+                {mediaUrls.map((media, index) => renderMedia(media, index))}
+              </ResponsiveCarousel>
+            </CarouselContainerRow>
           )}
           <DescriptionContainer>
             <p style={descriptionStyle}>

@@ -13,6 +13,7 @@ node_modules
 
 #uploads
 /uploads
+/processed_data
 
 # misc
 .env

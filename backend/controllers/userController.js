@@ -52,7 +52,7 @@ const getRelatedExhibits = asyncHandler(async (req, res) => {
     select related_exhibit_id, related_exhibit_title, file_name, file_location 
     from (
       select img.related_exhibit_id, img.related_exhibit_title, atch.file_name, atch.file_location,
-      row_number() over (partition by img.related_exhibit_id order by atch.file_name) as rn
+      row_number() over (partition by img.related_exhibit_id order by file_size asc) as rn
       FROM  attachments atch
       right join (
         select distinct related_exhibit_id, e.title as related_exhibit_title

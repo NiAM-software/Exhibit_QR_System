@@ -18,6 +18,7 @@ const App = () => {
   });
 
   if (shouldExcludeHeader) {
+    console.log("Hi");
     return (
       <>
         <Toaster />
@@ -29,6 +30,7 @@ const App = () => {
       </>
     );
   } else{
+    console.log("Bye");
   return (
    <>
        <Toaster/>

@@ -15,13 +15,13 @@ import {
 const getMaintenanceList = async (req, res) => {
     try {
       const categoriesQuery    = "SELECT DISTINCT category_id, category_name FROM category where active_ind='Y'"; 
-      const locationQuery      = "SELECT DISTINCT location_id, location_name FROM location where active_ind='Y'"; 
+      // const locationQuery      = "SELECT DISTINCT location_id, location_name FROM location where active_ind='Y'"; 
       const locationTypesQuery = "SELECT DISTINCT  id, location_type FROM location_type where active_ind='Y'";
       const roomQuery          = "SELECT DISTINCT room_id, room_name FROM room where active_ind='Y'";
   
-      const [categoriesResults,locationResults,locationTypesResults,roomResults] = await Promise.all([
+      const [categoriesResults,locationTypesResults,roomResults] = await Promise.all([
         db.promise().query(categoriesQuery),
-        db.promise().query(locationQuery),
+        // db.promise().query(locationQuery),
         db.promise().query(locationTypesQuery),
         db.promise().query(roomQuery),
       ]);
@@ -29,7 +29,7 @@ const getMaintenanceList = async (req, res) => {
       if (
         categoriesResults[0] && categoriesResults[0].length > 0 &&
         locationTypesResults[0] && locationTypesResults[0].length > 0 &&
-        locationResults[0] && locationResults[0].length > 0 &&
+        // locationResults[0] && locationResults[0].length > 0 &&
         roomResults[0] && roomResults[0].length > 0
       ) {
         const categories = categoriesResults[0]
@@ -46,12 +46,12 @@ const getMaintenanceList = async (req, res) => {
           }))
           .filter((location_type) => location_type.name !== null && location_type.name !== '');
       
-        const locations = locationResults[0]
-          .map((row) => ({
-            id: row.location_id,
-            name: row.location_name,
-          }))
-          .filter((location) => location.name !== null && location.name !== '');
+        // const locations = locationResults[0]
+        //   .map((row) => ({
+        //     id: row.location_id,
+        //     name: row.location_name,
+        //   }))
+        //   .filter((location) => location.name !== null && location.name !== '');
       
         const rooms = roomResults[0]
           .map((row) => ({
@@ -60,12 +60,13 @@ const getMaintenanceList = async (req, res) => {
 
           }))
           .filter((room) => room.name !== null && room.name !== '');
-          res.status(200).json({ categories, locationTypes, locations, rooms });
+          res.status(200).json({ categories, locationTypes,rooms });
         }
     else {
         return res.status(404).json({ message: 'No categories or location types found' });
       }
     } catch (err) {
+      // console.log("HI",err.message)
       return res.status(500).json({ message: err.message });
     }
   };  
@@ -173,49 +174,49 @@ const deleteCategory = asyncHandler(async (req, res) => {
 // @desc    Create new location
 // @route   POST /api/exhibits/maintenance/location
 // @access  Private/Admin
-const createLocation = asyncHandler(async (req, res) => {
-    const {location}= req.body;
-    try {
-      const query = 'Insert into location(location_name,active_ind) VALUES(?, ?)';
-      const [results, fields] = await db.promise().query(query,[location,'Y']);
+// const createLocation = asyncHandler(async (req, res) => {
+//     const {location}= req.body;
+//     try {
+//       const query = 'Insert into location(location_name,active_ind) VALUES(?, ?)';
+//       const [results, fields] = await db.promise().query(query,[location,'Y']);
   
-      if (results && results.affectedRows > 0) {
-        const newLocationId = results.insertId;
-        res.status(201).json({ message: 'Location created successfully' , id : newLocationId});
-      } else {
-        return res.status(401).json({ message: "Failed to create location" });
-      }
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
-    }
-  });
+//       if (results && results.affectedRows > 0) {
+//         const newLocationId = results.insertId;
+//         res.status(201).json({ message: 'Location created successfully' , id : newLocationId});
+//       } else {
+//         return res.status(401).json({ message: "Failed to create location" });
+//       }
+//     } catch (err) {
+//       return res.status(500).json({ message: err.message });
+//     }
+//   });
   
 // @desc    Update location
 // @route   PUT /api/exhibits/maintenance/location
 // @access  Private/Admin
-  const updateLocation = asyncHandler(async (req, res) => {
-    const {location,id}= req.body;
-    try {
-      const selectQuery = "SELECT * FROM location WHERE location_id=? AND active_ind='Y'";
-      const [selectResults, selectFields] = await db.promise().query(selectQuery, [id]);
+  // const updateLocation = asyncHandler(async (req, res) => {
+  //   const {location,id}= req.body;
+  //   try {
+  //     const selectQuery = "SELECT * FROM location WHERE location_id=? AND active_ind='Y'";
+  //     const [selectResults, selectFields] = await db.promise().query(selectQuery, [id]);
   
-      if (selectResults && selectResults.length > 0) {
-        const updateQuery ="UPDATE location SET location_name=? WHERE location_id=? and active_ind='Y'";
-        const [updateResults, updateFields] = await db.promise().query(updateQuery, [location,id]);
+  //     if (selectResults && selectResults.length > 0) {
+  //       const updateQuery ="UPDATE location SET location_name=? WHERE location_id=? and active_ind='Y'";
+  //       const [updateResults, updateFields] = await db.promise().query(updateQuery, [location,id]);
   
-        if (updateResults.affectedRows > 0) {
-          return res.status(200).json({ message: "Successfully updated location" }); // wrong status code for dev env
-        } else {
-          return res.status(500).json({ message: "Couldn't update location" });
-        }
-      } else {
-        return res.status(404).json({ message: "location doesn't exist" });
-      }
-    } catch (err) {
-      console.log(err.message)
-      return res.status(500).json({ message: err.message });
-    }
-  });
+  //       if (updateResults.affectedRows > 0) {
+  //         return res.status(200).json({ message: "Successfully updated location" }); // wrong status code for dev env
+  //       } else {
+  //         return res.status(500).json({ message: "Couldn't update location" });
+  //       }
+  //     } else {
+  //       return res.status(404).json({ message: "location doesn't exist" });
+  //     }
+  //   } catch (err) {
+  //     console.log(err.message)
+  //     return res.status(500).json({ message: err.message });
+  //   }
+  // });
 
 // @desc    Create new location type
 // @route   POST /api/exhibits/maintenance/location_type
@@ -319,29 +320,29 @@ const createRoom = asyncHandler(async (req, res) => {
 // @desc    Delete location
 // @route   DELETE /api/exhibits/maintenance/location/:id
 // @access  Private/Admin
-const deleteLocation = asyncHandler(async (req, res) => {
-  const { ids } = req.body;
+// const deleteLocation = asyncHandler(async (req, res) => {
+//   const { ids } = req.body;
 
-  try {
-    const selectQuery = "SELECT * FROM location WHERE location_id IN (?) AND active_ind='Y'";
-    const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
+//   try {
+//     const selectQuery = "SELECT * FROM location WHERE location_id IN (?) AND active_ind='Y'";
+//     const [selectResults, selectFields] = await db.promise().query(selectQuery, [ids]);
 
-    if (selectResults && selectResults.length > 0) {
-      const updateQuery = "UPDATE location SET active_ind='N' WHERE location_id IN (?)";
-      const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
+//     if (selectResults && selectResults.length > 0) {
+//       const updateQuery = "UPDATE location SET active_ind='N' WHERE location_id IN (?)";
+//       const [updateResults, updateFields] = await db.promise().query(updateQuery, [ids]);
 
-      if (updateResults.affectedRows > 0) {
-        return res.status(200).json({ message: "Successfully deleted location" }); // Successfully deleted, no content to send
-      } else {
-        return res.status(500).json({ message: "No location were deleted" });
-      }
-    } else {
-      return res.status(404).json({ message: "location doesn't exist" });
-    }
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-});
+//       if (updateResults.affectedRows > 0) {
+//         return res.status(200).json({ message: "Successfully deleted location" }); // Successfully deleted, no content to send
+//       } else {
+//         return res.status(500).json({ message: "No location were deleted" });
+//       }
+//     } else {
+//       return res.status(404).json({ message: "location doesn't exist" });
+//     }
+//   } catch (err) {
+//     return res.status(500).json({ message: err.message });
+//   }
+// });
 
 // @desc    Delete location Type
 // @route   DELETE /api/exhibits/maintenance/location/:id
@@ -403,9 +404,9 @@ const deleteRoom = asyncHandler(async (req, res) => {
      createCategory,
      updateCategory,
      deleteCategory,
-     createLocation,
-     updateLocation,
-     deleteLocation,
+    //  createLocation,
+    //  updateLocation,
+    //  deleteLocation,
      createLocationType,
      updateLocationType,
      deleteLocationType,

@@ -30,6 +30,7 @@ import {
 } from '../utils/attachmentUtils.js';
 import queries from '../sql_queries/queries.js';
 import drop_queries from '../sql_queries/drop_queries.js';
+import {helperProcessData} from '../sql_queries/dataMassaging.js';
 import multer from 'multer';
 // const storage = multer.diskStorage({
 //   destination: function(req, file, cb) {
@@ -46,9 +47,9 @@ import {getMaintenanceList,
   createCategory,
   updateCategory,
   deleteCategory,
-  createLocation,
-  updateLocation,
-  deleteLocation,
+  // createLocation,
+  // updateLocation,
+  // deleteLocation,
   createLocationType,
   updateLocationType,
   deleteLocationType,
@@ -75,34 +76,53 @@ router.post("/import-csv", localUpload.single("file"), async (req, res) => {
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const filePath = file.path;
-       connection.beginTransaction();
+
+      const result = await helperProcessData(file.path, req.file.originalname);
+      const columnList = result.headers.map(header => `\`${header}\``).join(', ');
+      const filePath = result.filePath;
+      
+      connection.beginTransaction();
 
       try {
+
         // Drop tables if they exist
         for (const query of drop_queries) {
-           connection.execute(query);
+              try {
+                connection.execute(query);
+          } catch (queryError) {
+              // Log the error or handle it as needed
+              console.error('Query execution failed:', queryError);
+              throw queryError; 
+          }
         }
 
-        // // Load CSV data into exhibits_dummy table
+        // Load CSV data into exhibits_dummy table
         const loadQuery = `
           LOAD DATA LOCAL INFILE '${filePath}'
           INTO TABLE exhibits_dummy 
           FIELDS OPTIONALLY ENCLOSED BY '"'
           TERMINATED BY ',' 
           LINES TERMINATED BY '\\n' 
-          
-          (title, category, room, location_type, location, asset_number, manufacturer, era)
-          SET asset_number = NULLIF(@asset_number, '');
+          IGNORE 1 LINES
+          (${columnList})
         `;
+
+        //SET asset_number = NULLIF(@asset_number, '');
          connection.query(loadQuery); // Use `query` instead of `execute`
 
         // Execute other queries
         for (const query of queries) {
-           connection.execute(query);
+          try {
+              connection.execute(query);
+          } catch (queryError) {
+              // Log the error or handle it as needed
+              console.error('Query execution failed:', queryError);
+              throw queryError; // Re-throw the error to trigger the catch block
+          }
         }
-         connection.commit();
+        connection.commit();
         res.status(201).json({ message: 'All queries executed successfully in transaction' });
+      
       } catch (error) {
          connection.rollback();
         console.error('Transaction failed:', error);
@@ -111,7 +131,7 @@ router.post("/import-csv", localUpload.single("file"), async (req, res) => {
     } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ message: 'Error occurred', error: error.message });
-    } finally {
+  } finally {
       connection.release();
     }
   });
@@ -126,9 +146,9 @@ router.get("/maintenance", getMaintenanceList);
 router.post("/maintenance/category", createCategory);
 router.put("/maintenance/category", updateCategory);
 router.delete("/maintenance/category", protect, deleteCategory);
-router.post("/maintenance/location", createLocation);
-router.put("/maintenance/location", updateLocation);
-router.delete("/maintenance/location", protect, deleteLocation);
+// router.post("/maintenance/location", createLocation);
+// router.put("/maintenance/location", updateLocation);
+// router.delete("/maintenance/location", protect, deleteLocation);
 router.post("/maintenance/location_type", createLocationType);
 router.put("/maintenance/location_type", updateLocationType);
 router.delete("/maintenance/location_type", protect, deleteLocationType);
@@ -150,15 +170,17 @@ router.post(
     const deleteAttachmentsResponse = await deleteMultipleAttachmentsUtils(filesToBeDeleted)
     for (const file of req.files) {
       const name = file.key;
-      const folderName = `exhibit_${exhibit_id}`;
+      const fileSize = file.size
+      const fileType = file.mimetype.split("/")[0];
+      const folderName = `exhibit_${req.params.exhibit_id}`;
       const fileName = name.split("/")[1];
 
       try {
         const query =
-          "INSERT INTO attachments (exhibit_id, file_name, file_location) VALUES (?, ?, ?)";
-        const [results, fields] = await db
-          .promise()
-          .query(query, [exhibit_id, fileName, folderName]);
+        "INSERT INTO attachments (exhibit_id, file_name, file_size, file_type, file_location) VALUES (?, ?,?, ?, ?)";
+      const [results, fields] = await db
+        .promise()
+        .query(query, [exhibit_id, fileName,fileSize,fileType, folderName]);
 
         if (results && results.affectedRows > 0) {
         } else {
