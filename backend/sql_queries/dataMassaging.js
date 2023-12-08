@@ -3,6 +3,7 @@ import csv from "csv-parser";
 import fastcsv from 'fast-csv';
 import xlsx from  "xlsx";
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 function readCSVFile(filePath) {
   return new Promise((resolve, reject) => {
@@ -84,7 +85,10 @@ function processData(data) {
 }
 
 function writeDataToCSV(data) {
-    const outputDir = path.join("/Users/srivenkat/Documents/test/Exhibit_QR_System", "processed_data");
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const outputDir = path.join(__dirname, "processed_data");
+    console.log("outputDir"+outputDir);
 
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir);
