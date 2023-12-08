@@ -87,7 +87,7 @@ function processData(data) {
 function writeDataToCSV(data) {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const outputDir = path.join(__dirname, "processed_data");
+    const outputDir = path.join(__dirname,'..', '..', "processed_data");
     console.log("outputDir"+outputDir);
 
     if (!fs.existsSync(outputDir)) {
