@@ -229,8 +229,8 @@ const HomeScreen = () => {
     })
       .then((res) => {
         console.log(res);
-        toast.success('Data loaded Successfully')
-        window.location.reload()
+        toast.success("Data loaded Successfully");
+        window.location.reload();
       })
       .catch((err) => console.log(err));
   };
@@ -256,7 +256,8 @@ const HomeScreen = () => {
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error("Error exporting CSV:", error.message);
+      console.log("in catch block");
+      console.error(error.message);
     }
   };
 
@@ -328,50 +329,50 @@ const HomeScreen = () => {
 
   const tableData = data
     ? data
-      // .filter(
-      //   (exhibit) =>
-      //     exhibit.title &&
-      //     exhibit.title.toLowerCase().includes(filterText.toLowerCase())
-      // )
-      .filter((exhibit) => {
-        const valuesToSearch = [
-          exhibit.title,
-          exhibit.room,
-          exhibit.asset_number,
-          exhibit.category,
-          exhibit.subcategory,
-          exhibit.era,
-          exhibit.exhibit_id,
-        ];
+        // .filter(
+        //   (exhibit) =>
+        //     exhibit.title &&
+        //     exhibit.title.toLowerCase().includes(filterText.toLowerCase())
+        // )
+        .filter((exhibit) => {
+          const valuesToSearch = [
+            exhibit.title,
+            exhibit.room,
+            exhibit.asset_number,
+            exhibit.category,
+            exhibit.subcategory,
+            exhibit.era,
+            exhibit.exhibit_id,
+          ];
 
-        return valuesToSearch
-          .map((value) => String(value)) // Convert each value to a string
-          .filter(Boolean) // Filter out undefined or falsy values
-          .some((value) =>
-            value.toLowerCase().includes(filterText.toLowerCase())
-          );
-      })
-      .map((exhibit) => {
-        const {
-          title,
-          room,
-          asset_number,
-          category,
-          subcategory,
-          era,
-          exhibit_id,
-        } = exhibit;
+          return valuesToSearch
+            .map((value) => String(value)) // Convert each value to a string
+            .filter(Boolean) // Filter out undefined or falsy values
+            .some((value) =>
+              value.toLowerCase().includes(filterText.toLowerCase())
+            );
+        })
+        .map((exhibit) => {
+          const {
+            title,
+            room,
+            asset_number,
+            category,
+            subcategory,
+            era,
+            exhibit_id,
+          } = exhibit;
 
-        return {
-          title,
-          room,
-          asset_number,
-          category,
-          subcategory,
-          era,
-          exhibit_id,
-        };
-      })
+          return {
+            title,
+            room,
+            asset_number,
+            category,
+            subcategory,
+            era,
+            exhibit_id,
+          };
+        })
     : [];
 
   //console.log(tableData);
@@ -435,8 +436,6 @@ const HomeScreen = () => {
             </Navbar.Collapse>
           </Container>
         </Navbar>
-
-
 
         {/* <form>
           <TextField type="file" />
