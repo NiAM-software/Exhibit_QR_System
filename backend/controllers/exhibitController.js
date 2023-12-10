@@ -531,27 +531,22 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
   try {
     const [exhibitsResults] = await db.promise().query(exhibitsQuery);
     const exhibits = exhibitsResults;
-    const jsonData = JSON.parse(JSON.stringify(exhibits));
 
-    // CSV
-    const ws = fs.createWriteStream('exhibits.csv');
+// CSV
+const ws = fs.createWriteStream('exhibits.csv');
     fastcsv
-      .write(jsonData, { headers: true })
-      .on('data', function (data) {
-        console.log('Writing data:', data);
-      })
-      .on('end', function () {
-        console.log('Write to exhibits.csv successfully!');
-        // Set headers for CSV download
-        res.setHeader('Content-Type', 'text/csv');
-        res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');
-        // Pipe the CSV file to the response stream
-        fs.createReadStream('exhibits.csv').pipe(res);
-
-        // Close the write stream
-        ws.close();
-      })
-      .pipe(ws);
+    .write(exhibits, { headers: true })
+    .on('data', function (data) {
+      console.log('Writing data:', data);
+    })
+    .on('end', function () {
+      console.log('Write to exhibits.csv successfully!');
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');
+      fs.createReadStream('exhibits.csv').pipe(res);
+      ws.close();
+    })
+    .pipe(ws);
   } catch (err) {
     console.error('Error fetching exhibits:', err);
     res.status(500).json({ message: 'Internal Server Error' });
