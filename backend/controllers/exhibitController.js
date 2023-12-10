@@ -539,6 +539,12 @@ const ws = fs.createWriteStream('exhibits.csv');
     .on('data', function (data) {
       console.log('Writing data:', data);
     })
+    .on('error', function (error) {
+      console.error('Error writing data:', error);
+      // Handle the error, e.g., close the stream or send an error response
+      res.status(500).json({ message: 'Error writing data to CSV' });
+      ws.close();
+    })
     .on('end', function () {
       console.log('Write to exhibits.csv successfully!');
       res.setHeader('Content-Type', 'text/csv');
