@@ -529,33 +529,46 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
       LEFT JOIN room r ON r.room_id = e.room_id AND r.active_ind='Y' ${keyword}`;
 
   try {
-    const [exhibitsResults] = await db.promise().query(exhibitsQuery);
-    const exhibits = exhibitsResults;
+    const ws = fs.createWriteStream('exhibits.csv');
 
+    // const [exhibitsResults] = await db.promise().query(exhibitsQuery);
+    // const exhibits = exhibitsResults;
+    db.promise().query(exhibitsQuery, function(error, data, fields) {
+      if (error) throw error;
+  
+      const jsonData = JSON.parse(JSON.stringify(data));
+      // console.log("jsonData", jsonData);
+  
+      fastcsv
+        .write(jsonData, { headers: true })
+        .on("finish", function() {
+          console.log("Write to bezkoder_mysql_fastcsv.csv successfully!");
+        })
+        .pipe(ws);
+    });
 // CSV
-const ws = fs.createWriteStream('exhibits.csv');
-    fastcsv
-    .write(exhibits, { headers: true })
-    .on('data', function (data) {
-      console.log('Writing data:', data);
-    })
-    .on('error', function (error) {
-      console.error('Error writing data:', error);
-      // Handle the error, e.g., close the stream or send an error response
-      res.status(500).json({ message: 'Error writing data to CSV' });
-      ws.close();
-    })
-    .on('end', function () {
-      console.log('Write to exhibits.csv successfully!');
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');
-      fs.createReadStream('exhibits.csv').pipe(res);
-      ws.close();
-    })
-    .on("finish", function(){
-      console.log("END");
-   }) 
-    .pipe(ws);
+  //   fastcsv
+  //   .write(exhibits, { headers: true })
+  //   .on('data', function (data) {
+  //     console.log('Writing data:', data);
+  //   })
+  //   .on('error', function (error) {
+  //     console.error('Error writing data:', error);
+  //     // Handle the error, e.g., close the stream or send an error response
+  //     res.status(500).json({ message: 'Error writing data to CSV' });
+  //     ws.close();
+  //   })
+  //   .on('end', function () {
+  //     console.log('Write to exhibits.csv successfully!');
+  //     res.setHeader('Content-Type', 'text/csv');
+  //     res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');
+  //     fs.createReadStream('exhibits.csv').pipe(res);
+  //     ws.close();
+  //   })
+  //   .on("finish", function(){
+  //     console.log("END");
+  //  }) 
+  //   .pipe(ws);
   } catch (err) {
     console.error('Error fetching exhibits:', err);
     res.status(500).json({ message: 'Internal Server Error' });
