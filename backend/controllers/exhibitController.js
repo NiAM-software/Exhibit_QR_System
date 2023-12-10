@@ -552,6 +552,9 @@ const ws = fs.createWriteStream('exhibits.csv');
       fs.createReadStream('exhibits.csv').pipe(res);
       ws.close();
     })
+    .on("finish", function(){
+      console.log("END");
+   }) 
     .pipe(ws);
   } catch (err) {
     console.error('Error fetching exhibits:', err);
