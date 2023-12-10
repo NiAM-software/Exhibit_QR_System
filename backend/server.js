@@ -17,6 +17,7 @@ const port = process.env.PORT
 console.log("PORT" + port)
 console.log(port);
 const app = express();
+app.use(timeout.handler(180000));
 
 app.use(cors({ origin : '*'}))
 app.use(express.json());
