@@ -20,10 +20,13 @@ function readCSVFile(filePath) {
 function readExcelFile(filePath) {
     // console.log(filePath);
     const workbook = xlsx.readFile(filePath);
-    //   const sheetName = 'Museum,Shop, and HVR Inventory ' ;
-    const sheetName = workbook.SheetNames[0]; 
+    const sheetName = 'Museum,Shop, and HVR Inventory';
+    if (!workbook.SheetNames.includes(sheetName)) {
+        throw new Error(`No sheet named "${sheetName}" found`);
+      }
+    // const sheetName = workbook.SheetNames[0]; 
     const worksheet = workbook.Sheets[sheetName];
-    const data = xlsx.utils.sheet_to_json(worksheet, { raw: true, defval: "" });
+    const data = xlsx.utils.sheet_to_json(worksheet, {raw:true,defval: "" });
     //   console.log(data); // Debugging line to print the raw data
     return data;
 }
@@ -41,8 +44,13 @@ function getFileType(filePath) {
 
 function processData(data) {
     // Filter where Building is 'Museum'
-    data = data.filter(row => row.Building === 'Museum');
+    console.log(data)
 
+    if (data.some(row => 'Building' in row)) {
+        // Handle the case where 'Building' column is not found
+        data = data.filter(row => row.Building === 'Museum');
+        // Additional logic here...
+      } 
     // Use regex to select columns of interest
     const patterns = {
         title: /\s*title\s*/i,
@@ -134,13 +142,5 @@ async function helperProcessData(filePath, file_name) {
     // console.log(headers)
     return { headers, filePath: outputFilePath };
 }
-
-// Example usage
-// const file_name='exhibits.csv';
-// const filePath = '/Users/srivenkat/Documents/test/Exhibit_QR_System/exhibits.csv'; // or .xlsx
-// helperProcessData(filePath,file_name).then(outputFilePath => {
-//     // console.log("success")
-//     console.log(outputFilePath);
-// });
 
 export  {helperProcessData};

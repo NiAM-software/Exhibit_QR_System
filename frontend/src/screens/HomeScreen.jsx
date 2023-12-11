@@ -25,7 +25,7 @@ import { FaSearch, FaFilter } from "react-icons/fa";
 import styled from "styled-components";
 import CustomModal from "../components/CustomModal";
 import ButtonsContainer from "../components/ButtonsContainer";
-// import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
+
 
 const customStyles = {
   rows: {
@@ -229,10 +229,26 @@ const HomeScreen = () => {
     })
       .then((res) => {
         console.log(res);
-        toast.success('Data loaded Successfully')
-        window.location.reload()
+        if (res.status == 201) {
+          toast.success('Data loaded Successfully');
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          console.log(res);
+          toast.error('Error uploading data. Please check the guidelines.');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err.response);
+        toast.error('Error uploading data: ' + err.response.data.error);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
   };
 
   // export csv
@@ -257,6 +273,7 @@ const HomeScreen = () => {
       document.body.removeChild(link);
     } catch (error) {
       console.error("Error exporting CSV:", error.message);
+      toast.error("Error exporting CSV")
     }
   };
 

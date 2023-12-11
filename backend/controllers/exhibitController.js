@@ -90,6 +90,7 @@ const getDeletedExhibits = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getExhibitById = asyncHandler(async (req, res) => {
   const {id} = req.params
+
  
   try {
     const query = `select 
@@ -531,7 +532,14 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
   try {
     const [exhibitsResults] = await db.promise().query(exhibitsQuery);
     const exhibits = exhibitsResults;
-    const jsonData = JSON.parse(JSON.stringify(exhibits));
+    // const jsonData = JSON.parse(JSON.stringify(exhibits));
+    const jsonData = exhibits.map((exhibit) => ({
+      ...exhibit,
+      itemType: exhibit.category,
+    }));
+
+    jsonData.forEach((exhibit) => delete exhibit.category);
+    console.log(jsonData);
 
     // CSV
     const ws = fs.createWriteStream('exhibits.csv');
@@ -541,7 +549,7 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
         console.log('Writing data:', data);
       })
       .on('end', function () {
-        console.log('Write to exhibits.csv successfully!');
+        // console.log('Write to exhibits.csv successfully!');
         // Set headers for CSV download
         res.setHeader('Content-Type', 'text/csv');
         res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');

@@ -16,7 +16,7 @@ const getExhibitForUser = asyncHandler(async (req, res) => {
   // console.log('Hi, everything will be fine')
 
   try {
-    const query = "SELECT title, exhibit_desc FROM exhibits WHERE exhibit_id=? and active_ind='Y'";
+    const query = "SELECT title,manufacturer,era,exhibit_desc FROM exhibits WHERE exhibit_id=? and active_ind='Y'";
     const [results, fields] = await db.promise().query(query, [id]);
     // console.log('desc:',results[0])
     if (results && results.length > 0) {
@@ -29,6 +29,8 @@ const getExhibitForUser = asyncHandler(async (req, res) => {
       const presignedURLS = await getPresignedUrlsUtils(objectKeys); 
       res.status(200).json({
         title: results[0].title,
+        manufacturer:results[0].manufacturer,
+        era:results[0].era,
         exhibit_desc: results[0].exhibit_desc,
         attachmentURLS : presignedURLS, 
       });

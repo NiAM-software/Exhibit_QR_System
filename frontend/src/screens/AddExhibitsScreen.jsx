@@ -180,6 +180,25 @@ const AddExhibitScreen = () => {
     return errors;
   };
 
+  const rollbackCall = async (exhibit_id) => {
+    // console.log()
+    try {
+      console.log(exhibit_id);
+      const rollback = await fetch(`api/admin/exhibits/rollback/${exhibit_id}`, {
+        method: 'DELETE'
+      });
+      // console.log(rollback)
+      if (!rollback.ok) {
+        // If the response status is not in the range 200-299, consider it an error
+        throw new Error(`Failed to rollback exhibit. Status: ${rollback.status}`);
+      }
+      console.log('Exhibit rolled back successfully');
+    } catch (error) {
+      console.log(error)
+      console.error('Error rolling back exhibit:', error.message);
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -265,11 +284,13 @@ const AddExhibitScreen = () => {
               toast.error('Failed to insert related exhibits');
             }
           }
-
           else {
             setIsLoading(false);
             console.error('Second API Call to S3 Failed:', s3Response.statusText);
-            toast.error('Failed to upload to S3');
+            toast.error("Second API Call to S3 Failed");
+            setTimeout(() => {
+              rollbackCall(new_exhibit_id);
+            }, 2000);
           }
         }
 

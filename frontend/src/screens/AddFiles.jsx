@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Modal, Upload, message, Button } from 'antd';
 import axios from 'axios';
@@ -21,52 +21,53 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
   const [previewFileType, setPreviewFileType] = useState('');
   const [fileList, setFileList] = useState([]);
   const [unsupportedFiles, setUnsupportedFiles] = useState([]);
+  const mediaRef = useRef(null);
 
   const handleCancel = () => {
     // Stop the media playback if it's a video or audio
-    if (previewFileType === 'video' || previewFileType === 'audio') {
-        const previewElement = document.getElementById('media-preview');
-        if (previewElement) {
-            previewElement.pause();
-            previewElement.currentTime = 0; // Reset the playback to the start
-        }
+    if (mediaRef.current) {
+      mediaRef.current.pause();
+      mediaRef.current.currentTime = 0;
     }
+
     setPreviewOpen(false);
+    setPreviewImage('');
+    setPreviewFileType('');
+    setPreviewTitle('');
   };
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
-      if (file.type.startsWith('image/') || file.type.startsWith('audio/')) {
-        // For image files
+      if (file.type.startsWith('image/') || file.type.startsWith('audio/') || file.type.startsWith('video/')) {
         file.preview = await getBase64(file.originFileObj);
-      } else if (file.type.startsWith('video/')) {
-        // For video files, create an object URL for preview
-        file.preview = URL.createObjectURL(file.originFileObj);
+        console.log("file preview", file.preview);
       }
+
     }
+    console.log("file preview", file.url);
     console.log('FILE', file);
     setPreviewImage(file.url || file.preview);
     setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     setPreviewFileType(file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : 'image');
     setPreviewOpen(true);
   };
-  
+
   const beforeUpload = (file) => {
     const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime', 'audio/mpeg', 'audio/wav']; // Add audio formats
     const isSupported = allowedFormats.includes(file.type);
-  
+
     if (!isSupported) {
       message.error(`Unsupported file format: ${file.name}`);
       setUnsupportedFiles([...unsupportedFiles, file.type]);
       return false;
     }
-  
+
     const allFilesSupported = fileList.every((item) => allowedFormats.includes(item.type));
-  
+
     if (!allFilesSupported) {
       setUnsupportedFiles([]);
     }
-  
+
     return true;
   };
 
@@ -97,6 +98,36 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     //setFileList([]);
     nOK();
 
+  };
+
+  const PreviewModalContent = ({ fileType, source }) => {
+    useEffect(() => {
+      // Ensure the media stops playing when the source changes
+      if (mediaRef.current) {
+        mediaRef.current.pause();
+      }
+    }, [source]);
+
+    switch (fileType) {
+      case 'video':
+        return (
+          <video ref={mediaRef} style={{ width: '100%' }} controls>
+            <source src={source} type="video/mp4" />
+            Your browser does not support HTML video.
+          </video>
+        );
+      case 'audio':
+        return (
+          <audio ref={mediaRef} style={{ width: '100%' }} controls>
+            <source src={source} type="audio/mpeg" />
+            Your browser does not support HTML audio.
+          </audio>
+        );
+      case 'image':
+        return <img alt="example" style={{ width: '100%' }} src={source} />;
+      default:
+        return null;
+    }
   };
 
   const goBackToHomePage = () => {
@@ -204,19 +235,7 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
         </Upload>
       </div>
       <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-          {previewFileType === 'video' ? (
-              <video id="media-preview" style={{ width: '100%' }} controls>
-                  <source src={previewImage} type="video/mp4" />
-                  Your browser does not support HTML video.
-              </video>
-          ) : previewFileType === 'audio' ? (
-              <audio id="media-preview" style={{ width: '100%' }} controls>
-                  <source src={previewImage} type="audio/mpeg" />
-                  Your browser does not support HTML audio.
-              </audio>
-          ) : (
-              <img alt="example" style={{ width: '100%' }} src={previewImage} />
-          )}
+        <PreviewModalContent fileType={previewFileType} source={previewImage} />
       </Modal>
 
 

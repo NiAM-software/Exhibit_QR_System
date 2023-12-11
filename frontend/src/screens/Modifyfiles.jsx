@@ -126,6 +126,9 @@ const Modifyfiles = ({
       mediaRef.current.currentTime = 0;
     }
     setPreviewOpen(false);
+    setPreviewFile('');
+    setPreviewFileType('');
+    setPreviewTitle('');
   };
 
   const buttonContainerStyle = {
@@ -142,12 +145,9 @@ const Modifyfiles = ({
 
 
     if (!file.url && !file.preview) {
-      if (isImage) {
+      if (isImage || isVideo || isAudio) {
         // For image files
         file.preview = await getBase64(file.originFileObj);
-      } else if (isVideo || isAudio) {
-        // For video files, create an object URL for preview
-        file.preview = URL.createObjectURL(file.originFileObj);
       }
     }
     console.log('FILE', file);
@@ -166,6 +166,36 @@ const Modifyfiles = ({
       }
     };
   }, [previewFile, previewFileType]);
+
+  const PreviewModalContent = ({ fileType, source }) => {
+    useEffect(() => {
+      // Ensure the media stops playing when the source changes
+      if (mediaRef.current) {
+        mediaRef.current.pause();
+      }
+    }, [source]);
+
+    switch (fileType) {
+      case 'video':
+        return (
+          <video ref={mediaRef} style={{ width: '100%' }} controls>
+            <source src={source} type="video/mp4" />
+            Your browser does not support HTML video.
+          </video>
+        );
+      case 'audio':
+        return (
+          <audio ref={mediaRef} style={{ width: '100%' }} controls>
+            <source src={source} type="audio/mpeg" />
+            Your browser does not support HTML audio.
+          </audio>
+        );
+      case 'image':
+        return <img alt="example" style={{ width: '100%' }} src={source} />;
+      default:
+        return null;
+    }
+  };
 
   const renderItem = (originNode, file, fileList, actions) => {
     const thumbnailStyle = {
@@ -188,10 +218,11 @@ const Modifyfiles = ({
     const isAudio = /\.(mp3|mpeg|wav)(\?|$)/i.test(file.name); // Add check for audio files
 
     // Create a URL for preview if the file is local
+    const filePreviewUrl = file.url || file.preview;
+
     if (isLocalFile && !file.preview) {
       file.preview = URL.createObjectURL(file.originFileObj);
     }
-    const filePreviewUrl = file.url || file.preview;
 
     return (
       <div className="ant-upload-list-item">
@@ -399,19 +430,7 @@ const Modifyfiles = ({
         </Upload>
       </div>
       <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-          {previewFileType === 'video' ? (
-              <video ref={mediaRef} style={{ width: '100%' }} controls>
-                  <source src={previewFile} type="video/mp4" />
-                  Your browser does not support HTML video.
-              </video>
-          ) : previewFileType === 'audio' ? (
-              <audio ref={mediaRef} style={{ width: '100%' }} controls>
-                  <source src={previewFile} type="audio/mpeg" />
-                  Your browser does not support HTML audio.
-              </audio>
-          ) : (
-              <img alt="example" style={{ width: '100%' }} src={previewFile} />
-          )}
+        <PreviewModalContent fileType={previewFileType} source={previewFile} />
       </Modal>
 
     </div>

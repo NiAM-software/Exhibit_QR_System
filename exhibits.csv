@@ -1,448 +1,1045 @@
-exhibit_id,title,category,subcategory,room,location_type,location,asset_number,manufacturer,era,exhibit_desc
-2,"""High Flight"" Poem",Photograph,,Main Room,Display case,Bottom Right,822,,,
-3,1903 Wright Brothers flyer,display case,,Curtiss Room,Display case,Floor,4107,,,
-4,1908 June Bug,Display Board,,Main Room,near Ladies room,Wall,4232,,1908,"n the context of databases and the MVCC (Multi-Version Concurrency Control) model, the terminology may be a bit more specific. In MVCC, the concepts of ""data blocks"" and ""physical blocks"" can have distinctions based on the way versions of data are managed for concurrent transactions. Let's clarify:
-
-Data Blocks in MVCC:
-
-In MVCC, a ""data block"" is often associated with a version of a record or a row in a database table.
-Each version of a row is stored in a data block, and multiple versions of a row can coexist in the database over time, allowing for concurrent transactions.
-Physical Blocks in MVCC:
-
-""Physical blocks"" in the MVCC context typically refer to the actual blocks of data on the storage device (e.g., disk or memory) that store the versions of records.
-These physical blocks may include various versions of data, each associated with a particular transaction timestamp or a system version number.
-In summary, in MVCC, ""data blocks"" are often more closely tied to the logical versioning of records in the database, while ""physical blocks"" refer to the storage-level blocks that contain these versions. The MVCC model is designed to provide a consistent and isolated view of the data for each transaction, allowing for concurrency without sacrificing data integrity."
-5,1909-1924 history of flight display boards (6 panels),Display Board,,Main Room,near Ladies room,Wall,4233,,1909,
-6,1910 Curtiss Pusher Airplane,Airplane,,Curtiss Room,Main Floor,Floor,4126,Curtiss,1910,
-7,1914 rotary engine model,Model,,Curtiss Room,Display,Wall,4002,,,
-8,1919 parachutes Leslie L Irvin,Photo,,Curtiss Room,,Wall,4099,,,
-9,1925-1945 history of flight display boards (6 panels),Display Board,,Main Room,Above entrance,Wall,4234,,1925,
-10,1927 Col. Lindberg & mother,Photo,,Curtiss Room,,Wall,4088,,,
-11,"1927 Col. Lindberg Spirit of St Louis Syracuse to Rochester, Rochester to Buffalo",Photo,,Curtiss Room,,Wall,4089,,,
-12,1946-1981 history of flight display boards (6 panels),Display Board,,Main Room,Above entrance,Wall,4236,,1946,
-13,1947 Bell 47-5 Helicopter prototype (Fort Worth Record),Helicopter,,Main Room,,Floor,4370,Bell,1946,
-14,1950 Bell 47 helicopter,Display Board,,Main Room,Near front window,Wall,4337,,,
-15,500th flight of X-22A,Display Board,,Main Room,Above entrance,Wall,4235,,1984,
-16,80 of changing the way the world flies timeline,Display,,Main Room,,Ceiling,4561,,,
-17,Aero Club of Buffalo Meeting poster,Photo,,Curtiss Room,,Wall,4102,,,
-18,Aerodynamics History 1884-1896,Display Board,,Main Room,near Ladies room,Wall,4231,,1884,
-19,Agena 8081 Rocket Engine,Engine,,Curtiss Room,Main Floor,Floor,4154,Bell,,
-20,Agena Combustion Chamber,Exhibit,,Curtiss Room,Main Floor,Floor,4155,Bell,,
-21,Agena Combustion Chamber throat,Exhibit,,Curtiss Room,Main Floor,Floor,4156,Bell,,
-22,Agena Rocket Engine Model,Model,,Curtiss Room,Main Floor,Floor,4153,Bell,,
-23,AHS International Vertical Flight Heritage Site,Plaque,,Main Room,,floor,4552,,,
-24,AIAA historic Aerospace site bronze plaque,Plaque,,Main Room,,Floor,4191,,,
-25,Airmen greeting a damaged P-39 Sketch,Photograph,,Hallway to Curtiss Room,,Wall,736,,,
-26,Allison J35 Turbojet engine cutaway,Display,,Main Room,,Floor,4194,,,
-27,Allison model 250 turboshaft engine,Engine,,Main Room,Near front window,Wall,4359,Allison,,
-28,Allison V-1710 engine,Engine,,Main Room,Near P-39,Floor,4223,Allison,,
-29,Apollo 11 liftoff photograph,Photograph,,Curtiss Room,Main Floor,Wall,4171,,1969,
-30,Apollo Control Console,Exhibit,,Curtiss Room,Main Floor,Floor,4149,Consolidated,,
-31,Apollo models Display Case,display case,,Curtiss Room,Main Floor,Floor,4146,,,
-32,ARC Control Divert System model,Model,,Curtiss Room,Main Floor,Floor,4163,ARC,,
-33,Army Air Force training command certificate,Certificate,,Wall outside ladies room,,Wall,1821,,,
-34,ARO Corporation Display,display case,,Curtiss Room,Display case,Floor,4114,ARO Corporation,,
-35,Ascent propulsion system Saturn 5 Rocket description,Photograph,,Curtiss Room,Main Floor,Wall,4174,,,
-36,Astronaut Maneuvering System Poster,Photograph,,Curtiss Room,Main Floor,Wall,310,,1966,
-37,Astronaut Maneuvering unit,Exhibit,,Curtiss Room,Main Floor,Floor,4158,Bell,,
-38,"Astronaut, LEM, and Moon Buggy photograph",Photograph,,Curtiss Room,Main Floor,Wall,489,,,
-39,"Aviation itself is not inherently dangerous. But to an even greater degree than the sea, it is terribly unforgiving of any carelessness incapacity or neglect",Poster,,Theater,,wall,1846,,,
-40,B-17 Flying Fortress dedication plaque,Plaque,,Curtiss Room,Display,Wall,4008,,,
-41,B-24 Liberator dedication plaque,Plaque,,Curtiss Room,Display,Wall,4007,,,
-42,B-29 Enola gay model,Model,,Wall outside ladies room,,Wall,4185,Boeing,,
-43,B-29 Lity of L,Model,,Wall outside ladies room,,Wall,4186,Boeing,,
-44,BAe Hawk T. Mk 1A plastic model airplane kit,Model Airplane Kit,,Front Desk,,,1650,Premiere,,
-45,Baldwin's Dirigibles,Display Board,,Main Room,near Ladies room,Wall,4230,,1907,
-46,Beginning of flight (Golfer) Balloons 1783,Photo,,Curtiss Room,,Wall,4098,,,
-47,BELL - Agena Rocket Engine Family,Photograph,,Curtiss Room,Main Floor,Wall,376,,,
-48,BELL - Rocket Belt flying over helicopter,Photograph,,Theater,,,339,,,
-49,Bell 47 helicopter engine,Photograph,,Main Room,,Wall,1824,,,
-50,Bell 47 helicopter engine display,Engine,,Main Room,Near front window,Wall,4348,Bell,,
-51,Bell Aerospace Air cushion vehicles,display case,,Main Room,Near P-39,Wall,4204,,,
-52,Bell Aerospace army assault Air cushion vehicles,Photograph,,Main Room,Near P-39,Wall,4205,,,
-53,Bell Airacobra formation Photo,Photograph,,Hallway to Curtiss Room,,Wall,737,,,
-54,Bell Airacuda XFM-1 Model,display case,,Main Room,Near P-39,Floor,4224,,,
-55,Bell Airacuda XFM-1 Photograph,Photograph,,Main Room,Near P-39,Floor,4225,,,
-56,Bell Aircraft designed and built in WNY models display case: ~35 models,display case,,Main Room,Near P-39,Floor,4213,,,
-57,Bell Aircraft Racing Team,display case,,Main Room,,floor,4554,,,
-58,Bell ATV VTOL Photo,Photograph,,Hallway to Curtiss Room,,Wall,742,,,
-59,Bell Factory floor photos,display case,,Observation room,,Floor,4211,,,
-60,Bell Helicopter Fort Worth TX Display Case w/29 models,display case,,Main Room,,Floor,4502,,,
-61,Bell Helicopter Rotor Mast and Stabilizer Bar Assembly,Display,,Main Room,,Floor,4491,,,
-62,Bell Minute Man post boost propulsion system Bellows Tank Photograph,Photograph,,Curtiss Room,Main Floor,Wall,809,Moog,,
-63,Bell P-39 Aerocobra Model,Model,,Main Room,Near P-39,Floor,4207,Bell,,
-64,Bell P-59 Jack Wollams Photo,Photograph,,Hallway to Curtiss Room,,Wall,733,,,
-65,Bell propellant Tank photograph,Photograph,,Curtiss Room,Main Floor,Wall,808,Moog,,
-66,BELL X - 1,Photograph,,Main Room,,LU A - 1,671,,,
-67,Bell X Aircraft Evolution poster,Poster,,Main Room,On side of Display Case,,4560,,,
-68,Bell X-1,Model,,,,top of X-1 display,3487,,,
-69,Bell X-1 cockpit drawing,Drawing,,Main Room,,Wall,746,,,
-70,Bell X-1 model in display case,display case,,Main Room,,Floor,4192,,,
-71,Bell X-1 Painting (8 panels),Painting,,Main Room,,floor,4551,,,
-72,Bell X-1A photo,Photograph,,Hallway to Curtiss Room,,Wall,873,,,
-73,Bell X-2 Model,Model,,Main Room,On Display Case,,4557,Bell,,
-74,Bell X-2 photo,Photograph,,Hallway to Curtiss Room,,Wall,874,,,
-75,BELL X-2 Sweptwing with metal fragment,Photograph,,X-1 display,,MUS,747,,,
-76,Bell X-22 cut away view,Display Board,,Main Room,Above Display,Floor,1823,,,
-77,Bell X-22 photo,Photograph,,Hallway to Curtiss Room,,Wall,790,,,
-78,Bell X-22 powered model,display case,,Main Room,,Floor,4237,,,
-79,Bell XP-83 jet fighter photo,Photograph,,Hallway to Curtiss Room,,Wall,734,,,
-80,BELL XS-1           Broken Frame,Photograph,,Main Room,,A - 2,504,,,
-81,BELL XS-1  Meeting the Challenge,Photograph,,X-1 display,,MUS,744,,,
-82,Bell XS-1 rocket plane dropped by a B-29 Painting,Painting,,Hallway to Curtiss Room,,Wall,335,,,
-83,Bell XS-1 rocket plane Painting,Painting,,Hallway to Curtiss Room,,Wall,1820,,,
-84,Bell-47 Helicopter Transmission,Display,,Main Room,,Floor,4480,,,
-85,Bell/Moog heritage display Panel,Display Board,,Curtiss Room,Main Floor,Floor,4147,Moog,,
-86,Buffalo Aviation Pioneers memorial plaque,Plaque,,Main Room,Near P-39,Floor,4206,,,
-87,Buffalo firsts poster,Poster,,Main Room,,Wall,4201,,,
-88,C-46 Stewardess Station,Artifact,,Curtiss Room,Main Floor,Floor,4182,Curtiss,1946,
-89,Captain William C. Glasgow Plaque,Plaque,,Curtiss Room,Hallway,Wall,4119,,1945,
-90,Captain William C. Glasgow Portrait,Portrait,,Curtiss Room,Hallway,Wall,4120,,1945,
-91,Catalina PBY,Model,,Fleet & Consolidated Room,,Ceiling,4595,,,
-92,CF-AAR Biplane Model,Model,,Fleet & Consolidated Room,,Ceiling,4574,,,
-93,"Chalmers ""Slick"" Goodlin",display case,,Main Room,,floor,4555,,,
-94,Chuck Yeager,Photograph,,X-1 display,,wall,1853,,,
-95,Cievera Autogyro 1/2 scale replica (Pitcarin model),Replica,,Main Room,near Ladies room,Floor,4228,,1930,
-96,Cobham 100 years of aviation,Photo,,Curtiss Room,,Wall,4097,Cobham,,
-97,CONFEDERATE Air Force,Photograph,,Main Room,Table,A - 1,29,,,
-98,Consolidated 21C,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4055,Consolidated,,
-99,Consolidated advertising brochure for Fleetster,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4056,Consolidated,,
-100,Consolidated Aircraft,Display Board,,Fleet & Consolidated Room,,Floor,4575,,,
-101,"Consolidated Aircraft  Departs Buffalo for San Diego, CA",Display Board,,Fleet & Consolidated Room,,wall,4585,,1935,
-102,Consolidated Aircraft  Flying Boats,Display Board,,Fleet & Consolidated Room,,wall,4584,,,
-103,Consolidated Aircraft Banner,Flag,,Fleet & Consolidated Room,,Floor,4567,,,
-104,Consolidated Aircraft Commodore south American pan American airways ,Poster,,Fleet & Consolidated Room,,Floor,305,,,
-105,Consolidated Aircraft Display Case (4 models),display case,,Fleet & Consolidated Room,,Floor,4586,,,
-106,Consolidated Aircraft: A Journey Begins,Display Board,,Fleet & Consolidated Room,,wall,4582,,1923,
-107,Consolidated Clinton Warner assembling the 21C in China,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4058,Consolidated,,
-108,Consolidated Collection of Clinton Warner personal Items: Identification card for Air core reserve,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4063,Consolidated,,
-109,Consolidated Collection of Clinton Warner personal Items: Identification for national aeronautic association 1906,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4061,Consolidated,,
-110,Consolidated Collection of Clinton Warner personal Items: Pilot's book,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4062,Consolidated,,
-111,Consolidated Collection of Clinton Warner: biography,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4065,Consolidated,,
-112,Consolidated Collection of Clinton Warner: description plaque,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4064,Consolidated,,
-113,Consolidated Collection of Clinton Warner: photograph,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4066,Consolidated,,
-114,Consolidated Commodore,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4037,Consolidated,,
-115,Consolidated Commodore flying boat,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4038,Consolidated,,
-116,Consolidated Fleet advertising poster,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4049,Consolidated,,
-117,Consolidated Fleet Model II,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4048,Consolidated,,
-118,Consolidated Fleetster,Painting,,Fleet & Consolidated Room,,wall,252,,1930,
-119,Consolidated Fleetster 17-1,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4035,Consolidated,,
-120,Consolidated Fleetster 20 type 2,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4036,Consolidated,,
-121,Consolidated Fleetster 20A,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4039,Consolidated,,
-122,Consolidated Fleetster model 17,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4052,Consolidated,,
-123,Consolidated Flying Boats,Display Board,,Fleet & Consolidated Room,,Floor,4576,,,
-124,Consolidated P30,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4051,Consolidated,,
-125,Consolidated PB30,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4045,Consolidated,,
-126,Consolidated PBY Catalina,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4047,Consolidated,,
-127,Consolidated PT3 Trainer,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4040,Consolidated,,
-128,Consolidated Ruben Fleet photograph,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4057,Consolidated,,
-129,Consolidated unknown airplane,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4043,Consolidated,,
-130,Consolidated unknown biplane,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4041,Consolidated,,
-131,Consolidated William B Wheatley,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4059,Consolidated,,
-132,Consolidated William B Wheatley Biography,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4060,Consolidated,,
-133,Consolidated's Significant Contributions to advancement in Aviation,Display Board,,Fleet & Consolidated Room,,wall,4583,,,
-134,Consolodated P-30,Photograph,,Theater,,D - 1 BX #1,204,,,
-135,Continental R-670 Engine,Engine,,Fleet & Consolidated Room,,Floor,4569,Continental,,
-136,Control Divert System Model From ARC Propulsion Century Program 2 stage Anti ICBM 62 inches tall,Model,,Curtiss Room,Floor,,3122,,,
-137,Cornell Aeronautical Laboratory/Calspan Birth of an aircraft,Display Board,,Curtiss Room,Wall Display,Floor,4110,Calspan,,
-138,Cornell Aeronautical Laboratory/Calspan Simulation display,display case,,Curtiss Room,Display case,Floor,4109,Calspan,,
-139,Cornu's Helicopter,Display Board,,Main Room,near Ladies room,Wall,4229,,1907,
-140,Courier Express Charles Lindberg,Photo,,Curtiss Room,,Wall,4086,,,
-141,Cunningham Hall GA-36,Airplane,,Fleet & Consolidated Room,,Floor,4562,,,
-142,Curtiss Aeroplane Div. Display Case,display case,,Curtiss Room,Display case,Floor,4108,,,
-143,Curtiss Airplane & Motor Co. Sign,Painting,,Curtiss Room,Main Floor,Wall,4180,Curtiss,,
-144,Curtiss AT9 Jeep,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4029,Curtiss,,
-145,Curtiss C45 Commando,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4020,Curtiss,,
-146,Curtiss F9C-2,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4018,Curtiss,,
-147,Curtiss F9C2 Sparrow Hawk,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4030,Curtiss,,
-148,Curtiss Factory floor photos,display case,,Observation room,,Floor,4212,,,
-149,Curtiss Hawk P-1A Airplane,Airplane,,Curtiss Room,Main Floor,Floor,4138,Curtiss,1926,
-150,Curtiss Jenny JN-4 Airplane,Airplane,,Curtiss Room,Main Floor,Floor,4132,Curtiss,,
-151,Curtiss Jenny JN-4 artifact Display Case,Engine,,Curtiss Room,Main Floor,Floor,4131,Curtiss,,
-152,Curtiss Jenny JN-4 history exhibit,Exhibit,,Curtiss Room,Main Floor,Floor,4130,Curtiss,,
-153,Curtiss Jenny JN-4 Model,Model,,Curtiss Room,Main Floor,Floor,4139,Curtiss,,
-154,Curtiss Jenny JN-4 Model built by Thomas Pastore,Model,,Curtiss Room,Main Floor,Floor,4128,Curtiss,,
-155,Curtiss Jenny JN-4 OX-5 Engine Magneto,Display,,Curtiss Room,Main Floor,Floor,4133,Curtiss,,
-156,Curtiss Jenny JN-4 Wing section replica,Artifact,,Curtiss Room,Main Floor,Floor,4129,Curtiss,,
-157,Curtiss Jenny Tennis game photograph,Photograph,,Curtiss Room,Main Floor,Floor,4134,Curtiss,,
-158,"Curtiss Jennys in Production; Churchill Street, Buffalo NY",Photo,,Curtiss Room,History of the Curtiss Company,Wall,4090,Curtiss,,
-159,Curtiss JN-4D,Photo,,Curtiss Room,History of the Curtiss Company,Wall,4091,Curtiss,,
-160,Curtiss JN4 Jenny Trainer,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4031,Curtiss,,
-161,Curtiss Model D Pusher Photograph,Photograph,,Curtiss Room,Hallway,Wall,4125,Curtiss,1911,
-162,Curtiss NC2 Fledgling,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4033,Curtiss,,
-163,Curtiss NC4 Flying Boat,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4032,Curtiss,,
-164,Curtiss P-36 Pursuit,Photograph,,Curtiss Room,Hallway,Wall,199,Curtiss,,
-165,Curtiss P-40 Warhawk model,Model,,Curtiss Room,Main Floor,Floor,4141,Curtiss,,
-166,Curtiss P1-B Model,Model,,Curtiss Room,Main Floor,Floor,4140,Curtiss,,
-167,Curtiss P36 Hawk,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4019,Curtiss,,
-168,Curtiss P40 War Hawk,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4022,Curtiss,,
-169,Curtiss P40 War Hawk painting,Painting,,Curtiss Room,,Wall,4096,Curtiss,,
-170,Curtiss P47-G,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4017,Curtiss,,
-171,Curtiss P6E ,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4028,Curtiss,,
-172,Curtiss SB2C Hell Diver,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4015,Curtiss,,
-173,Curtiss SBC-2C Helldiver,Photograph,,Curtiss Room,Hallway,Wall,184,Curtiss,,
-174,Curtiss SW-20-E Commando,Model,,Curtiss Room,,Display Case,3484,,,
-175,Curtiss unknown biplane passenger plane,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4024,Curtiss,,
-176,Curtiss unknown counter rotating prop,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4016,Curtiss,,
-177,Curtiss V-1570 Conqueror Engine,Engine,,Curtiss Room,Main Floor,Floor,4137,Curtiss,1929,
-178,Curtiss Wright 85 years on NYSE,Photo,,Curtiss Room,,Wall,4106,Curtiss Wright,,
-179,Curtiss Wright AT-9 Jeep Painting,Painting,,Curtiss Room,Main Floor,Wall,4179,Curtiss Wright,,
-180,Curtiss Wright C-46 Commando painting,Painting,,Curtiss Room,Hallway,Wall,340,Curtiss Wright,,
-181,Curtiss Wright P-36 Hawk Photograph,Photograph,,Curtiss Room,Hallway,Wall,316,Curtiss Wright,1940,
-182,"Curtiss Wright P-36 Hawk, C-46 Commando, P-40 Warhawk Photograph",Photograph,,Curtiss Room,Hallway,Wall,191,Curtiss Wright,1941,
-183,Curtiss Wright P-36A Hawk production Line,Photograph,,Curtiss Room,Hallway,Wall,325,Curtiss Wright,,
-184,Curtiss Wright P-40 Warhawk painting,Painting,,Curtiss Room,Hallway,Wall,728,Curtiss Wright,,
-185,Curtiss Wright SB2C Hell Diver Photograph,Photograph,,Curtiss Room,Hallway,Wall,725,Curtiss Wright,,
-186,Curtiss Wright SBC-3 Helldiver,Photograph,,Curtiss Room,Hallway,Wall,202,Curtiss Wright,1938,
-187,Curtiss Wright SNC-1 Flacon,Photograph,,Curtiss Room,Hallway,Wall,200,Curtiss Wright,1940,
-188,Curtiss Wright XF14-C2 Fighter Photograph,Photograph,,Curtiss Room,Hallway,Wall,197,Curtiss Wright,1943,
-189,Curtiss Wright XP 37 poster,Photograph,,Curtiss Room,Hallway,Wall,4121,Curtiss Wright,,
-190,Curtiss Wright XP-46 Fighter Photograph,Photograph,,Curtiss Room,Hallway,Wall,195,Curtiss Wright,1941,
-191,Curtiss Wright XP-60C Fighter Photograph,Photograph,,Curtiss Room,Hallway,Wall,198,Curtiss Wright,1941,
-192,Curtiss Wright XP-62 Fighter Photograph,Photograph,,Curtiss Room,Hallway,Wall,194,Curtiss Wright,1942,
-193,Curtiss Wright XP40Q Fighter Photograph,Photograph,,Curtiss Room,Hallway,Wall,196,Curtiss Wright,1944,
-194,Curtiss XP-55 Ascender picture,Photograph,,Curtiss Room,Hallway,Wall,4122,Curtiss,,
-195,Curtiss-Wright P-40 metal model  on stand 7 inch wingspan,Model,,Curtiss Room,Desk,,3129,Curtiss Wright,,
-196,Descriptive plaque: Jay Demming,Plaque,,Main Room,On Display Case,,4548,,,
-197,Designed and build in WNY,Sign,,Main Room,On side of Display Case,,4559,,,
-198,DH-4 Flying the mail,Display Board,,Curtiss Room,Display,Floor,4083,,,
-199,Dick Pealer Display Table,display case,,Fleet & Consolidated Room,,Floor,4587,,,
-200,Dirigible,Model,,Fleet & Consolidated Room,,Ceiling,4592,,,
-201,Display Case,display case,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Floor,4014,,,
-202,Display Case of  models of various jet airplanes,display case,,Main Room,,Floor,4199,,,
-203,Display Case of 19 airplane models,display case,,Hallway to Curtiss Room,,Wall,4184,,,
-204,Display Case: Bell World War II Employee memorabilia,display case,,Main Room,,Floor,4550,,,
-205,Display Case: Young and Kelly,display case,,Main Room,,Floor,4549,,,
-206,Display poster of Bell Aerospace Air cushion vehicles,Display Board,,Main Room,Near P-39,Wall,4203,,,
-207,Douglas C-47 Painting (Print)   ,Photograph,,Main Room,Table,G - 2,879,,,
-208,Drawing of Orville Wright,Photo,,Curtiss Room,,Wall,4100,,,
-209,Early Night Raiders German Zeppelin-Stakken R XVI,Photograph,,Main Room,Table,G - 1,807,,,
-210,Earthrise Photograph of the earth from space,Photograph,,Curtiss Room,Main Floor,Wall,4173,,1969,
-211,Elias #9 photograph,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4076,Elias,,
-212,Elias Brothers,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4080,Elias,,
-213,"Elias Brothers Biography, Abraham and Gabriel",Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4082,Elias,,
-214,Elias Dunlop NBL-1 Bomber,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4078,Elias,,
-215,Elias EC1 Air Coupe,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4079,Elias,,
-216,Elias EM-1,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4077,Elias,,
-217,Elias EM-1 photograph,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4075,Elias,,
-218,Elias EM-2 1922,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4071,Elias,,
-219,Elias MBS No 52 biplane,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4072,Elias,,
-220,Elias Stupar ES-1,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4081,Elias,,
-221,Elias unknown,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4074,Elias,,
-222,Elias XNBS-3 short range bomber,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4073,Elias,,
-223,ELM aviation club,Photo,,Curtiss Room,,Wall,4103,,,
-224,Evolution of the Bell fighters photo,Photograph,,Hallway to Curtiss Room,,Wall,375,,,
-225,Evolution of the Bell VTOL flight Development,Poster,,Main Room,Back of display case,Wall,4304,,,
-226,F9C-2 USN Fighter,Model,,,,Display Case,3485,,,
-227,Falcon 10 'French Navy plastic model airplane kit,Model Airplane Kit,,Front Desk,,,1651,Hasewaga,,
-228,First Blind Flight of Jimmy Doolittle,Painting,,Fleet & Consolidated Room,,wall,1840,,1929,
-229,First Launch of Space Shuttle Columbia,Photograph,,Curtiss Room,Main Floor,Wall,750,,,
-230,first operational helicopter at Gardenville,Photograph,,Main Room,,Wall,1831,,,
-231,First Supersonic flight,,,X-1 display,,wall,1855,,,
-232,First supersonic flight 50th anniversary X-1 poster,Poster,,Main Room,Back of display case,Wall,4293,,,
-233,Fleet Blimp Model,Model,,Fleet & Consolidated Room,,Ceiling,4594,,,
-234,Fleet Cockpit Display,Display,,Fleet & Consolidated Room,,Floor,4591,,,
-235,Fleet Fawn,Poster,,Fleet & Consolidated Room,,wall,1841,,,
-236,Fleet model,Model,,Wall outside ladies room,,Wall,4188,,,
-237,Fleet Model 1,Airplane,,Fleet & Consolidated Room,,Floor,4563,,,
-238,Fleet N2Y1 information poster,Display Board,,Fleet & Consolidated Room,,Floor,4588,,,
-239,Fleet of Canada,Display Board,,Fleet & Consolidated Room,,Floor,4568,,,
-240,Fleet of the buffalo aeronautical corporation photo,Photograph,,Wall outside ladies room,,Wall,1822,,,
-241,Fleet Wing Construction ,Display,,Fleet & Consolidated Room,,Floor,4593,,,
-242,"Fleet, Bell and Buffalo",Display Board,,Fleet & Consolidated Room,,Floor,4580,,,
-243,"Fleet, Bell And Consolidated",Display Board,,Fleet & Consolidated Room,,Floor,4578,,,
-244,Flight Demonstrator exhibit,Exhibit,,Curtiss Room,Main Floor,Floor,4127,,,
-245,Flight Simulator,Simulator,,Theater,,Floor,4598,,,
-246,Floyd Carlson Display Case,display case,,Main Room,,floor,4553,,,
-247,Floyd Carlson Statue,Statue,,Main Room,On Display Case,,4556,,,
-248,Folding table under Allison J35 Turbojet engine cutaway,Furniture,,Main Room,,Floor,4195,,,
-249,formation of the Aero Club of Buffalo 1910,Photo,,Curtiss Room,,Wall,4101,,,
-250,Franklin 4AC-150,Engine,,Fleet & Consolidated Room,,Floor,4573,Franklin,1935,
-251,Ft Worth to Niagara falls Plaque,Plaque,,Main Room,,Floor,4381,,1952,
-252,GAM-63 Rascal Rocket Engine,Engine,,Curtiss Room,Main Floor,Floor,4152,Bell,,
-253,Gardenville development facility (union garage),Photograph,,Main Room,,Wall,1829,,,
-254,Gardenville organization photo of people that invented the helicopter,Photograph,,Main Room,,Wall,4546,,,
-255,Gates Flying Circus,Photo,,Curtiss Room,,Wall,4105,,,
-256,GE I-16 Jet Engine display,Engine,,Main Room,,Floor,4200,GE,1942,
-257,General Chuck Yeager,Photograph,,X-1 display,,wall,1854,,,
-258,Glenn Curtiss Partners Desk plus 11 photo frames,Display,,Curtiss Room,Display,Floor,4093,Curtiss,,
-259,Glenn Hammond Curtiss Biography,Photograph,,Curtiss Room,Hallway,Wall,1818,Curtiss,,
-260,Glenn Hammond Curtiss Portrait,Portrait,,Curtiss Room,Hallway,Wall,1817,Curtiss,,
-261,Globe of the Moon,Model,,Curtiss Room,Main Floor,Wall,4175,,,
-262,Grover and Larry Bell display board,Display Board,,Main Room,,Floor,4535,,,
-263,Gwinn Aircar,Model,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4070,Gwinn brothers,,
-264,Gwinn Aircar Advertisement,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4067,Gwinn brothers,,
-265,Gwinn Aircar Specifications,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4069,Gwinn brothers,,
-266,Gwinn brothers description,Photo,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4068,Gwinn brothers,,
-267,Hamilton Standard Hydromatin Propeller,Photograph,,Curtiss Room,Display,Wall,4003,Hamilton Standard,,
-268,Heinkel He 111H-22 plastic model airplane kit,Model Airplane Kit,,Front Desk,,,1647,Monogram,,
-269,Herbert O. Fisher - Chief Test Pilot - Curtiss Wright,Photograph,,Curtiss Room,Hallway,Wall,4123,Curtiss Wright,,
-270,History of Bell Aerospace Air cushion vehicles,Display Board,,Main Room,Near P-39,Wall,4202,,,
-271,History of Manned Space Flight Poster,Photograph,,Curtiss Room,Main Floor,Wall,4167,,,
-272,History of the Curtiss Company Display,Photo,,Curtiss Room,History of the Curtiss Company,Wall,4092,Curtiss,,
-273,Ira G Ross Hall of Aerospace Technology (wind tunnel),Exhibit,,Curtiss Room,Wall Display,Floor,4111,,,
-274,Ira G Ross Hall of Aerospace Technology wind tunnel model,Model,,Curtiss Room,Display,Floor,4112,,,
-275,Jake Painting dedicated to all 107th members presented by 107th air refueling wing,Painting,,Wall outside ladies room,,Wall,22,,,
-276,Jay Demming Bell Test pilot Photograph,Photograph,,Main Room,On Display Case,,1832,,,
-277,Jay Demming Bell Test pilot Photograph with p-63 Cobra 2 race plane,Photograph,,Main Room,On Display Case,,4547,,,
-278,Junkers JU-88S plastic model airplane kit,Model Airplane Kit,,Front Desk,,,1649,Hobby Craft,,
-279,Kinner R-55 Engine,Engine,,Fleet & Consolidated Room,,Floor,4565,Kinner,,
-280,"Lancaster BI/III, Spitfire MkIIa, Hurricane MkIIc plastic model airplane kit",Model Airplane Kit,,Front Desk,,,1654,Airfix,,
-281,Larry Bell painting,Painting,,Main Room,,Wall,203,,,
-282,Larry Bell painting (Bell Helicopter Textron),Painting,,Main Room,,Wall,756,,,
-283,Larry Bell Photograph,Photograph,,Main Room,On Display Case,,1847,,,
-284,Larry Bell Photograph as VP of Consolidated,Photograph,,Hallway to Curtiss Room,,Wall,374,,1930,
-285,Larry Bell with Cigarette,Photograph,,Main Room,,Wall,740,,,
-286,Larry Bell's Private Helicopter,Display Board,,Main Room,,Floor,4469,,,
-287,Larry Bell's Private Helicopter model 47H1,Helicopter,,Main Room,,Floor,4436,,1955,
-288,LCAC-1 Hovercraft,Photograph,,Main Room,Back of display case,Wall,4271,,,
-289,Liberty Engine Display  board,Display Board,,Curtiss Room,Main Floor,Floor,4136,,1917,
-290,Liberty V-12 Engine,Engine,,Curtiss Room,Main Floor,Floor,4135,,1917,
-291,Lifetime folding chairs,Furniture,,Main Room,,Floor,4193,,,
-292,Lindberg and Dirigibles Display,Display Board,,Curtiss Room,,Wall,4084,,,
-293,"Lindberg photographs and a piece of the aircraft covering, 3 medals when he visited buffalo",Photo,,Curtiss Room,,Wall,4087,,,
-294,Link Trainer Flight Simulator,Simulator,,Curtiss Room,Main Floor,Floor,4181,Link,,
-295,LLRV Poster,Poster,,Curtiss Room,Space area,Wall,146,,,
-296,Local links to the past poster easel,Poster,,Main Room,Near P-39,Floor,4217,,,
-297,Lockheed - Various Aircraft,Photograph,,Main Room,Table,G - 1,817,,,
-298,Lockheed F - 22,Photograph,,Main Room,Table,G - 1,814,,,
-299,LORAS System,display case,,Curtiss Room,Display case,Floor,4113,,,
-300,Lunar lander Flight Simulator,Simulator,,Theater,,Floor,4599,,,
-301,Lunar lander prototype photo,Photograph,,Hallway to Curtiss Room,,Wall,488,,,
-302,Lunar Module Ascent Engine,Engine,,Curtiss Room,Main Floor,Floor,4164,Bell,,
-303,Lunar Module Model,Model,,Curtiss Room,Main Floor,Floor,4166,Bell,,
-304,Macon Airship Display Board,Display Board,,Fleet & Consolidated Room,,Floor,4589,,,
-305,Marilyn Monroe Building Radioplane drone,Photograph,,Fleet & Consolidated Room,,wall,693,,,
-306,Marine Corps Assault Vehicle LVA,Photograph,,Main Room,Back of display case,Wall,4315,,,
-307,"Martin, Douglas and Bell",Display Board,,Fleet & Consolidated Room,,Floor,4579,,,
-308,MASH and the Helicopter Painting (8 panels),Painting,,Main Room,,Floor,4513,,,
-309,MASH Stretcher,Artifact,,Main Room,,Floor,4524,,,
-310,McDonnell Douglas F-4 Phantom in vertical flight,Photograph,,Main Room,Table,G - 2,475,,,
-311,Memory of the Curtiss Wright crash into the plan bronze plaque,Display,,Curtiss Room,Display,Floor,4094,Curtiss Wright,,
-312,Memory of the Curtiss Wright crash into the plan bronze plaque Description,Display,,Curtiss Room,Display,Floor,4095,Curtiss Wright,,
-313,Mercury Capsule drawing,Drawing,,Wall outside ladies room,,Wall,345,,,
-314,Minute Man Missile fuel tank cutaway model,Model,,Curtiss Room,Main Floor,Floor,4159,Bell,,
-315,Minute Man Missile launch,Photograph,,Main Room,Back of display case,Wall,4260,,,
-316,Mission Control,Photograph,,Curtiss Room,Main Floor,Wall,4170,,,
-317,Model 47 Insect sprayer or crop duster display board,Display Board,,Main Room,,Floor,4425,,1947,
-318,Model 47 Insect sprayer or crop duster Mdel 47B3 SN 63 1947,Helicopter,,Main Room,,Floor,4414,Bell,1947,
-319,Model of USS Sable Great Lakes Aircraft Carrier,was a passenger ship,,Curtiss Room,Display,Wall,4004,,,
-320,Modern mission of mercy,Poster,,Main Room,,Wall,1827,,,
-321,Modern War Planes,Poster,,Main Room,,,1838,,,
-322,Moog Boost and Pitch compensator description poster,Exhibit,,Curtiss Room,Main Floor,Floor,4144,Moog,,
-323,"Moog Boost and Pitch compensator F-22, F-15",Exhibit,,Curtiss Room,Main Floor,Floor,4143,,,
-324,Moog Space Heritage Display Panel,Display Board,,Curtiss Room,Main Floor,Floor,4145,Moog,,
-325,Morris aeroservice biplane model,Model,,Wall outside ladies room,,Wall,4187,,,
-326,NASA photograph of a comet,Photograph,,Main Room,Back of display case,Wall,4238,,,
-327,Navy's Last Biplane Fighter Grumman FF-1,Photograph,,Main Room,Table,G - 1,803,,,
-328,NC4 Across the Atlantic,Display Board,,Curtiss Room,Display,Wall,4013,,,
-329,New kind of flyer,Poster,,Main Room,,Wall,1828,,,
-330,Niagara County Sheriff w/Bell 47B Helicopter,Photograph,,Main Room,On Display Case,,1834,,,
-331,Niagara Frontier Aviation and Aerospace Hall of Fame floor display,Display Board,,Curtiss Room,Display,Wall,4006,,,
-332,Niagara Frontier Aviation and Aerospace Hall of Fame wall display,Display Board,,Curtiss Room,Display,Wall,4005,,,
-333,NY State Flag,Flag,,Main Room,,Floor,4447,,,
-334,NY State: Birthplace of American Jet Powered Aviation,Display Board,,Main Room,,Wall,4196,,,
-335,P-36 Hawk,Model,,,,Display Case,3486,,,
-336,P-39 37 mm cannon display,Display,,Main Room,Near P-39,Floor,4220,,,
-337,P-39 Description,Display,,Main Room,Near P-39,Floor,4219,,,
-338,P-39 Description of the history of the plane on display,Display,,Main Room,Near P-39,Floor,4222,,,
-339,P-39 Ivan Ivanovich Baranovsky,Display,,Main Room,Near P-39,Floor,4221,,,
-340,P-39 rear view photo,Photograph,,Hallway to Curtiss Room,,Wall,387,,,
-341,P-39 restored airplane (from Russia),Airplane,,Main Room,Near P-39,Floor,4214,Bell,,
-342,P-39Q Aracobra display case,display case,,Main Room,Near P-39,Floor,4210,,,
-343,P-63 King Cobra display Board,Display Board,,Main Room,Near P-39,Floor,4209,,,
-344,P-63 King Cobra display case with artifacts,display case,,Main Room,Near P-39,Floor,4208,,,
-345,P-63 model 1:48 scale,Model,,Main Room,,Ceiling,4227,,,
-346,P40 mock cockpit (Capt Joe Kidd),Display,,Theater,,Floor,4600,,,
-347,Pair of aces,Painting,,Theater,,Wall,1844,,,
-348,Paul Faltyn Plaque (Museum Creator),Plaque,,Main Room,On Display Case,,1835,,,
-349,"PBPS Flight #1, Eastern Test Range",Photograph,,Curtiss Room,Main Floor,Wall,765,,,
-350,People the world over depend on Bell Helicopters round plaque,Plaque,,Main Room,,Floor,4403,,,
-351,Pettit Model: Curtiss P-40 in plastic display case,Model,,Front Desk,Model Room,L-21,1595,,,
-352,Pettit Model: F-14 Tomcat,Model,,Front Desk,Model Room,L-1,1442,,,
-353,Pettit Model: Lockheed C-5B Galaxy,Model,,Front Desk,Model Room,L-26,1624,,,
-354,Pettit Model: Lockheed F-117,Model,,Front Desk,Model Room,L-12,1534,,,
-355,Pettit Model: Lockheed F-16,Model,,Front Desk,Model Room,L-12,1536,,,
-356,Pettit Model: Lockheed F-16C,Model,,Front Desk,Model Room,L-12,1535,,,
-357,Pettit Model: Lockheed P-38 Lightning,Model,,Front Desk,Model Room,L-26,1625,,,
-358,Pettit Model: Lockheed S3A Viking,Model,,Front Desk,Model Room,L-16,1572,,,
-359,Pettit Model: SR-71 Blackbird,Model,,Front Desk,Model Room,L-1,1439,,,
-360,Pettit Model: unknown propeller plane white Fuerza Aerea Colombiana,Model,,Front Desk,Model Room,L-21,1597,,,
-361,Pettit Model: US Army monoplane,Model,,Front Desk,Model Room,L-27,1626,,,
-362,Photo of Collier Trophy,Photograph,,Hallway to Curtiss Room,,Wall,1819,,,
-363,photograph of a biplane unknown,Photo,,Curtiss Room,,Wall,4104,,,
-364,photograph of Lunar module with Moon in the background,Photograph,,Curtiss Room,Main Floor,Wall,749,,1969,
-365,Photograph of the Museum's Model 1 Fleet,Photograph,,Fleet & Consolidated Room,,wall,1842,,,
-366,Point to Point delivery by the magic carpet ,Poster,,Main Room,,Wall,1826,,,
-367,Positive Expulsion Tank,Exhibit,,Curtiss Room,Main Floor,Floor,4162,Bell,,
-368,Pratt and Whitney R2000 Radial engine,Engine,,Theater,,Floor,4597,,,
-369,Prime Crew for first lunar landing photograph,Photograph,,Curtiss Room,Main Floor,Wall,4172,,1969,
-370,R-1830 Pratt & Whitney Twin Wasp Engine,Engine,,Curtiss Room,Display,Wall,4001,Pratt & Whitney,,
-371,Radioplane OQ14TDE Engine,Engine,,Fleet & Consolidated Room,,Floor,4570,,,
-372,"RAF 44th Combat Support Crew  Walla Walla, WA",Photograph,,Main Room,Table,G - 2,861,,,
-373,Ranger L440 Engine,Engine,,Fleet & Consolidated Room,,Floor,4572,Ranger,1941,
-374,Ranger V770,Engine,,Fleet & Consolidated Room,,Floor,4566,Ranger,1940,
-375,Reaction control thrusters,Exhibit,,Curtiss Room,Main Floor,Floor,4160,,,
-376,Reserved Floyd Carlson Chief Pilot parking sign,Sign,,Main Room,,Wall,1836,,,
-377,Reuben Hollis Fleet,Display Board,,Fleet & Consolidated Room,,wall,4581,,1918,
-378,Rocket belt display,Display,,Main Room,,Floor,4189,,,
-379,Rocket test Technicians and fire brigade,Photograph,,Main Room,On side of Display Case,,1848,,,
-380,Rockets infographic poster,Photograph,,Curtiss Room,Main Floor,Wall,4176,,,
-381,Rolling Diaphragm Tank,Exhibit,,Curtiss Room,Main Floor,Floor,4161,Bell,,
-382,Rosie the riveter display ,Display,,Main Room,Near P-39,Floor,4216,,,
-383,Rosie the Riveter in the Radioplane Factory,Photograph,,Fleet & Consolidated Room,,Floor,4571,,,
-384,Rosie the Riveter Poster,Poster,,Main Room,Near P-39,Floor,1850,,,
-385,Rough and Ready early balloon flight panel display,Display Board,,Hallway to Curtiss Room,,Wall,4183,,,
-386,Russian Stomovik LL-10,Photograph,,Main Room,,wall,192,,,
-387,Ryan Sprit of St Louis ,Model,,Curtiss Room,,Wall,4085,,,
-388,Saturn blockhouse painting,Painting,,Curtiss Room,Main Floor,Wall,4169,,,
-389,Scott Aviation Display,display case,,Curtiss Room,Display case,Floor,4116,,,
-390,Skyways - Consolidated Commadore,Photograph,,Fleet & Consolidated Room,,G - 1,804,,,
-391,Skyways Poster of Consolidated Commodore,Poster,,Fleet & Consolidated Room,,Floor,147,,,
-392,Small rocket lift device (rocket belt) photo,Photograph,,Hallway to Curtiss Room,,Wall,348,,,
-393,Space Shuttle Orbiter Forward Thermal Windshield,Exhibit,,Curtiss Room,Main Floor,Floor,4142,,,
-394,Speed at sea photo stand,Photograph,,Main Room,,Floor,1852,,,
-395,sting of the cobra race painting (Bell Airacobra),Painting,,Hallway to Curtiss Room,,Wall,735,,,
-396,T33A Ejection Seat,Exhibit,,Curtiss Room,Display,Floor,4117,,,
-397,T33A Ejection Seat Description,Display Board,,Curtiss Room,Display,Floor,4118,,,
-398,the dawn of aviation,Poster,,Main Room,,,1839,,,
-399,The Helicopter is ready,Poster,,Main Room,,Wall,1825,,,
-400,The invisible wall: the sound barrier X-1 display,Display,,Main Room,,Floor,4190,,,
-401,the magic carpet power by franklin,Poster,,Main Room,,Wall,1830,,,
-402,Trouble Ahead B-17 Painting,Painting,,Curtiss Room,Main Floor,Wall,4178,Boeing,1944,
-403,TWA Consolidated passenger plane,Painting,,Fleet & Consolidated Room,,,1843,,,
-404,Unknown photograph of Hovercraft coming out of a ship,Photograph,,Main Room,Back of display case,Wall,4249,,,
-405,US Flag,Flag,,Main Room,,Floor,4458,,,
-406,US Navy Dirigibles,Display Board,,Fleet & Consolidated Room,,Floor,4590,,,
-407,USAF GAM-63 rocket firing,Photograph,,Hallway to Curtiss Room,,Wall,497,,,
-408,Vought SB2U Vindicator plastic model airplane kit,Model Airplane Kit,,Front Desk,,,1644,HiPM,,
-409,w.2/700 jet aero engine by Frank Whittle,Drawing,,Main Room,,Floor,4198,,,
-410,War Bird donation bomb,Display,,Main Room,Near P-39,Floor,4218,,,
-411,Wendell Moore Rocket Belt inventor ,Display Board,,Curtiss Room,Main Floor,Floor,4148,,,
-412,Western New York Aviation Timeline,Display Board,,Curtiss Room,Display,Wall,4009,,,
-413,Western New York Aviation Timeline background,Display Board,,Curtiss Room,Display,Wall,4010,,,
-414,William G. Gisel Hall of Fame Plaque,Plaque,,Main Room,Near front window,Wall,4326,,,
-415,Winged victory army air force patches,Poster,,Main Room,,wall,1849,,,
-416,WNY liquid rocket engine accessory display frame,Display Board,,Curtiss Room,Main Floor,Wall,4168,Moog,,
-417,Women in the factory poster,Poster,,Main Room,Near P-39,Floor,4215,,,
-418,Women then and now,Photograph,,Main Room,,wall,1851,,,
-419,Wooden Propeller,Artifact,,Curtiss Room,Main Floor,Wall,4177,,,
-420,World War I aircraft,Poster,,Main Room,,,1837,,,
-421,Wright R 1300 engine,Engine,,Theater,,Floor,4596,,,
-422,X-1 Postage Stamp,Photograph,,Main Room,,MUS,774,,,
-423,XP-59A Bronze plaque,Plaque,,Main Room,,Wall,4197,,,
-424,YMF-1 Aracuda,Painting,,Theater,,wall,1845,,,
-425,Young and Kelly Sign,Sign,,Main Room,On Display Case,,1833,,,
-426,Zero Gravity Belt,Exhibit,,Curtiss Room,Main Floor,Floor,4150,Bell,1965,
-427,Zero Gravity Belt Display Board,Display Board,,Curtiss Room,Main Floor,Floor,4151,,,
-512,test,Display Board,,Main Room,,,4601,,,
-513,newtest,,,,,,4602,,,
-514,try,,,,,,4603,,,
-515,1914 rotary engine model,Model,,Curtiss Room,Display,Wall,10,,,
-516,B-24 Liberator dedication plaque,Plaque,,Curtiss Room,Display,Wall,,,,
-517,Hamilton Standard Hydromatin Propeller,Photograph,,Curtiss Room,Display,Wall,11,Hamilton Standard,,
-518,Model of USS Sable Great Lakes Aircraft Carrier,was a passenger ship,,Curtiss Room,Display,Wall,12,,,
-519,Niagara Frontier Aviation and Aerospace Hall of Fame floor display,Display Board,,Curtiss Room,Display,Wall,14,,,
-520,Niagara Frontier Aviation and Aerospace Hall of Fame wall display,Display Board,,Curtiss Room,Display,Wall,13,,,
-521,R-1830 Pratt & Whitney Twin Wasp Engine,Engine,,Curtiss Room,Display,Wall,9,Pratt & Whitney,,
-522,B-24 Liberator dedication plaque,Plaque,,Curtiss Room,Display,Wall,,,,
+exhibit_id,title,subcategory,room,location_type,location,asset_number,manufacturer,era,exhibit_desc,itemType
+1,,,X-1 display,,wall,0,,,,
+2,"""High Flight"" Poem",,Main Room,Display case,Bottom Right,822,,,,Photograph
+3,1903 Wright Brothers flyer,,Curtiss Room,Display case,Floor,4107,,,,
+4,1908 June Bug,,Main Room,near Ladies room,Wall,4232,,1908,,Display Board
+5,1909-1924 history of flight display boards (6 panels),,Main Room,near Ladies room,Wall,4233,,1909,,Display Board
+6,1910 Curtiss Pusher Airplane,,Curtiss Room,Main Floor,Floor,4126,Curtiss,1910,,Airplane
+7,1914 rotary engine model,,Curtiss Room,Display,Wall,4002,,,,Model
+8,1919 parachutes Leslie L Irvin,,Curtiss Room,,Wall,4099,,,,Photo
+9,1925-1945 history of flight display boards (6 panels),,Main Room,Above entrance,Wall,4234,,1925,,Display Board
+10,1927 Col. Lindberg & mother,,Curtiss Room,,Wall,4088,,,,Photo
+11,"1927 Col. Lindberg Spirit of St Louis Syracuse to Rochester, Rochester to Buffalo",,Curtiss Room,,Wall,4089,,,,Photo
+12,1946-1981 history of flight display boards (6 panels),,Main Room,Above entrance,Wall,4236,,1946,,Display Board
+13,1947 Bell 47-5 Helicopter prototype (Fort Worth Record),,Main Room,,Floor,4370,Bell,1946,,Helicopter
+14,1950 Bell 47 helicopter,,Main Room,Near front window,Wall,4337,,,,Display Board
+15,500th flight of X-22A,,Main Room,Above entrance,Wall,4235,,1984,,Display Board
+16,80 of changing the way the world flies timeline,,Main Room,,Ceiling,4561,,,,Display
+17,Aero Club of Buffalo Meeting poster,,Curtiss Room,,Wall,4102,,,,Photo
+18,Aerodynamics History 1884-1896,,Main Room,near Ladies room,Wall,4231,,1884,,Display Board
+19,Agena 8081 Rocket Engine,,Curtiss Room,Main Floor,Floor,4154,Bell,,,Engine
+20,Agena Combustion Chamber,,Curtiss Room,Main Floor,Floor,4155,Bell,,,Exhibit
+21,Agena Combustion Chamber throat,,Curtiss Room,Main Floor,Floor,4156,Bell,,,Exhibit
+22,Agena Rocket Engine Model,,Curtiss Room,Main Floor,Floor,4153,Bell,,,Model
+23,AHS International Vertical Flight Heritage Site,,Main Room,,floor,4552,,,,Plaque
+24,AIAA historic Aerospace site bronze plaque,,Main Room,,Floor,4191,,,,Plaque
+25,Airmen greeting a damaged P-39 Sketch,,Hallway to Curtiss Room,,Wall,736,,,,Photograph
+26,Allison J35 Turbojet engine cutaway,,Main Room,,Floor,4194,,,,Display
+27,Allison model 250 turboshaft engine,,Main Room,Near front window,Wall,4359,Allison,,,Engine
+28,Allison V-1710 engine,,Main Room,Near P-39,Floor,4223,Allison,,,Engine
+29,Apollo 11 liftoff photograph,,Curtiss Room,Main Floor,Wall,4171,,1969,,Photograph
+30,Apollo Control Console,,Curtiss Room,Main Floor,Floor,4149,Consolidated,,,Exhibit
+31,Apollo models Display Case,,Curtiss Room,Main Floor,Floor,4146,,,,
+32,ARC Control Divert System model,,Curtiss Room,Main Floor,Floor,4163,ARC,,,Model
+33,Army Air Force training command certificate,,Wall outside ladies room,,Wall,1821,,,,Certificate
+34,ARO Corporation Display,,Curtiss Room,Display case,Floor,4114,ARO Corporation,,,
+35,Ascent propulsion system Saturn 5 Rocket description,,Curtiss Room,Main Floor,Wall,4174,,,,Photograph
+36,Astronaut Maneuvering System Poster,,Curtiss Room,Main Floor,Wall,310,,1966,,Photograph
+37,Astronaut Maneuvering unit,,Curtiss Room,Main Floor,Floor,4158,Bell,,,Exhibit
+38,"Astronaut, LEM, and Moon Buggy photograph",,Curtiss Room,Main Floor,Wall,489,,,,Photograph
+39,"Aviation itself is not inherently dangerous. But to an even greater degree than the sea, it is terribly unforgiving of any carelessness incapacity or neglect",,Theater,,wall,1846,,,,Poster
+40,B-17 Flying Fortress dedication plaque,,Curtiss Room,Display,Wall,4008,,,,Plaque
+41,B-24 Liberator dedication plaque,,Curtiss Room,Display,Wall,4007,,,,Plaque
+42,B-29 Enola gay model,,Wall outside ladies room,,Wall,4185,Boeing,,,Model
+43,B-29 Lity of L,,Wall outside ladies room,,Wall,4186,Boeing,,,Model
+44,BAe Hawk T. Mk 1A plastic model airplane kit,,Front Desk,,,1650,Premiere,,,Model Airplane Kit
+45,Baldwin's Dirigibles,,Main Room,near Ladies room,Wall,4230,,1907,,Display Board
+46,Beginning of flight (Golfer) Balloons 1783,,Curtiss Room,,Wall,4098,,,,Photo
+47,BELL - Agena Rocket Engine Family,,Curtiss Room,Main Floor,Wall,376,,,,Photograph
+48,BELL - Rocket Belt flying over helicopter,,Theater,,,339,,,,Photograph
+49,Bell 47 helicopter engine,,Main Room,,Wall,1824,,,,Photograph
+50,Bell 47 helicopter engine display,,Main Room,Near front window,Wall,4348,Bell,,,Engine
+51,Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,4204,,,,
+52,Bell Aerospace army assault Air cushion vehicles,,Main Room,Near P-39,Wall,4205,,,,Photograph
+53,Bell Airacobra formation Photo,,Hallway to Curtiss Room,,Wall,737,,,,Photograph
+54,Bell Airacuda XFM-1 Model,,Main Room,Near P-39,Floor,4224,,,,
+55,Bell Airacuda XFM-1 Photograph,,Main Room,Near P-39,Floor,4225,,,,Photograph
+56,Bell Aircraft designed and built in WNY models display case: ~35 models,,Main Room,Near P-39,Floor,4213,,,,
+57,Bell Aircraft Racing Team,,Main Room,,floor,4554,,,,
+58,Bell ATV VTOL Photo,,Hallway to Curtiss Room,,Wall,742,,,,Photograph
+59,Bell Factory floor photos,,Observation room,,Floor,4211,,,,
+60,Bell Helicopter Fort Worth TX Display Case w/29 models,,Main Room,,Floor,4502,,,,
+61,Bell Helicopter Rotor Mast and Stabilizer Bar Assembly,,Main Room,,Floor,4491,,,,Display
+62,Bell Minute Man post boost propulsion system Bellows Tank Photograph,,Curtiss Room,Main Floor,Wall,809,Moog,,,Photograph
+63,Bell P-39 Aerocobra Model,,Main Room,Near P-39,Floor,4207,Bell,,,Model
+64,Bell P-59 Jack Wollams Photo,,Hallway to Curtiss Room,,Wall,733,,,,Photograph
+65,Bell propellant Tank photograph,,Curtiss Room,Main Floor,Wall,808,Moog,,,Photograph
+66,BELL X - 1,,Main Room,,LU A - 1,671,,,,Photograph
+67,Bell X Aircraft Evolution poster,,Main Room,On side of Display Case,,4560,,,,Poster
+68,Bell X-1,,,,top of X-1 display,3487,,,,Model
+69,Bell X-1 cockpit drawing,,Main Room,,Wall,746,,,,Drawing
+70,Bell X-1 model in display case,,Main Room,,Floor,4192,,,,
+71,Bell X-1 Painting (8 panels),,Main Room,,floor,4551,,,,Painting
+72,Bell X-1A photo,,Hallway to Curtiss Room,,Wall,873,,,,Photograph
+73,Bell X-2 Model,,Main Room,On Display Case,,4557,Bell,,,Model
+74,Bell X-2 photo,,Hallway to Curtiss Room,,Wall,874,,,,Photograph
+75,BELL X-2 Sweptwing with metal fragment,,X-1 display,,MUS,747,,,,Photograph
+76,Bell X-22 cut away view,,Main Room,Above Display,Floor,1823,,,,Display Board
+77,Bell X-22 photo,,Hallway to Curtiss Room,,Wall,790,,,,Photograph
+78,Bell X-22 powered model,,Main Room,,Floor,4237,,,,
+79,Bell XP-83 jet fighter photo,,Hallway to Curtiss Room,,Wall,734,,,,Photograph
+80,BELL XS-1           Broken Frame,,Main Room,,A - 2,504,,,,Photograph
+81,BELL XS-1  Meeting the Challenge,,X-1 display,,MUS,744,,,,Photograph
+82,Bell XS-1 rocket plane dropped by a B-29 Painting,,Hallway to Curtiss Room,,Wall,335,,,,Painting
+83,Bell XS-1 rocket plane Painting,,Hallway to Curtiss Room,,Wall,1820,,,,Painting
+84,Bell-47 Helicopter Transmission,,Main Room,,Floor,4480,,,,Display
+85,Bell/Moog heritage display Panel,,Curtiss Room,Main Floor,Floor,4147,Moog,,,Display Board
+86,Buffalo Aviation Pioneers memorial plaque,,Main Room,Near P-39,Floor,4206,,,,Plaque
+87,Buffalo firsts poster,,Main Room,,Wall,4201,,,,Poster
+88,C-46 Stewardess Station,,Curtiss Room,Main Floor,Floor,4182,Curtiss,1946,,Artifact
+89,Captain William C. Glasgow Plaque,,Curtiss Room,Hallway,Wall,4119,,1945,,Plaque
+90,Captain William C. Glasgow Portrait,,Curtiss Room,Hallway,Wall,4120,,1945,,Portrait
+91,Catalina PBY,,Fleet & Consolidated Room,,Ceiling,4595,,,,Model
+92,CF-AAR Biplane Model,,Fleet & Consolidated Room,,Ceiling,4574,,,,Model
+93,"Chalmers ""Slick"" Goodlin",,Main Room,,floor,4555,,,,
+94,Chuck Yeager,,X-1 display,,wall,1853,,,,Photograph
+95,Cievera Autogyro 1/2 scale replica (Pitcarin model),,Main Room,near Ladies room,Floor,4228,,1930,,Replica
+96,Cobham 100 years of aviation,,Curtiss Room,,Wall,4097,Cobham,,,Photo
+97,CONFEDERATE Air Force,,Main Room,Table,A - 1,29,,,,Photograph
+98,Consolidated 21C,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4055,Consolidated,,,Model
+99,Consolidated advertising brochure for Fleetster,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4056,Consolidated,,,Photo
+100,Consolidated Aircraft,,Fleet & Consolidated Room,,Floor,4575,,,,Display Board
+101,"Consolidated Aircraft  Departs Buffalo for San Diego, CA",,Fleet & Consolidated Room,,wall,4585,,1935,,Display Board
+102,Consolidated Aircraft  Flying Boats,,Fleet & Consolidated Room,,wall,4584,,,,Display Board
+103,Consolidated Aircraft Banner,,Fleet & Consolidated Room,,Floor,4567,,,,Flag
+104,Consolidated Aircraft Commodore south American pan American airways ,,Fleet & Consolidated Room,,Floor,305,,,,Poster
+105,Consolidated Aircraft Display Case (4 models),,Fleet & Consolidated Room,,Floor,4586,,,,
+106,Consolidated Aircraft: A Journey Begins,,Fleet & Consolidated Room,,wall,4582,,1923,,Display Board
+107,Consolidated Clinton Warner assembling the 21C in China,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4058,Consolidated,,,Photo
+108,Consolidated Collection of Clinton Warner personal Items: Identification card for Air core reserve,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4063,Consolidated,,,Photo
+109,Consolidated Collection of Clinton Warner personal Items: Identification for national aeronautic association 1906,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4061,Consolidated,,,Photo
+110,Consolidated Collection of Clinton Warner personal Items: Pilot's book,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4062,Consolidated,,,Photo
+111,Consolidated Collection of Clinton Warner: biography,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4065,Consolidated,,,Photo
+112,Consolidated Collection of Clinton Warner: description plaque,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4064,Consolidated,,,Photo
+113,Consolidated Collection of Clinton Warner: photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4066,Consolidated,,,Photo
+114,Consolidated Commodore,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4037,Consolidated,,,Photo
+115,Consolidated Commodore flying boat,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4038,Consolidated,,,Photo
+116,Consolidated Fleet advertising poster,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4049,Consolidated,,,Photo
+117,Consolidated Fleet Model II,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4048,Consolidated,,,Photo
+118,Consolidated Fleetster,,Fleet & Consolidated Room,,wall,252,,1930,,Painting
+119,Consolidated Fleetster 17-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4035,Consolidated,,,Photo
+120,Consolidated Fleetster 20 type 2,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4036,Consolidated,,,Photo
+121,Consolidated Fleetster 20A,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4039,Consolidated,,,Photo
+122,Consolidated Fleetster model 17,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4052,Consolidated,,,Model
+123,Consolidated Flying Boats,,Fleet & Consolidated Room,,Floor,4576,,,,Display Board
+124,Consolidated P30,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4051,Consolidated,,,Photo
+125,Consolidated PB30,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4045,Consolidated,,,Model
+126,Consolidated PBY Catalina,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4047,Consolidated,,,Model
+127,Consolidated PT3 Trainer,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4040,Consolidated,,,Model
+128,Consolidated Ruben Fleet photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4057,Consolidated,,,Photo
+129,Consolidated unknown airplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4043,Consolidated,,,Model
+130,Consolidated unknown biplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4041,Consolidated,,,Model
+131,Consolidated William B Wheatley,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4059,Consolidated,,,Photo
+132,Consolidated William B Wheatley Biography,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Consolidated,4060,Consolidated,,,Photo
+133,Consolidated's Significant Contributions to advancement in Aviation,,Fleet & Consolidated Room,,wall,4583,,,,Display Board
+134,Consolodated P-30,,Theater,,D - 1 BX #1,204,,,,Photograph
+135,Continental R-670 Engine,,Fleet & Consolidated Room,,Floor,4569,Continental,,,Engine
+136,Control Divert System Model From ARC Propulsion Century Program 2 stage Anti ICBM 62 inches tall,,Curtiss Room,Floor,,3122,,,,Model
+137,Cornell Aeronautical Laboratory/Calspan Birth of an aircraft,,Curtiss Room,Wall Display,Floor,4110,Calspan,,,Display Board
+138,Cornell Aeronautical Laboratory/Calspan Simulation display,,Curtiss Room,Display case,Floor,4109,Calspan,,,
+139,Cornu's Helicopter,,Main Room,near Ladies room,Wall,4229,,1907,,Display Board
+140,Courier Express Charles Lindberg,,Curtiss Room,,Wall,4086,,,,Photo
+141,Cunningham Hall GA-36,,Fleet & Consolidated Room,,Floor,4562,,,,Airplane
+142,Curtiss Aeroplane Div. Display Case,,Curtiss Room,Display case,Floor,4108,,,,
+143,Curtiss Airplane & Motor Co. Sign,,Curtiss Room,Main Floor,Wall,4180,Curtiss,,,Painting
+144,Curtiss AT9 Jeep,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4029,Curtiss,,,Model
+145,Curtiss C45 Commando,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4020,Curtiss,,,Model
+146,Curtiss F9C-2,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4018,Curtiss,,,Model
+147,Curtiss F9C2 Sparrow Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4030,Curtiss,,,Model
+148,Curtiss Factory floor photos,,Observation room,,Floor,4212,,,,
+149,Curtiss Hawk P-1A Airplane,,Curtiss Room,Main Floor,Floor,4138,Curtiss,1926,,Airplane
+150,Curtiss Jenny JN-4 Airplane,,Curtiss Room,Main Floor,Floor,4132,Curtiss,,,Airplane
+151,Curtiss Jenny JN-4 artifact Display Case,,Curtiss Room,Main Floor,Floor,4131,Curtiss,,,Engine
+152,Curtiss Jenny JN-4 history exhibit,,Curtiss Room,Main Floor,Floor,4130,Curtiss,,,Exhibit
+153,Curtiss Jenny JN-4 Model,,Curtiss Room,Main Floor,Floor,4139,Curtiss,,,Model
+154,Curtiss Jenny JN-4 Model built by Thomas Pastore,,Curtiss Room,Main Floor,Floor,4128,Curtiss,,,Model
+155,Curtiss Jenny JN-4 OX-5 Engine Magneto,,Curtiss Room,Main Floor,Floor,4133,Curtiss,,,Display
+156,Curtiss Jenny JN-4 Wing section replica,,Curtiss Room,Main Floor,Floor,4129,Curtiss,,,Artifact
+157,Curtiss Jenny Tennis game photograph,,Curtiss Room,Main Floor,Floor,4134,Curtiss,,,Photograph
+158,"Curtiss Jennys in Production; Churchill Street, Buffalo NY",,Curtiss Room,History of the Curtiss Company,Wall,4090,Curtiss,,,Photo
+159,Curtiss JN-4D,,Curtiss Room,History of the Curtiss Company,Wall,4091,Curtiss,,,Photo
+160,Curtiss JN4 Jenny Trainer,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4031,Curtiss,,,Model
+161,Curtiss Model D Pusher Photograph,,Curtiss Room,Hallway,Wall,4125,Curtiss,1911,,Photograph
+162,Curtiss NC2 Fledgling,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4033,Curtiss,,,Model
+163,Curtiss NC4 Flying Boat,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4032,Curtiss,,,Model
+164,Curtiss P-36 Pursuit,,Curtiss Room,Hallway,Wall,199,Curtiss,,,Photograph
+165,Curtiss P-40 Warhawk model,,Curtiss Room,Main Floor,Floor,4141,Curtiss,,,Model
+166,Curtiss P1-B Model,,Curtiss Room,Main Floor,Floor,4140,Curtiss,,,Model
+167,Curtiss P36 Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4019,Curtiss,,,Model
+168,Curtiss P40 War Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4022,Curtiss,,,Model
+169,Curtiss P40 War Hawk painting,,Curtiss Room,,Wall,4096,Curtiss,,,Painting
+170,Curtiss P47-G,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4017,Curtiss,,,Model
+171,Curtiss P6E ,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4028,Curtiss,,,Model
+172,Curtiss SB2C Hell Diver,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4015,Curtiss,,,Model
+173,Curtiss SBC-2C Helldiver,,Curtiss Room,Hallway,Wall,184,Curtiss,,,Photograph
+174,Curtiss SW-20-E Commando,,Curtiss Room,,Display Case,3484,,,,Model
+175,Curtiss unknown biplane passenger plane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4024,Curtiss,,,Model
+176,Curtiss unknown counter rotating prop,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Curtiss,4016,Curtiss,,,Model
+177,Curtiss V-1570 Conqueror Engine,,Curtiss Room,Main Floor,Floor,4137,Curtiss,1929,,Engine
+178,Curtiss Wright 85 years on NYSE,,Curtiss Room,,Wall,4106,Curtiss Wright,,,Photo
+179,Curtiss Wright AT-9 Jeep Painting,,Curtiss Room,Main Floor,Wall,4179,Curtiss Wright,,,Painting
+180,Curtiss Wright C-46 Commando painting,,Curtiss Room,Hallway,Wall,340,Curtiss Wright,,,Painting
+181,Curtiss Wright P-36 Hawk Photograph,,Curtiss Room,Hallway,Wall,316,Curtiss Wright,1940,,Photograph
+182,"Curtiss Wright P-36 Hawk, C-46 Commando, P-40 Warhawk Photograph",,Curtiss Room,Hallway,Wall,191,Curtiss Wright,1941,,Photograph
+183,Curtiss Wright P-36A Hawk production Line,,Curtiss Room,Hallway,Wall,325,Curtiss Wright,,,Photograph
+184,Curtiss Wright P-40 Warhawk painting,,Curtiss Room,Hallway,Wall,728,Curtiss Wright,,,Painting
+185,Curtiss Wright SB2C Hell Diver Photograph,,Curtiss Room,Hallway,Wall,725,Curtiss Wright,,,Photograph
+186,Curtiss Wright SBC-3 Helldiver,,Curtiss Room,Hallway,Wall,202,Curtiss Wright,1938,,Photograph
+187,Curtiss Wright SNC-1 Flacon,,Curtiss Room,Hallway,Wall,200,Curtiss Wright,1940,,Photograph
+188,Curtiss Wright XF14-C2 Fighter Photograph,,Curtiss Room,Hallway,Wall,197,Curtiss Wright,1943,,Photograph
+189,Curtiss Wright XP 37 poster,,Curtiss Room,Hallway,Wall,4121,Curtiss Wright,,,Photograph
+190,Curtiss Wright XP-46 Fighter Photograph,,Curtiss Room,Hallway,Wall,195,Curtiss Wright,1941,,Photograph
+191,Curtiss Wright XP-60C Fighter Photograph,,Curtiss Room,Hallway,Wall,198,Curtiss Wright,1941,,Photograph
+192,Curtiss Wright XP-62 Fighter Photograph,,Curtiss Room,Hallway,Wall,194,Curtiss Wright,1942,,Photograph
+193,Curtiss Wright XP40Q Fighter Photograph,,Curtiss Room,Hallway,Wall,196,Curtiss Wright,1944,,Photograph
+194,Curtiss XP-55 Ascender picture,,Curtiss Room,Hallway,Wall,4122,Curtiss,,,Photograph
+195,Curtiss-Wright P-40 metal model  on stand 7 inch wingspan,,Curtiss Room,Desk,,3129,Curtiss Wright,,,Model
+196,Descriptive plaque: Jay Demming,,Main Room,On Display Case,,4548,,,,Plaque
+197,Designed and build in WNY,,Main Room,On side of Display Case,,4559,,,,Sign
+198,DH-4 Flying the mail,,Curtiss Room,Display,Floor,4083,,,,Display Board
+199,Dick Pealer Display Table,,Fleet & Consolidated Room,,Floor,4587,,,,
+200,Dirigible,,Fleet & Consolidated Room,,Ceiling,4592,,,,Model
+201,Display Case,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Floor,4014,,,,
+202,Display Case of  models of various jet airplanes,,Main Room,,Floor,4199,,,,
+203,Display Case of 19 airplane models,,Hallway to Curtiss Room,,Wall,4184,,,,
+204,Display Case: Bell World War II Employee memorabilia,,Main Room,,Floor,4550,,,,
+205,Display Case: Young and Kelly,,Main Room,,Floor,4549,,,,
+206,Display poster of Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,4203,,,,Display Board
+207,Douglas C-47 Painting (Print)   ,,Main Room,Table,G - 2,879,,,,Photograph
+208,Drawing of Orville Wright,,Curtiss Room,,Wall,4100,,,,Photo
+209,Early Night Raiders German Zeppelin-Stakken R XVI,,Main Room,Table,G - 1,807,,,,Photograph
+210,Earthrise Photograph of the earth from space,,Curtiss Room,Main Floor,Wall,4173,,1969,,Photograph
+211,Elias #9 photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4076,Elias,,,Photo
+212,Elias Brothers,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4080,Elias,,,Photo
+213,"Elias Brothers Biography, Abraham and Gabriel",,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4082,Elias,,,Photo
+214,Elias Dunlop NBL-1 Bomber,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4078,Elias,,,Model
+215,Elias EC1 Air Coupe,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4079,Elias,,,Model
+216,Elias EM-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4077,Elias,,,Model
+217,Elias EM-1 photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4075,Elias,,,Photo
+218,Elias EM-2 1922,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4071,Elias,,,Photo
+219,Elias MBS No 52 biplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4072,Elias,,,Photo
+220,Elias Stupar ES-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4081,Elias,,,Photo
+221,Elias unknown,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4074,Elias,,,Model
+222,Elias XNBS-3 short range bomber,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4073,Elias,,,Model
+223,ELM aviation club,,Curtiss Room,,Wall,4103,,,,Photo
+224,Evolution of the Bell fighters photo,,Hallway to Curtiss Room,,Wall,375,,,,Photograph
+225,Evolution of the Bell VTOL flight Development,,Main Room,Back of display case,Wall,4304,,,,Poster
+226,F9C-2 USN Fighter,,,,Display Case,3485,,,,Model
+227,Falcon 10 'French Navy plastic model airplane kit,,Front Desk,,,1651,Hasewaga,,,Model Airplane Kit
+228,First Blind Flight of Jimmy Doolittle,,Fleet & Consolidated Room,,wall,1840,,1929,,Painting
+229,First Launch of Space Shuttle Columbia,,Curtiss Room,Main Floor,Wall,750,,,,Photograph
+230,first operational helicopter at Gardenville,,Main Room,,Wall,1831,,,,Photograph
+231,First Supersonic flight,,X-1 display,,wall,1855,,,,
+232,First supersonic flight 50th anniversary X-1 poster,,Main Room,Back of display case,Wall,4293,,,,Poster
+233,Fleet Blimp Model,,Fleet & Consolidated Room,,Ceiling,4594,,,,Model
+234,Fleet Cockpit Display,,Fleet & Consolidated Room,,Floor,4591,,,,Display
+235,Fleet Fawn,,Fleet & Consolidated Room,,wall,1841,,,,Poster
+236,Fleet model,,Wall outside ladies room,,Wall,4188,,,,Model
+237,Fleet Model 1,,Fleet & Consolidated Room,,Floor,4563,,,,Airplane
+238,Fleet N2Y1 information poster,,Fleet & Consolidated Room,,Floor,4588,,,,Display Board
+239,Fleet of Canada,,Fleet & Consolidated Room,,Floor,4568,,,,Display Board
+240,Fleet of the buffalo aeronautical corporation photo,,Wall outside ladies room,,Wall,1822,,,,Photograph
+241,Fleet Wing Construction ,,Fleet & Consolidated Room,,Floor,4593,,,,Display
+242,"Fleet, Bell and Buffalo",,Fleet & Consolidated Room,,Floor,4580,,,,Display Board
+243,"Fleet, Bell And Consolidated",,Fleet & Consolidated Room,,Floor,4578,,,,Display Board
+244,Flight Demonstrator exhibit,,Curtiss Room,Main Floor,Floor,4127,,,,Exhibit
+245,Flight Simulator,,Theater,,Floor,4598,,,,Simulator
+246,Floyd Carlson Display Case,,Main Room,,floor,4553,,,,
+247,Floyd Carlson Statue,,Main Room,On Display Case,,4556,,,,Statue
+248,Folding table under Allison J35 Turbojet engine cutaway,,Main Room,,Floor,4195,,,,Furniture
+249,formation of the Aero Club of Buffalo 1910,,Curtiss Room,,Wall,4101,,,,Photo
+250,Franklin 4AC-150,,Fleet & Consolidated Room,,Floor,4573,Franklin,1935,,Engine
+251,Ft Worth to Niagara falls Plaque,,Main Room,,Floor,4381,,1952,,Plaque
+252,GAM-63 Rascal Rocket Engine,,Curtiss Room,Main Floor,Floor,4152,Bell,,,Engine
+253,Gardenville development facility (union garage),,Main Room,,Wall,1829,,,,Photograph
+254,Gardenville organization photo of people that invented the helicopter,,Main Room,,Wall,4546,,,,Photograph
+255,Gates Flying Circus,,Curtiss Room,,Wall,4105,,,,Photo
+256,GE I-16 Jet Engine display,,Main Room,,Floor,4200,GE,1942,,Engine
+257,General Chuck Yeager,,X-1 display,,wall,1854,,,,Photograph
+258,Glenn Curtiss Partners Desk plus 11 photo frames,,Curtiss Room,Display,Floor,4093,Curtiss,,,Display
+259,Glenn Hammond Curtiss Biography,,Curtiss Room,Hallway,Wall,1818,Curtiss,,,Photograph
+260,Glenn Hammond Curtiss Portrait,,Curtiss Room,Hallway,Wall,1817,Curtiss,,,Portrait
+261,Globe of the Moon,,Curtiss Room,Main Floor,Wall,4175,,,,Model
+262,Grover and Larry Bell display board,,Main Room,,Floor,4535,,,,Display Board
+263,Gwinn Aircar,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4070,Gwinn brothers,,,Model
+264,Gwinn Aircar Advertisement,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4067,Gwinn brothers,,,Photo
+265,Gwinn Aircar Specifications,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4069,Gwinn brothers,,,Photo
+266,Gwinn brothers description,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Elias Brothers,4068,Gwinn brothers,,,Photo
+267,Hamilton Standard Hydromatin Propeller,,Curtiss Room,Display,Wall,4003,Hamilton Standard,,,Photograph
+268,Heinkel He 111H-22 plastic model airplane kit,,Front Desk,,,1647,Monogram,,,Model Airplane Kit
+269,Herbert O. Fisher - Chief Test Pilot - Curtiss Wright,,Curtiss Room,Hallway,Wall,4123,Curtiss Wright,,,Photograph
+270,History of Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,4202,,,,Display Board
+271,History of Manned Space Flight Poster,,Curtiss Room,Main Floor,Wall,4167,,,,Photograph
+272,History of the Curtiss Company Display,,Curtiss Room,History of the Curtiss Company,Wall,4092,Curtiss,,,Photo
+273,Ira G Ross Hall of Aerospace Technology (wind tunnel),,Curtiss Room,Wall Display,Floor,4111,,,,Exhibit
+274,Ira G Ross Hall of Aerospace Technology wind tunnel model,,Curtiss Room,Display,Floor,4112,,,,Model
+275,Jake Painting dedicated to all 107th members presented by 107th air refueling wing,,Wall outside ladies room,,Wall,22,,,,Painting
+276,Jay Demming Bell Test pilot Photograph,,Main Room,On Display Case,,1832,,,,Photograph
+277,Jay Demming Bell Test pilot Photograph with p-63 Cobra 2 race plane,,Main Room,On Display Case,,4547,,,,Photograph
+278,Junkers JU-88S plastic model airplane kit,,Front Desk,,,1649,Hobby Craft,,,Model Airplane Kit
+279,Kinner R-55 Engine,,Fleet & Consolidated Room,,Floor,4565,Kinner,,,Engine
+280,"Lancaster BI/III, Spitfire MkIIa, Hurricane MkIIc plastic model airplane kit",,Front Desk,,,1654,Airfix,,,Model Airplane Kit
+281,Larry Bell painting,,Main Room,,Wall,203,,,,Painting
+282,Larry Bell painting (Bell Helicopter Textron),,Main Room,,Wall,756,,,,Painting
+283,Larry Bell Photograph,,Main Room,On Display Case,,1847,,,,Photograph
+284,Larry Bell Photograph as VP of Consolidated,,Hallway to Curtiss Room,,Wall,374,,1930,,Photograph
+285,Larry Bell with Cigarette,,Main Room,,Wall,740,,,,Photograph
+286,Larry Bell's Private Helicopter,,Main Room,,Floor,4469,,,,Display Board
+287,Larry Bell's Private Helicopter model 47H1,,Main Room,,Floor,4436,,1955,,Helicopter
+288,LCAC-1 Hovercraft,,Main Room,Back of display case,Wall,4271,,,,Photograph
+289,Liberty Engine Display  board,,Curtiss Room,Main Floor,Floor,4136,,1917,,Display Board
+290,Liberty V-12 Engine,,Curtiss Room,Main Floor,Floor,4135,,1917,,Engine
+291,Lifetime folding chairs,,Main Room,,Floor,4193,,,,Furniture
+292,Lindberg and Dirigibles Display,,Curtiss Room,,Wall,4084,,,,Display Board
+293,"Lindberg photographs and a piece of the aircraft covering, 3 medals when he visited buffalo",,Curtiss Room,,Wall,4087,,,,Photo
+294,Link Trainer Flight Simulator,,Curtiss Room,Main Floor,Floor,4181,Link,,,Simulator
+295,LLRV Poster,,Curtiss Room,Space area,Wall,146,,,,Poster
+296,Local links to the past poster easel,,Main Room,Near P-39,Floor,4217,,,,Poster
+297,Lockheed - Various Aircraft,,Main Room,Table,G - 1,817,,,,Photograph
+298,Lockheed F - 22,,Main Room,Table,G - 1,814,,,,Photograph
+299,LORAS System,,Curtiss Room,Display case,Floor,4113,,,,
+300,Lunar lander Flight Simulator,,Theater,,Floor,4599,,,,Simulator
+301,Lunar lander prototype photo,,Hallway to Curtiss Room,,Wall,488,,,,Photograph
+302,Lunar Module Ascent Engine,,Curtiss Room,Main Floor,Floor,4164,Bell,,,Engine
+303,Lunar Module Model,,Curtiss Room,Main Floor,Floor,4166,Bell,,,Model
+304,Macon Airship Display Board,,Fleet & Consolidated Room,,Floor,4589,,,,Display Board
+305,Marilyn Monroe Building Radioplane drone,,Fleet & Consolidated Room,,wall,693,,,,Photograph
+306,Marine Corps Assault Vehicle LVA,,Main Room,Back of display case,Wall,4315,,,,Photograph
+307,"Martin, Douglas and Bell",,Fleet & Consolidated Room,,Floor,4579,,,,Display Board
+308,MASH and the Helicopter Painting (8 panels),,Main Room,,Floor,4513,,,,Painting
+309,MASH Stretcher,,Main Room,,Floor,4524,,,,Artifact
+310,McDonnell Douglas F-4 Phantom in vertical flight,,Main Room,Table,G - 2,475,,,,Photograph
+311,Memory of the Curtiss Wright crash into the plan bronze plaque,,Curtiss Room,Display,Floor,4094,Curtiss Wright,,,Display
+312,Memory of the Curtiss Wright crash into the plan bronze plaque Description,,Curtiss Room,Display,Floor,4095,Curtiss Wright,,,Display
+313,Mercury Capsule drawing,,Wall outside ladies room,,Wall,345,,,,Drawing
+314,Minute Man Missile fuel tank cutaway model,,Curtiss Room,Main Floor,Floor,4159,Bell,,,Model
+315,Minute Man Missile launch,,Main Room,Back of display case,Wall,4260,,,,Photograph
+316,Mission Control,,Curtiss Room,Main Floor,Wall,4170,,,,Photograph
+317,Model 47 Insect sprayer or crop duster display board,,Main Room,,Floor,4425,,1947,,Display Board
+318,Model 47 Insect sprayer or crop duster Mdel 47B3 SN 63 1947,,Main Room,,Floor,4414,Bell,1947,,Helicopter
+319,Model of USS Sable Great Lakes Aircraft Carrier,,Curtiss Room,Display,Wall,4004,,,,was a passenger ship
+320,Modern mission of mercy,,Main Room,,Wall,1827,,,,Poster
+321,Modern War Planes,,Main Room,,,1838,,,,Poster
+322,Moog Boost and Pitch compensator description poster,,Curtiss Room,Main Floor,Floor,4144,Moog,,,Exhibit
+323,"Moog Boost and Pitch compensator F-22, F-15",,Curtiss Room,Main Floor,Floor,4143,,,,Exhibit
+324,Moog Space Heritage Display Panel,,Curtiss Room,Main Floor,Floor,4145,Moog,,,Display Board
+325,Morris aeroservice biplane model,,Wall outside ladies room,,Wall,4187,,,,Model
+326,NASA photograph of a comet,,Main Room,Back of display case,Wall,4238,,,,Photograph
+327,Navy's Last Biplane Fighter Grumman FF-1,,Main Room,Table,G - 1,803,,,,Photograph
+328,NC4 Across the Atlantic,,Curtiss Room,Display,Wall,4013,,,,Display Board
+329,New kind of flyer,,Main Room,,Wall,1828,,,,Poster
+330,Niagara County Sheriff w/Bell 47B Helicopter,,Main Room,On Display Case,,1834,,,,Photograph
+331,Niagara Frontier Aviation and Aerospace Hall of Fame floor display,,Curtiss Room,Display,Wall,4006,,,,Display Board
+332,Niagara Frontier Aviation and Aerospace Hall of Fame wall display,,Curtiss Room,Display,Wall,4005,,,,Display Board
+333,NY State Flag,,Main Room,,Floor,4447,,,,Flag
+334,NY State: Birthplace of American Jet Powered Aviation,,Main Room,,Wall,4196,,,,Display Board
+335,P-36 Hawk,,,,Display Case,3486,,,,Model
+336,P-39 37 mm cannon display,,Main Room,Near P-39,Floor,4220,,,,Display
+337,P-39 Description,,Main Room,Near P-39,Floor,4219,,,,Display
+338,P-39 Description of the history of the plane on display,,Main Room,Near P-39,Floor,4222,,,,Display
+339,P-39 Ivan Ivanovich Baranovsky,,Main Room,Near P-39,Floor,4221,,,,Display
+340,P-39 rear view photo,,Hallway to Curtiss Room,,Wall,387,,,,Photograph
+341,P-39 restored airplane (from Russia),,Main Room,Near P-39,Floor,4214,Bell,,,Airplane
+342,P-39Q Aracobra display case,,Main Room,Near P-39,Floor,4210,,,,
+343,P-63 King Cobra display Board,,Main Room,Near P-39,Floor,4209,,,,Display Board
+344,P-63 King Cobra display case with artifacts,,Main Room,Near P-39,Floor,4208,,,,
+345,P-63 model 1:48 scale,,Main Room,,Ceiling,4227,,,,Model
+346,P40 mock cockpit (Capt Joe Kidd),,Theater,,Floor,4600,,,,Display
+347,Pair of aces,,Theater,,Wall,1844,,,,Painting
+348,Paul Faltyn Plaque (Museum Creator),,Main Room,On Display Case,,1835,,,,Plaque
+349,"PBPS Flight #1, Eastern Test Range",,Curtiss Room,Main Floor,Wall,765,,,,Photograph
+350,People the world over depend on Bell Helicopters round plaque,,Main Room,,Floor,4403,,,,Plaque
+351,Pettit Model: Curtiss P-40 in plastic display case,,Front Desk,Model Room,L-21,1595,,,,Model
+352,Pettit Model: F-14 Tomcat,,Front Desk,Model Room,L-1,1442,,,,Model
+353,Pettit Model: Lockheed C-5B Galaxy,,Front Desk,Model Room,L-26,1624,,,,Model
+354,Pettit Model: Lockheed F-117,,Front Desk,Model Room,L-12,1534,,,,Model
+355,Pettit Model: Lockheed F-16,,Front Desk,Model Room,L-12,1536,,,,Model
+356,Pettit Model: Lockheed F-16C,,Front Desk,Model Room,L-12,1535,,,,Model
+357,Pettit Model: Lockheed P-38 Lightning,,Front Desk,Model Room,L-26,1625,,,,Model
+358,Pettit Model: Lockheed S3A Viking,,Front Desk,Model Room,L-16,1572,,,,Model
+359,Pettit Model: SR-71 Blackbird,,Front Desk,Model Room,L-1,1439,,,,Model
+360,Pettit Model: unknown propeller plane white Fuerza Aerea Colombiana,,Front Desk,Model Room,L-21,1597,,,,Model
+361,Pettit Model: US Army monoplane,,Front Desk,Model Room,L-27,1626,,,,Model
+362,Photo of Collier Trophy,,Hallway to Curtiss Room,,Wall,1819,,,,Photograph
+363,photograph of a biplane unknown,,Curtiss Room,,Wall,4104,,,,Photo
+364,photograph of Lunar module with Moon in the background,,Curtiss Room,Main Floor,Wall,749,,1969,,Photograph
+365,Photograph of the Museum's Model 1 Fleet,,Fleet & Consolidated Room,,wall,1842,,,,Photograph
+366,Point to Point delivery by the magic carpet ,,Main Room,,Wall,1826,,,,Poster
+367,Positive Expulsion Tank,,Curtiss Room,Main Floor,Floor,4162,Bell,,,Exhibit
+368,Pratt and Whitney R2000 Radial engine,,Theater,,Floor,4597,,,,Engine
+369,Prime Crew for first lunar landing photograph,,Curtiss Room,Main Floor,Wall,4172,,1969,,Photograph
+370,R-1830 Pratt & Whitney Twin Wasp Engine,,Curtiss Room,Display,Wall,4001,Pratt & Whitney,,,Engine
+371,Radioplane OQ14TDE Engine,,Fleet & Consolidated Room,,Floor,4570,,,,Engine
+372,"RAF 44th Combat Support Crew  Walla Walla, WA",,Main Room,Table,G - 2,861,,,,Photograph
+373,Ranger L440 Engine,,Fleet & Consolidated Room,,Floor,4572,Ranger,1941,,Engine
+374,Ranger V770,,Fleet & Consolidated Room,,Floor,4566,Ranger,1940,,Engine
+375,Reaction control thrusters,,Curtiss Room,Main Floor,Floor,4160,,,,Exhibit
+376,Reserved Floyd Carlson Chief Pilot parking sign,,Main Room,,Wall,1836,,,,Sign
+377,Reuben Hollis Fleet,,Fleet & Consolidated Room,,wall,4581,,1918,,Display Board
+378,Rocket belt display,,Main Room,,Floor,4189,,,,Display
+379,Rocket test Technicians and fire brigade,,Main Room,On side of Display Case,,1848,,,,Photograph
+380,Rockets infographic poster,,Curtiss Room,Main Floor,Wall,4176,,,,Photograph
+381,Rolling Diaphragm Tank,,Curtiss Room,Main Floor,Floor,4161,Bell,,,Exhibit
+382,Rosie the riveter display ,,Main Room,Near P-39,Floor,4216,,,,Display
+383,Rosie the Riveter in the Radioplane Factory,,Fleet & Consolidated Room,,Floor,4571,,,,Photograph
+384,Rosie the Riveter Poster,,Main Room,Near P-39,Floor,1850,,,,Poster
+385,Rough and Ready early balloon flight panel display,,Hallway to Curtiss Room,,Wall,4183,,,,Display Board
+386,Russian Stomovik LL-10,,Main Room,,wall,192,,,,Photograph
+387,Ryan Sprit of St Louis ,,Curtiss Room,,Wall,4085,,,,Model
+388,Saturn blockhouse painting,,Curtiss Room,Main Floor,Wall,4169,,,,Painting
+389,Scott Aviation Display,,Curtiss Room,Display case,Floor,4116,,,,
+390,Skyways - Consolidated Commadore,,Fleet & Consolidated Room,,G - 1,804,,,,Photograph
+391,Skyways Poster of Consolidated Commodore,,Fleet & Consolidated Room,,Floor,147,,,,Poster
+392,Small rocket lift device (rocket belt) photo,,Hallway to Curtiss Room,,Wall,348,,,,Photograph
+393,Space Shuttle Orbiter Forward Thermal Windshield,,Curtiss Room,Main Floor,Floor,4142,,,,Exhibit
+394,Speed at sea photo stand,,Main Room,,Floor,1852,,,,Photograph
+395,sting of the cobra race painting (Bell Airacobra),,Hallway to Curtiss Room,,Wall,735,,,,Painting
+396,T33A Ejection Seat,,Curtiss Room,Display,Floor,4117,,,,Exhibit
+397,T33A Ejection Seat Description,,Curtiss Room,Display,Floor,4118,,,,Display Board
+398,the dawn of aviation,,Main Room,,,1839,,,,Poster
+399,The Helicopter is ready,,Main Room,,Wall,1825,,,,Poster
+400,The invisible wall: the sound barrier X-1 display,,Main Room,,Floor,4190,,,,Display
+401,the magic carpet power by franklin,,Main Room,,Wall,1830,,,,Poster
+402,Trouble Ahead B-17 Painting,,Curtiss Room,Main Floor,Wall,4178,Boeing,1944,,Painting
+403,TWA Consolidated passenger plane,,Fleet & Consolidated Room,,,1843,,,,Painting
+404,Unknown photograph of Hovercraft coming out of a ship,,Main Room,Back of display case,Wall,4249,,,,Photograph
+405,US Flag,,Main Room,,Floor,4458,,,,Flag
+406,US Navy Dirigibles,,Fleet & Consolidated Room,,Floor,4590,,,,Display Board
+407,USAF GAM-63 rocket firing,,Hallway to Curtiss Room,,Wall,497,,,,Photograph
+408,Vought SB2U Vindicator plastic model airplane kit,,Front Desk,,,1644,HiPM,,,Model Airplane Kit
+409,w.2/700 jet aero engine by Frank Whittle,,Main Room,,Floor,4198,,,,Drawing
+410,War Bird donation bomb,,Main Room,Near P-39,Floor,4218,,,,Display
+411,Wendell Moore Rocket Belt inventor ,,Curtiss Room,Main Floor,Floor,4148,,,,Display Board
+412,Western New York Aviation Timeline,,Curtiss Room,Display,Wall,4009,,,,Display Board
+413,Western New York Aviation Timeline background,,Curtiss Room,Display,Wall,4010,,,,Display Board
+414,William G. Gisel Hall of Fame Plaque,,Main Room,Near front window,Wall,4326,,,,Plaque
+415,Winged victory army air force patches,,Main Room,,wall,1849,,,,Poster
+416,WNY liquid rocket engine accessory display frame,,Curtiss Room,Main Floor,Wall,4168,Moog,,,Display Board
+417,Women in the factory poster,,Main Room,Near P-39,Floor,4215,,,,Poster
+418,Women then and now,,Main Room,,wall,1851,,,,Photograph
+419,Wooden Propeller,,Curtiss Room,Main Floor,Wall,4177,,,,Artifact
+420,World War I aircraft,,Main Room,,,1837,,,,Poster
+421,Wright R 1300 engine,,Theater,,Floor,4596,,,,Engine
+422,X-1 Postage Stamp,,Main Room,,MUS,774,,,,Photograph
+423,XP-59A Bronze plaque,,Main Room,,Wall,4197,,,,Plaque
+424,YMF-1 Aracuda,,Theater,,wall,1845,,,,Painting
+425,Young and Kelly Sign,,Main Room,On Display Case,,1833,,,,Sign
+426,Zero Gravity Belt,,Curtiss Room,Main Floor,Floor,4150,Bell,1965,,Exhibit
+427,Zero Gravity Belt Display Board,,Curtiss Room,Main Floor,Floor,4151,,,,Display Board
+512,1914 rotary engine model,,Curtiss Room,Display,Wall,16,,,,Model
+513,B-24 Liberator dedication plaque,,Curtiss Room,Display,Wall,,,,,Plaque
+514,Hamilton Standard Hydromatin Propeller,,Curtiss Room,Display,Wall,17,Hamilton Standard,,,Photograph
+515,Model of USS Sable Great Lakes Aircraft Carrier,,Curtiss Room,Display,Wall,19,,,,was a passenger ship
+516,Niagara Frontier Aviation and Aerospace Hall of Fame floor display,,Curtiss Room,Display,Wall,21,,,,Display Board
+517,Niagara Frontier Aviation and Aerospace Hall of Fame wall display,,Curtiss Room,Display,Wall,20,,,,Display Board
+518,R-1830 Pratt & Whitney Twin Wasp Engine,,Curtiss Room,Display,Wall,15,Pratt & Whitney,,,Engine
+519,1903 Wright Brothers flyer,,Curtiss Room,Display case,Floor,,,,,
+520,1908 June Bug,,Main Room,near Ladies room,Wall,,,1908,,
+521,1909-1924 history of flight display boards (6 panels),,Main Room,near Ladies room,Wall,,,1909,,
+522,1910 Curtiss Pusher Airplane,,Curtiss Room,Main Floor,Floor,,Curtiss,1910,,
+523,1914 rotary engine model,,Curtiss Room,Display,Wall,,,,,
+524,1919 parachutes Leslie L Irvin,,Curtiss Room,,Wall,,,,,
+525,1925-1945 history of flight display boards (6 panels),,Main Room,Above entrance,Wall,,,1925,,
+526,1927 Col. Lindberg & mother,,Curtiss Room,,Wall,,,,,
+527,"1927 Col. Lindberg Spirit of St Louis Syracuse to Rochester, Rochester to Buffalo",,Curtiss Room,,Wall,,,,,
+528,1946-1981 history of flight display boards (6 panels),,Main Room,Above entrance,Wall,,,1946,,
+529,1947 Bell 47-5 Helicopter prototype (Fort Worth Record),,Main Room,,Floor,,,1947,,
+530,1950 Bell 47 helicopter,,Main Room,Near front window,Wall,,,,,
+531,500th flight of X-22A,,Main Room,Above entrance,Wall,,,1984,,
+532,80 of changing the way the world flies timeline,,Main Room,,Ceiling,,,,,
+533,Aero Club of Buffalo Meeting poster,,Curtiss Room,,Wall,,,,,
+534,Aerodynamics History 1884-1896,,Main Room,near Ladies room,Wall,,,1884,,
+535,Agena 8081 Rocket Engine,,Curtiss Room,Main Floor,Floor,,Bell,,,
+536,Agena Combustion Chamber,,Curtiss Room,Main Floor,Floor,,Bell,,,
+537,Agena Combustion Chamber throat,,Curtiss Room,Main Floor,Floor,,Bell,,,
+538,Agena Rocket Engine Model,,Curtiss Room,Main Floor,Floor,,Bell,,,
+539,AHS International Vertical Flight Heritage Site,,Main Room,,floor,,,,,
+540,AIAA historic Aerospace site bronze plaque,,Main Room,,Floor,,,,,
+541,Allison J35 Turbojet engine cutaway,,Main Room,,Floor,,,,,
+542,Allison model 250 turboshaft engine,,Main Room,Near front window,Wall,,Allison,,,
+543,Allison V-1710 engine,,Main Room,Near P-39,Floor,,Allison,,,
+544,Apollo 11 liftoff photograph,,Curtiss Room,Main Floor,Wall,,,1969,,
+545,Apollo Control Console,,Curtiss Room,Main Floor,Floor,,Consolidated,,,
+546,Apollo models Display Case,,Curtiss Room,Main Floor,Floor,,,,,
+547,ARC Control Divert System model,,Curtiss Room,Main Floor,Floor,,ARC,,,
+548,ARO Corporation Display,,Curtiss Room,Display case,Floor,,ARO Corporation,,,
+549,Ascent propulsion system Saturn 5 Rocket description,,Curtiss Room,Main Floor,Wall,,,,,
+550,Astronaut Maneuvering unit,,Curtiss Room,Main Floor,Floor,,Bell,,,
+551,B-17 Flying Fortress dedication plaque,,Curtiss Room,Display,Wall,,,,,
+552,B-24 Liberator dedication plaque,,Curtiss Room,Display,Wall,,,,,
+553,B-29 Enola gay model,,Wall on top of Ladies room,,Wall,,Boeing,,,
+554,B-29 Lity of L,,Wall on top of Ladies room,,Wall,,Boeing,,,
+555,Baldwin's Dirigibles,,Main Room,near Ladies room,Wall,,,1907,,
+556,Beginning of flight (Golfer) Balloons 1783,,Curtiss Room,,Wall,,,,,
+557,Bell 47 helicopter engine display,,Main Room,Near front window,Wall,,Bell,,,
+558,Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+559,Bell Aerospace army assault Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+560,Bell Airacuda XFM-1 Model,,Main Room,Near P-39,Ceiling,,Bell,,,
+561,Bell Airacuda XFM-1 Photograph,,Main Room,Near P-39,Floor,,,,,
+562,Bell Aircraft designed and built in WNY models display case: ~35 models,,Main Room,Near P-39,Floor,,,,,
+563,Bell Aircraft Racing Team,,Main Room,,floor,,,,,
+564,Bell Factory floor photos,,Observation room,,Floor,,,,,
+565,Bell Helicopter Fort Worth TX Display Case w/29 models,,Main Room,,Floor,,,,,
+566,Bell Helicopter Rotor Mast and Stabilizer Bar Assembly,,Main Room,,Floor,,,,,
+567,Bell P-39 Aerocobra Model,,Main Room,Near P-39,Floor,,Bell,,,
+568,Bell X Aircraft Evolution poster,,Main Room,On side of Display Case,,,,,,
+569,Bell X-1 model in display case,,Main Room,,Floor,,,,,
+570,Bell X-1 Painting (8 panels),,Main Room,,floor,,,,,
+571,Bell X-2 Model,,Main Room,On Display Case,,,Bell,,,
+572,Bell X-22 powered model,,Main Room,,Floor,,,,,
+573,Bell-47 Helicopter Transmission,,Main Room,,Floor,,,,,
+574,Bell/Moog heritage display Panel,,Curtiss Room,Main Floor,Floor,,Moog,,,
+575,Buffalo Aviation Pioneers memorial plaque,,Main Room,Near P-39,Floor,,,,,
+576,Buffalo firsts poster,,Main Room,,Wall,,,,,
+577,C-46 Stewardess Station,,Curtiss Room,Main Floor,Floor,,Curtiss,1946,,
+578,Captain William C. Glasgow Plaque,,Curtiss Room,Hallway,Wall,,,1945,,
+579,Captain William C. Glasgow Portrait,,Curtiss Room,Hallway,Wall,,,1945,,
+580,Catalina PBY,,Fleet & Consolidated Room,,Ceiling,,,,,
+581,CF-AAR Biplane Model,,Fleet & Consolidated Room,,Ceiling,,,,,
+582,Chalmers Slick Goodlin,,Main Room,,Floor,,,,,
+583,Cievera Autogyro 1/2 scale replica (Pitcarin model),,Main Room,near Ladies room,Floor,,,1930,,
+584,Cobham 100 years of aviation,,Curtiss Room,,Wall,,Cobham,,,
+585,Consolidated 21C,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+586,Consolidated advertising brochure for Fleetster,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+587,Consolidated Aircraft,,Fleet & Consolidated Room,,Floor,,,,,
+588,"Consolidated Aircraft  Departs Buffalo for San Diego, CA",,Fleet & Consolidated Room,,wall,,,1935,,
+589,Consolidated Aircraft  Flying Boats,,Fleet & Consolidated Room,,wall,,,,,
+590,Consolidated Aircraft Banner,,Fleet & Consolidated Room,,Floor,,,,,
+591,Consolidated Aircraft Display Case (4 models),,Fleet & Consolidated Room,,Floor,,,,,
+592,Consolidated Aircraft: A Journey Begins,,Fleet & Consolidated Room,,wall,,,1923,,
+593,Consolidated Clinton Warner assembling the 21C in China,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+594,Consolidated Collection of Clinton Warner personal Items: Identification card for Air core reserve,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+595,Consolidated Collection of Clinton Warner personal Items: Identification for national aeronautic association 1906,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+596,Consolidated Collection of Clinton Warner personal Items: Pilot's book,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+597,Consolidated Collection of Clinton Warner: biography,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+598,Consolidated Collection of Clinton Warner: description plaque,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+599,Consolidated Collection of Clinton Warner: photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+600,Consolidated Commodore,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+601,Consolidated Commodore flying boat,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+602,Consolidated Fleet advertising poster,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+603,Consolidated Fleet Model II,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+604,Consolidated Fleetster 17-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+605,Consolidated Fleetster 20 type 2,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+606,Consolidated Fleetster 20A,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+607,Consolidated Fleetster model 17,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+608,Consolidated Flying Boats,,Fleet & Consolidated Room,,Floor,,,,,
+609,Consolidated P30,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+610,Consolidated PB30,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+611,Consolidated PBY Catalina,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+612,Consolidated PT3 Trainer,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+613,Consolidated Ruben Fleet photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+614,Consolidated unknown airplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+615,Consolidated unknown biplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+616,Consolidated William B Wheatley,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+617,Consolidated William B Wheatley Biography,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+618,Consolidated's Significant Contributions to advancement in Aviation,,Fleet & Consolidated Room,,wall,,,,,
+619,Continental R-670 Engine,,Fleet & Consolidated Room,,Floor,,Continental,,,
+620,Control Divert System Model From ARC Propulsion Century Program 2 stage Anti ICBM 62 inches tall,,Curtiss Room,Floor,,,,,,
+621,Cornell Aeronautical Laboratory/Calspan Birth of an aircraft,,Curtiss Room,Wall Display,Floor,,Calspan,,,
+622,Cornell Aeronautical Laboratory/Calspan Simulation display,,Curtiss Room,Display case,Floor,,Calspan,,,
+623,Cornu's Helicopter,,Main Room,near Ladies room,Wall,,,1907,,
+624,Courier Express Charles Lindberg,,Curtiss Room,,Wall,,,,,
+625,Cunningham Hall GA-36,,Fleet & Consolidated Room,,Floor,,,,,
+626,Curtiss Aeroplane Div. Display Case,,Curtiss Room,Display case,Floor,,,,,
+627,Curtiss Airplane & Motor Co. Sign,,Curtiss Room,Main Floor,Wall,,Curtiss,,,
+628,Curtiss AT9 Jeep,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+629,Curtiss C45 Commando,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+630,Curtiss F9C-2,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+631,Curtiss F9C2 Sparrow Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+632,Curtiss Factory floor photos,,Observation room,,Floor,,,,,
+633,Curtiss Hawk P-1A Airplane,,Curtiss Room,Main Floor,Floor,,Curtiss,1926,,
+634,Curtiss Jenny JN-4 Airplane,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+635,Curtiss Jenny JN-4 artifact Display Case,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+636,Curtiss Jenny JN-4 history exhibit,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+637,Curtiss Jenny JN-4 Model,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+638,Curtiss Jenny JN-4 Model built by Thomas Pastore,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+639,Curtiss Jenny JN-4 OX-5 Engine Magneto,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+640,Curtiss Jenny JN-4 Wing section replica,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+641,Curtiss Jenny Tennis game photograph,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+642,"Curtiss Jennys in Production; Churchill Street, Buffalo NY",,Curtiss Room,History of the Curtiss Company,Wall,,Curtiss,,,
+643,Curtiss JN-4D,,Curtiss Room,History of the Curtiss Company,Wall,,Curtiss,,,
+644,Curtiss JN4 Jenny Trainer,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+645,Curtiss Model D Pusher Photograph,,Curtiss Room,Hallway,Wall,,Curtiss,1911,,
+646,Curtiss NC2 Fledgling,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+647,Curtiss NC4 Flying Boat,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+648,Curtiss P-40 Warhawk model,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+649,Curtiss P1-B Model,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+650,Curtiss P36 Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+651,Curtiss P40 War Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+652,Curtiss P40 War Hawk painting,,Curtiss Room,,Wall,,Curtiss,,,
+653,Curtiss P47-G,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+654,Curtiss P6E ,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+655,Curtiss SB2C Hell Diver,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+656,Curtiss unknown biplane passenger plane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+657,Curtiss unknown counter rotating prop,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+658,Curtiss V-1570 Conqueror Engine,,Curtiss Room,Main Floor,Floor,,Curtiss,1929,,
+659,Curtiss Wright 85 years on NYSE,,Curtiss Room,,Wall,,Curtiss Wright,,,
+660,Curtiss Wright AT-9 Jeep Painting,,Curtiss Room,Main Floor,Wall,,Curtiss Wright,,,
+661,Curtiss Wright XP 37 poster,,Curtiss Room,Hallway,Wall,,Curtiss Wright,,,
+662,Curtiss XP-55 Ascender picture,,Curtiss Room,Hallway,Wall,,Curtiss,,,
+663,Curtiss-Wright P-40 metal model  on stand 7 inch wingspan,,Curtiss Room,Desk,,,Curtiss Wright,,,
+664,Descriptive plaque: Jay Demming,,Main Room,On Display Case,,,,,,
+665,Designed and build in WNY,,Main Room,On side of Display Case,,,,,,
+666,DH-4 Flying the mail,,Curtiss Room,Display,Floor,,,,,
+667,Dick Pealer Display Table,,Fleet & Consolidated Room,,Floor,,,,,
+668,Dirigible,,Fleet & Consolidated Room,,Ceiling,,,,,
+669,Display Case,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Floor,,,,,
+670,Display Case of  models of various jet airplanes,,Main Room,,Floor,,,,,
+671,Display Case of 19 airplane models,,Hallway to Curtiss Room,,Wall,,,,,
+672,Display Case: Bell World War II Employee memorabilia,,Main Room,,Floor,,,,,
+673,Display Case: Young and Kelly,,Main Room,,Floor,,,,,
+674,Display poster of Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+675,Drawing of Orville Wright,,Curtiss Room,,Wall,,,,,
+676,Earthrise Photograph of the earth from space,,Curtiss Room,Main Floor,Wall,,,1969,,
+677,Elias #9 photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+678,Elias Brothers,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+679,"Elias Brothers Biography, Abraham and Gabriel",,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+680,Elias Dunlop NBL-1 Bomber,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+681,Elias EC1 Air Coupe,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+682,Elias EM-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+683,Elias EM-1 photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+684,Elias EM-2 1922,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+685,Elias MBS No 52 biplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+686,Elias Stupar ES-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+687,Elias unknown,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+688,Elias XNBS-3 short range bomber,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+689,ELM aviation club,,Curtiss Room,,Wall,,,,,
+690,Evolution of the Bell VTOL flight Development,,Main Room,Back of display case,Wall,,,,,
+691,First supersonic flight 50th anniversary X-1 poster,,Main Room,Back of display case,Wall,,,,,
+692,Fleet Blimp Model,,Fleet & Consolidated Room,,Ceiling,,,,,
+693,Fleet Cockpit Display,,Fleet & Consolidated Room,,Floor,,,,,
+694,Fleet model,,Wall on top of Ladies room,,Wall,,,,,
+695,Fleet Model 1,,Fleet & Consolidated Room,,Floor,,,,,
+696,Fleet N2Y1 information poster,,Fleet & Consolidated Room,,Floor,,,,,
+697,Fleet of Canada,,Fleet & Consolidated Room,,Floor,,,,,
+698,Fleet Wing Construction ,,Fleet & Consolidated Room,,Floor,,,,,
+699,"Fleet, Bell and Buffalo",,Fleet & Consolidated Room,,Floor,,,,,
+700,"Fleet, Bell And Consolidated",,Fleet & Consolidated Room,,Floor,,,,,
+701,Flight Demonstrator exhibit,,Curtiss Room,Main Floor,Floor,,,,,
+702,Flight Simulator,,Theater Room,,Floor,,,,,
+703,Floyd Carlson Display Case,,Main Room,,floor,,,,,
+704,Floyd Carlson Statue,,Main Room,On Display Case,,,,,,
+705,Folding table under Allison J35 Turbojet engine cutaway,,Main Room,,Floor,,,,,
+706,formation of the Aero Club of Buffalo 1910,,Curtiss Room,,Wall,,,,,
+707,Franklin 4AC-150,,Fleet & Consolidated Room,,Floor,,Franklin,1935,,
+708,Ft Worth to Niagara falls Plaque,,Main Room,,Floor,,,1952,,
+709,GAM-63 Rascal Rocket Engine,,Curtiss Room,Main Floor,Floor,,Bell,,,
+710,Gardenville organization photo of people that invented the helicopter,,Main Room,,Wall,,,,,
+711,Gates Flying Circus,,Curtiss Room,,Wall,,,,,
+712,GE I-16 Jet Engine display,,Main Room,,Floor,,GE,1942,,
+713,Glenn Curtiss Partners Desk plus 11 photo frames,,Curtiss Room,Display,Floor,,Curtiss,,,
+714,Globe of the Moon,,Curtiss Room,Main Floor,Wall,,,,,
+715,Grover and Larry Bell display board,,Main Room,,Floor,,,,,
+716,Gwinn Aircar,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+717,Gwinn Aircar Advertisement,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+718,Gwinn Aircar Specifications,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+719,Gwinn brothers description,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+720,Hamilton Standard Hydromatin Propeller,,Curtiss Room,Display,Wall,,Hamilton Standard,,,
+721,Herbert O. Fisher - Chief Test Pilot - Curtiss Wright,,Curtiss Room,Hallway,Wall,,Curtiss Wright,,,
+722,History of Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+723,History of Manned Space Flight Poster,,Curtiss Room,Main Floor,Wall,,,,,
+724,History of the Curtiss Company Display,,Curtiss Room,History of the Curtiss Company,Wall,,Curtiss,,,
+725,Ira G Ross Hall of Aerospace Technology (wind tunnel),,Curtiss Room,Wall Display,Floor,,,,,
+726,Ira G Ross Hall of Aerospace Technology wind tunnel model,,Curtiss Room,Display,Floor,,,,,
+727,Jay Demming Bell Test pilot Photograph with p-63 Cobra 2 race plane,,Main Room,On Display Case,,,,,,
+728,Kinner R-55 Engine,,Fleet & Consolidated Room,,Floor,,Kinner,,,
+729,Larry Bell's Private Helicopter,,Main Room,,Floor,,,,,
+730,LCAC-1 Hovercraft,,Main Room,Back of display case,Wall,,,,,
+731,Liberty Engine Display  board,,Curtiss Room,Main Floor,Floor,,,1917,,
+732,Liberty V-12 Engine,,Curtiss Room,Main Floor,Floor,,,1917,,
+733,Lifetime folding chairs,,Main Room,,Floor,,,,,
+734,Lindberg and Dirigibles Display,,Curtiss Room,,Wall,,,,,
+735,"Lindberg photographs and a piece of the aircraft covering, 3 medals when he visited buffalo",,Curtiss Room,,Wall,,,,,
+736,Link Trainer Flight Simulator,,Curtiss Room,Main Floor,Floor,,Link,,,
+737,Local links to the past poster easel,,Main Room,Near P-39,Floor,,,,,
+738,LORAS System,,Curtiss Room,Display case,Floor,,,,,
+739,Lunar lander Flight Simulator,,Theater Room,,Floor,,,,,
+740,Lunar Module Ascent Engine,,Curtiss Room,Main Floor,Floor,,Bell,,,
+741,Lunar Module Model,,Curtiss Room,Main Floor,Floor,,Bell,,,
+742,Macon Airship Display Board,,Fleet & Consolidated Room,,Floor,,,,,
+743,Marine Corps Assault Vehicle LVA,,Main Room,Back of display case,Wall,,,,,
+744,"Martin, Douglas and Bell",,Fleet & Consolidated Room,,Floor,,,,,
+745,MASH and the Helicopter Painting (8 panels),,Main Room,,Floor,,,,,
+746,MASH Stretcher,,Main Room,,Floor,,,,,
+747,Memory of the Curtiss Wright crash into the plan bronze plaque,,Curtiss Room,Display,Floor,,Curtiss Wright,,,
+748,Memory of the Curtiss Wright crash into the plan bronze plaque Description,,Curtiss Room,Display,Floor,,Curtiss Wright,,,
+749,Minute Man Missile fuel tank cutaway model,,Curtiss Room,Main Floor,Floor,,Bell,,,
+750,Minute Man Missile launch,,Main Room,Back of display case,Wall,,,,,
+751,Mission Control,,Curtiss Room,Main Floor,Wall,,,,,
+752,Model 47 Insect sprayer or crop duster,,Main Room,,Floor,,Bell,1947,,
+753,Model 47 Insect sprayer or crop duster display board,,Main Room,,Floor,,,1947,,
+754,Model of USS Sable Great Lakes Aircraft Carrier,,Curtiss Room,Display,Wall,,,,,
+755,Moog Boost and Pitch compensator description poster,,Curtiss Room,Main Floor,Floor,,Moog,,,
+756,"Moog Boost and Pitch compensator F-22, F-15",,Curtiss Room,Main Floor,Floor,,,,,
+757,Moog Space Heritage Display Panel,,Curtiss Room,Main Floor,Floor,,Moog,,,
+758,Morris aeroservice biplane model,,Wall on top of Ladies room,,Wall,,,,,
+759,NASA photograph of a comet,,Main Room,Back of display case,Wall,,,,,
+760,NC4 Across the Atlantic,,Curtiss Room,Display,Wall,,,,,
+761,Niagara Frontier Aviation and Aerospace Hall of Fame floor display,,Curtiss Room,Display,Wall,,,,,
+762,Niagara Frontier Aviation and Aerospace Hall of Fame wall display,,Curtiss Room,Display,Wall,,,,,
+763,NY State Flag,,Main Room,,Floor,,,,,
+764,NY State: Birthplace of American Jet Powered Aviation,,Main Room,,Wall,,,,,
+765,P-39 37 mm cannon display,,Main Room,Near P-39,Floor,,,,,
+766,P-39 Description,,Main Room,Near P-39,Floor,,,,,
+767,P-39 Description of the history of the plane on display,,Main Room,Near P-39,Floor,,,,,
+768,P-39 Ivan Ivanovich Baranovsky,,Main Room,Near P-39,Floor,,,,,
+769,P-39 restored airplane (from Russia),,Main Room,Near P-39,Floor,,Bell,,,
+770,P-39Q Aracobra display case,,Main Room,Near P-39,Floor,,,,,
+771,P-63 King Cobra display Board,,Main Room,Near P-39,Floor,,,,,
+772,P-63 King Cobra display case with artifacts,,Main Room,Near P-39,Floor,,,,,
+773,P-63 model 1:48 scale,,Main Room,,Ceiling,,,,,
+774,P40 mock cockpit,,Theater Room,,Floor,,,,,
+775,People the world over depend on Bell Helicopters round plaque,,Main Room,,Floor,,,,,
+776,photograph of a biplane unknown,,Curtiss Room,,Wall,,,,,
+777,Positive Expulsion Tank,,Curtiss Room,Main Floor,Floor,,Bell,,,
+778,Pratt and Whitney R2000 Radial engine,,Theater Room,,Floor,,,,,
+779,Prime Crew for first lunar landing photograph,,Curtiss Room,Main Floor,Wall,,,1969,,
+780,R-1830 Pratt & Whitney Twin Wasp Engine,,Curtiss Room,Display,Wall,,Pratt & Whitney,,,
+781,Radioplane OQ14TDE Engine,,Fleet & Consolidated Room,,Floor,,,,,
+782,Ranger L440 Engine,,Fleet & Consolidated Room,,Floor,,Ranger,1941,,
+783,Ranger V770,,Fleet & Consolidated Room,,Floor,,Ranger,1940,,
+784,Reaction control thrusters,,Curtiss Room,Main Floor,Floor,,,,,
+785,Reuben Hollis Fleet,,Fleet & Consolidated Room,,wall,,,1918,,
+786,Rocket belt display,,Main Room,,Floor,,,,,
+787,Rockets infographic poster,,Curtiss Room,Main Floor,Wall,,,,,
+788,Rolling Diaphragm Tank,,Curtiss Room,Main Floor,Floor,,Bell,,,
+789,Rosie the riveter display ,,Main Room,Near P-39,Floor,,,,,
+790,Rosie the Riveter in the Radioplane Factory,,Fleet & Consolidated Room,,Floor,,,,,
+791,Rough and Ready early balloon flight panel display,,Hallway to Curtiss Room,,Wall,,,,,
+792,Ryan Sprit of St Louis ,,Curtiss Room,,Wall,,,,,
+793,Saturn blockhouse painting,,Curtiss Room,Main Floor,Wall,,,,,
+794,Scott Aviation Display,,Curtiss Room,Display case,Floor,,,,,
+795,Space Shuttle Orbiter Forward Thermal Windshield,,Curtiss Room,Main Floor,Floor,,,,,
+796,T33A Ejection Seat,,Curtiss Room,Display,Floor,,,,,
+797,T33A Ejection Seat Description,,Curtiss Room,Display,Floor,,,,,
+798,The invisible wall: the sound barrier X-1 display,,Main Room,,Floor,,,,,
+799,Trouble Ahead B-17 Painting,,Curtiss Room,Main Floor,Wall,,Boeing,1944,,
+800,Unknown photograph of Hovercraft coming out of a ship,,Main Room,Back of display case,Wall,,,,,
+801,US Flag,,Main Room,,Floor,,,,,
+802,US Navy Dirigibles,,Fleet & Consolidated Room,,Floor,,,,,
+803,w.2/700 jet aero engine by Frank Whittle,,Main Room,,Floor,,,,,
+804,War Bird donation bomb,,Main Room,Near P-39,Floor,,,,,
+805,Wendell Moore Rocket Belt inventor ,,Curtiss Room,Main Floor,Floor,,,,,
+806,Western New York Aviation Timeline,,Curtiss Room,Display,Wall,,,,,
+807,William G. Gisel Hall of Fame Plaque,,Main Room,Near front window,Wall,,,,,
+808,WNY liquid rocket engine accessory display frame,,Curtiss Room,Main Floor,Wall,,Moog,,,
+809,Women in the factory poster,,Main Room,Near P-39,Floor,,,,,
+810,Wooden Propeller,,Curtiss Room,Main Floor,Wall,,,,,
+811,Wright R 1300 engine,,Theater Room,,Floor,,,,,
+812,XP-59A Bronze plaque,,Main Room,,Wall,,,,,
+813,Zero Gravity Belt,,Curtiss Room,Main Floor,Floor,,Bell,,,
+814,Zero Gravity Belt Display Board,,Curtiss Room,Main Floor,Floor,,,,,
+1030,1903 Wright Brothers flyer,,Curtiss Room,Display case,Floor,,,,,
+1031,1908 June Bug,,Main Room,near Ladies room,Wall,,,1908,,
+1032,1909-1924 history of flight display boards (6 panels),,Main Room,near Ladies room,Wall,,,1909,,
+1033,1910 Curtiss Pusher Airplane,,Curtiss Room,Main Floor,Floor,,Curtiss,1910,,
+1034,1914 rotary engine model,,Curtiss Room,Display,Wall,,,,,
+1035,1919 parachutes Leslie L Irvin,,Curtiss Room,,Wall,,,,,
+1036,1925-1945 history of flight display boards (6 panels),,Main Room,Above entrance,Wall,,,1925,,
+1037,1927 Col. Lindberg & mother,,Curtiss Room,,Wall,,,,,
+1038,"1927 Col. Lindberg Spirit of St Louis Syracuse to Rochester, Rochester to Buffalo",,Curtiss Room,,Wall,,,,,
+1039,1946-1981 history of flight display boards (6 panels),,Main Room,Above entrance,Wall,,,1946,,
+1040,1947 Bell 47-5 Helicopter prototype (Fort Worth Record),,Main Room,,Floor,,,1947,,
+1041,1950 Bell 47 helicopter,,Main Room,Near front window,Wall,,,,,
+1042,500th flight of X-22A,,Main Room,Above entrance,Wall,,,1984,,
+1043,80 of changing the way the world flies timeline,,Main Room,,Ceiling,,,,,
+1044,Aero Club of Buffalo Meeting poster,,Curtiss Room,,Wall,,,,,
+1045,Aerodynamics History 1884-1896,,Main Room,near Ladies room,Wall,,,1884,,
+1046,Agena 8081 Rocket Engine,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1047,Agena Combustion Chamber,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1048,Agena Combustion Chamber throat,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1049,Agena Rocket Engine Model,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1050,AHS International Vertical Flight Heritage Site,,Main Room,,floor,,,,,
+1051,AIAA historic Aerospace site bronze plaque,,Main Room,,Floor,,,,,
+1052,Allison J35 Turbojet engine cutaway,,Main Room,,Floor,,,,,
+1053,Allison model 250 turboshaft engine,,Main Room,Near front window,Wall,,Allison,,,
+1054,Allison V-1710 engine,,Main Room,Near P-39,Floor,,Allison,,,
+1055,Apollo 11 liftoff photograph,,Curtiss Room,Main Floor,Wall,,,1969,,
+1056,Apollo Control Console,,Curtiss Room,Main Floor,Floor,,Consolidated,,,
+1057,Apollo models Display Case,,Curtiss Room,Main Floor,Floor,,,,,
+1058,ARC Control Divert System model,,Curtiss Room,Main Floor,Floor,,ARC,,,
+1059,ARO Corporation Display,,Curtiss Room,Display case,Floor,,ARO Corporation,,,
+1060,Ascent propulsion system Saturn 5 Rocket description,,Curtiss Room,Main Floor,Wall,,,,,
+1061,Astronaut Maneuvering unit,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1062,B-17 Flying Fortress dedication plaque,,Curtiss Room,Display,Wall,,,,,
+1063,B-24 Liberator dedication plaque,,Curtiss Room,Display,Wall,,,,,
+1064,B-29 Enola gay model,,Wall on top of Ladies room,,Wall,,Boeing,,,
+1065,B-29 Lity of L,,Wall on top of Ladies room,,Wall,,Boeing,,,
+1066,Baldwin's Dirigibles,,Main Room,near Ladies room,Wall,,,1907,,
+1067,Beginning of flight (Golfer) Balloons 1783,,Curtiss Room,,Wall,,,,,
+1068,Bell 47 helicopter engine display,,Main Room,Near front window,Wall,,Bell,,,
+1069,Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+1070,Bell Aerospace army assault Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+1071,Bell Airacuda XFM-1 Model,,Main Room,Near P-39,Ceiling,,Bell,,,
+1072,Bell Airacuda XFM-1 Photograph,,Main Room,Near P-39,Floor,,,,,
+1073,Bell Aircraft designed and built in WNY models display case: ~35 models,,Main Room,Near P-39,Floor,,,,,
+1074,Bell Aircraft Racing Team,,Main Room,,floor,,,,,
+1075,Bell Factory floor photos,,Observation room,,Floor,,,,,
+1076,Bell Helicopter Fort Worth TX Display Case w/29 models,,Main Room,,Floor,,,,,
+1077,Bell Helicopter Rotor Mast and Stabilizer Bar Assembly,,Main Room,,Floor,,,,,
+1078,Bell P-39 Aerocobra Model,,Main Room,Near P-39,Floor,,Bell,,,
+1079,Bell X Aircraft Evolution poster,,Main Room,On side of Display Case,,,,,,
+1080,Bell X-1 model in display case,,Main Room,,Floor,,,,,
+1081,Bell X-1 Painting (8 panels),,Main Room,,floor,,,,,
+1082,Bell X-2 Model,,Main Room,On Display Case,,,Bell,,,
+1083,Bell X-22 powered model,,Main Room,,Floor,,,,,
+1084,Bell-47 Helicopter Transmission,,Main Room,,Floor,,,,,
+1085,Bell/Moog heritage display Panel,,Curtiss Room,Main Floor,Floor,,Moog,,,
+1086,Buffalo Aviation Pioneers memorial plaque,,Main Room,Near P-39,Floor,,,,,
+1087,Buffalo firsts poster,,Main Room,,Wall,,,,,
+1088,C-46 Stewardess Station,,Curtiss Room,Main Floor,Floor,,Curtiss,1946,,
+1089,Captain William C. Glasgow Plaque,,Curtiss Room,Hallway,Wall,,,1945,,
+1090,Captain William C. Glasgow Portrait,,Curtiss Room,Hallway,Wall,,,1945,,
+1091,Catalina PBY,,Fleet & Consolidated Room,,Ceiling,,,,,
+1092,CF-AAR Biplane Model,,Fleet & Consolidated Room,,Ceiling,,,,,
+1093,Chalmers Slick Goodlin,,Main Room,,Floor,,,,,
+1094,Cievera Autogyro 1/2 scale replica (Pitcarin model),,Main Room,near Ladies room,Floor,,,1930,,
+1095,Cobham 100 years of aviation,,Curtiss Room,,Wall,,Cobham,,,
+1096,Consolidated 21C,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1097,Consolidated advertising brochure for Fleetster,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1098,Consolidated Aircraft,,Fleet & Consolidated Room,,Floor,,,,,
+1099,"Consolidated Aircraft  Departs Buffalo for San Diego, CA",,Fleet & Consolidated Room,,wall,,,1935,,
+1100,Consolidated Aircraft  Flying Boats,,Fleet & Consolidated Room,,wall,,,,,
+1101,Consolidated Aircraft Banner,,Fleet & Consolidated Room,,Floor,,,,,
+1102,Consolidated Aircraft Display Case (4 models),,Fleet & Consolidated Room,,Floor,,,,,
+1103,Consolidated Aircraft: A Journey Begins,,Fleet & Consolidated Room,,wall,,,1923,,
+1104,Consolidated Clinton Warner assembling the 21C in China,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1105,Consolidated Collection of Clinton Warner personal Items: Identification card for Air core reserve,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1106,Consolidated Collection of Clinton Warner personal Items: Identification for national aeronautic association 1906,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1107,Consolidated Collection of Clinton Warner personal Items: Pilot's book,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1108,Consolidated Collection of Clinton Warner: biography,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1109,Consolidated Collection of Clinton Warner: description plaque,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1110,Consolidated Collection of Clinton Warner: photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1111,Consolidated Commodore,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1112,Consolidated Commodore flying boat,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+1113,Consolidated Fleet advertising poster,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1114,Consolidated Fleet Model II,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1115,Consolidated Fleetster 17-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+1116,Consolidated Fleetster 20 type 2,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+1117,Consolidated Fleetster 20A,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+1118,Consolidated Fleetster model 17,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1119,Consolidated Flying Boats,,Fleet & Consolidated Room,,Floor,,,,,
+1120,Consolidated P30,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1121,Consolidated PB30,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1122,Consolidated PBY Catalina,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1123,Consolidated PT3 Trainer,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1124,Consolidated Ruben Fleet photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1125,Consolidated unknown airplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1126,Consolidated unknown biplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Consolidated,,,
+1127,Consolidated William B Wheatley,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1128,Consolidated William B Wheatley Biography,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Consolidated,,Consolidated,,,
+1129,Consolidated's Significant Contributions to advancement in Aviation,,Fleet & Consolidated Room,,wall,,,,,
+1130,Continental R-670 Engine,,Fleet & Consolidated Room,,Floor,,Continental,,,
+1131,Control Divert System Model From ARC Propulsion Century Program 2 stage Anti ICBM 62 inches tall,,Curtiss Room,Floor,,,,,,
+1132,Cornell Aeronautical Laboratory/Calspan Birth of an aircraft,,Curtiss Room,Wall Display,Floor,,Calspan,,,
+1133,Cornell Aeronautical Laboratory/Calspan Simulation display,,Curtiss Room,Display case,Floor,,Calspan,,,
+1134,Cornu's Helicopter,,Main Room,near Ladies room,Wall,,,1907,,
+1135,Courier Express Charles Lindberg,,Curtiss Room,,Wall,,,,,
+1136,Cunningham Hall GA-36,,Fleet & Consolidated Room,,Floor,,,,,
+1137,Curtiss Aeroplane Div. Display Case,,Curtiss Room,Display case,Floor,,,,,
+1138,Curtiss Airplane & Motor Co. Sign,,Curtiss Room,Main Floor,Wall,,Curtiss,,,
+1139,Curtiss AT9 Jeep,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1140,Curtiss C45 Commando,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1141,Curtiss F9C-2,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1142,Curtiss F9C2 Sparrow Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1143,Curtiss Factory floor photos,,Observation room,,Floor,,,,,
+1144,Curtiss Hawk P-1A Airplane,,Curtiss Room,Main Floor,Floor,,Curtiss,1926,,
+1145,Curtiss Jenny JN-4 Airplane,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1146,Curtiss Jenny JN-4 artifact Display Case,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1147,Curtiss Jenny JN-4 history exhibit,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1148,Curtiss Jenny JN-4 Model,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1149,Curtiss Jenny JN-4 Model built by Thomas Pastore,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1150,Curtiss Jenny JN-4 OX-5 Engine Magneto,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1151,Curtiss Jenny JN-4 Wing section replica,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1152,Curtiss Jenny Tennis game photograph,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1153,"Curtiss Jennys in Production; Churchill Street, Buffalo NY",,Curtiss Room,History of the Curtiss Company,Wall,,Curtiss,,,
+1154,Curtiss JN-4D,,Curtiss Room,History of the Curtiss Company,Wall,,Curtiss,,,
+1155,Curtiss JN4 Jenny Trainer,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1156,Curtiss Model D Pusher Photograph,,Curtiss Room,Hallway,Wall,,Curtiss,1911,,
+1157,Curtiss NC2 Fledgling,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1158,Curtiss NC4 Flying Boat,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1159,Curtiss P-40 Warhawk model,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1160,Curtiss P1-B Model,,Curtiss Room,Main Floor,Floor,,Curtiss,,,
+1161,Curtiss P36 Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1162,Curtiss P40 War Hawk,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1163,Curtiss P40 War Hawk painting,,Curtiss Room,,Wall,,Curtiss,,,
+1164,Curtiss P47-G,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1165,Curtiss P6E ,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1166,Curtiss SB2C Hell Diver,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1167,Curtiss unknown biplane passenger plane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1168,Curtiss unknown counter rotating prop,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Curtiss,,Curtiss,,,
+1169,Curtiss V-1570 Conqueror Engine,,Curtiss Room,Main Floor,Floor,,Curtiss,1929,,
+1170,Curtiss Wright 85 years on NYSE,,Curtiss Room,,Wall,,Curtiss Wright,,,
+1171,Curtiss Wright AT-9 Jeep Painting,,Curtiss Room,Main Floor,Wall,,Curtiss Wright,,,
+1172,Curtiss Wright XP 37 poster,,Curtiss Room,Hallway,Wall,,Curtiss Wright,,,
+1173,Curtiss XP-55 Ascender picture,,Curtiss Room,Hallway,Wall,,Curtiss,,,
+1174,Curtiss-Wright P-40 metal model  on stand 7 inch wingspan,,Curtiss Room,Desk,,,Curtiss Wright,,,
+1175,Descriptive plaque: Jay Demming,,Main Room,On Display Case,,,,,,
+1176,Designed and build in WNY,,Main Room,On side of Display Case,,,,,,
+1177,DH-4 Flying the mail,,Curtiss Room,Display,Floor,,,,,
+1178,Dick Pealer Display Table,,Fleet & Consolidated Room,,Floor,,,,,
+1179,Dirigible,,Fleet & Consolidated Room,,Ceiling,,,,,
+1180,Display Case,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers",Floor,,,,,
+1181,Display Case of  models of various jet airplanes,,Main Room,,Floor,,,,,
+1182,Display Case of 19 airplane models,,Hallway to Curtiss Room,,Wall,,,,,
+1183,Display Case: Bell World War II Employee memorabilia,,Main Room,,Floor,,,,,
+1184,Display Case: Young and Kelly,,Main Room,,Floor,,,,,
+1185,Display poster of Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+1186,Drawing of Orville Wright,,Curtiss Room,,Wall,,,,,
+1187,Earthrise Photograph of the earth from space,,Curtiss Room,Main Floor,Wall,,,1969,,
+1188,Elias #9 photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1189,Elias Brothers,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1190,"Elias Brothers Biography, Abraham and Gabriel",,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1191,Elias Dunlop NBL-1 Bomber,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1192,Elias EC1 Air Coupe,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1193,Elias EM-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1194,Elias EM-1 photograph,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1195,Elias EM-2 1922,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1196,Elias MBS No 52 biplane,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1197,Elias Stupar ES-1,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1198,Elias unknown,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1199,Elias XNBS-3 short range bomber,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Elias,,,
+1200,ELM aviation club,,Curtiss Room,,Wall,,,,,
+1201,Evolution of the Bell VTOL flight Development,,Main Room,Back of display case,Wall,,,,,
+1202,First supersonic flight 50th anniversary X-1 poster,,Main Room,Back of display case,Wall,,,,,
+1203,Fleet Blimp Model,,Fleet & Consolidated Room,,Ceiling,,,,,
+1204,Fleet Cockpit Display,,Fleet & Consolidated Room,,Floor,,,,,
+1205,Fleet model,,Wall on top of Ladies room,,Wall,,,,,
+1206,Fleet Model 1,,Fleet & Consolidated Room,,Floor,,,,,
+1207,Fleet N2Y1 information poster,,Fleet & Consolidated Room,,Floor,,,,,
+1208,Fleet of Canada,,Fleet & Consolidated Room,,Floor,,,,,
+1209,Fleet Wing Construction ,,Fleet & Consolidated Room,,Floor,,,,,
+1210,"Fleet, Bell and Buffalo",,Fleet & Consolidated Room,,Floor,,,,,
+1211,"Fleet, Bell And Consolidated",,Fleet & Consolidated Room,,Floor,,,,,
+1212,Flight Demonstrator exhibit,,Curtiss Room,Main Floor,Floor,,,,,
+1213,Flight Simulator,,Theater Room,,Floor,,,,,
+1214,Floyd Carlson Display Case,,Main Room,,floor,,,,,
+1215,Floyd Carlson Statue,,Main Room,On Display Case,,,,,,
+1216,Folding table under Allison J35 Turbojet engine cutaway,,Main Room,,Floor,,,,,
+1217,formation of the Aero Club of Buffalo 1910,,Curtiss Room,,Wall,,,,,
+1218,Franklin 4AC-150,,Fleet & Consolidated Room,,Floor,,Franklin,1935,,
+1219,Ft Worth to Niagara falls Plaque,,Main Room,,Floor,,,1952,,
+1220,GAM-63 Rascal Rocket Engine,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1221,Gardenville organization photo of people that invented the helicopter,,Main Room,,Wall,,,,,
+1222,Gates Flying Circus,,Curtiss Room,,Wall,,,,,
+1223,GE I-16 Jet Engine display,,Main Room,,Floor,,GE,1942,,
+1224,Glenn Curtiss Partners Desk plus 11 photo frames,,Curtiss Room,Display,Floor,,Curtiss,,,
+1225,Globe of the Moon,,Curtiss Room,Main Floor,Wall,,,,,
+1226,Grover and Larry Bell display board,,Main Room,,Floor,,,,,
+1227,Gwinn Aircar,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+1228,Gwinn Aircar Advertisement,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+1229,Gwinn Aircar Specifications,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+1230,Gwinn brothers description,,Curtiss Room,"Display Case with Curtiss, Consolidated and Elias Brothers shelf",Elias Brothers,,Gwinn brothers,,,
+1231,Hamilton Standard Hydromatin Propeller,,Curtiss Room,Display,Wall,,Hamilton Standard,,,
+1232,Herbert O. Fisher - Chief Test Pilot - Curtiss Wright,,Curtiss Room,Hallway,Wall,,Curtiss Wright,,,
+1233,History of Bell Aerospace Air cushion vehicles,,Main Room,Near P-39,Wall,,,,,
+1234,History of Manned Space Flight Poster,,Curtiss Room,Main Floor,Wall,,,,,
+1235,History of the Curtiss Company Display,,Curtiss Room,History of the Curtiss Company,Wall,,Curtiss,,,
+1236,Ira G Ross Hall of Aerospace Technology (wind tunnel),,Curtiss Room,Wall Display,Floor,,,,,
+1237,Ira G Ross Hall of Aerospace Technology wind tunnel model,,Curtiss Room,Display,Floor,,,,,
+1238,Jay Demming Bell Test pilot Photograph with p-63 Cobra 2 race plane,,Main Room,On Display Case,,,,,,
+1239,Kinner R-55 Engine,,Fleet & Consolidated Room,,Floor,,Kinner,,,
+1240,Larry Bell's Private Helicopter,,Main Room,,Floor,,,,,
+1241,LCAC-1 Hovercraft,,Main Room,Back of display case,Wall,,,,,
+1242,Liberty Engine Display  board,,Curtiss Room,Main Floor,Floor,,,1917,,
+1243,Liberty V-12 Engine,,Curtiss Room,Main Floor,Floor,,,1917,,
+1244,Lifetime folding chairs,,Main Room,,Floor,,,,,
+1245,Lindberg and Dirigibles Display,,Curtiss Room,,Wall,,,,,
+1246,"Lindberg photographs and a piece of the aircraft covering, 3 medals when he visited buffalo",,Curtiss Room,,Wall,,,,,
+1247,Link Trainer Flight Simulator,,Curtiss Room,Main Floor,Floor,,Link,,,
+1248,Local links to the past poster easel,,Main Room,Near P-39,Floor,,,,,
+1249,LORAS System,,Curtiss Room,Display case,Floor,,,,,
+1250,Lunar lander Flight Simulator,,Theater Room,,Floor,,,,,
+1251,Lunar Module Ascent Engine,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1252,Lunar Module Model,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1253,Macon Airship Display Board,,Fleet & Consolidated Room,,Floor,,,,,
+1254,Marine Corps Assault Vehicle LVA,,Main Room,Back of display case,Wall,,,,,
+1255,"Martin, Douglas and Bell",,Fleet & Consolidated Room,,Floor,,,,,
+1256,MASH and the Helicopter Painting (8 panels),,Main Room,,Floor,,,,,
+1257,MASH Stretcher,,Main Room,,Floor,,,,,
+1258,Memory of the Curtiss Wright crash into the plan bronze plaque,,Curtiss Room,Display,Floor,,Curtiss Wright,,,
+1259,Memory of the Curtiss Wright crash into the plan bronze plaque Description,,Curtiss Room,Display,Floor,,Curtiss Wright,,,
+1260,Minute Man Missile fuel tank cutaway model,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1261,Minute Man Missile launch,,Main Room,Back of display case,Wall,,,,,
+1262,Mission Control,,Curtiss Room,Main Floor,Wall,,,,,
+1263,Model 47 Insect sprayer or crop duster,,Main Room,,Floor,,Bell,1947,,
+1264,Model 47 Insect sprayer or crop duster display board,,Main Room,,Floor,,,1947,,
+1265,Model of USS Sable Great Lakes Aircraft Carrier,,Curtiss Room,Display,Wall,,,,,
+1266,Moog Boost and Pitch compensator description poster,,Curtiss Room,Main Floor,Floor,,Moog,,,
+1267,"Moog Boost and Pitch compensator F-22, F-15",,Curtiss Room,Main Floor,Floor,,,,,
+1268,Moog Space Heritage Display Panel,,Curtiss Room,Main Floor,Floor,,Moog,,,
+1269,Morris aeroservice biplane model,,Wall on top of Ladies room,,Wall,,,,,
+1270,NASA photograph of a comet,,Main Room,Back of display case,Wall,,,,,
+1271,NC4 Across the Atlantic,,Curtiss Room,Display,Wall,,,,,
+1272,Niagara Frontier Aviation and Aerospace Hall of Fame floor display,,Curtiss Room,Display,Wall,,,,,
+1273,Niagara Frontier Aviation and Aerospace Hall of Fame wall display,,Curtiss Room,Display,Wall,,,,,
+1274,NY State Flag,,Main Room,,Floor,,,,,
+1275,NY State: Birthplace of American Jet Powered Aviation,,Main Room,,Wall,,,,,
+1276,P-39 37 mm cannon display,,Main Room,Near P-39,Floor,,,,,
+1277,P-39 Description,,Main Room,Near P-39,Floor,,,,,
+1278,P-39 Description of the history of the plane on display,,Main Room,Near P-39,Floor,,,,,
+1279,P-39 Ivan Ivanovich Baranovsky,,Main Room,Near P-39,Floor,,,,,
+1280,P-39 restored airplane (from Russia),,Main Room,Near P-39,Floor,,Bell,,,
+1281,P-39Q Aracobra display case,,Main Room,Near P-39,Floor,,,,,
+1282,P-63 King Cobra display Board,,Main Room,Near P-39,Floor,,,,,
+1283,P-63 King Cobra display case with artifacts,,Main Room,Near P-39,Floor,,,,,
+1284,P-63 model 1:48 scale,,Main Room,,Ceiling,,,,,
+1285,P40 mock cockpit,,Theater Room,,Floor,,,,,
+1286,People the world over depend on Bell Helicopters round plaque,,Main Room,,Floor,,,,,
+1287,photograph of a biplane unknown,,Curtiss Room,,Wall,,,,,
+1288,Positive Expulsion Tank,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1289,Pratt and Whitney R2000 Radial engine,,Theater Room,,Floor,,,,,
+1290,Prime Crew for first lunar landing photograph,,Curtiss Room,Main Floor,Wall,,,1969,,
+1291,R-1830 Pratt & Whitney Twin Wasp Engine,,Curtiss Room,Display,Wall,,Pratt & Whitney,,,
+1292,Radioplane OQ14TDE Engine,,Fleet & Consolidated Room,,Floor,,,,,
+1293,Ranger L440 Engine,,Fleet & Consolidated Room,,Floor,,Ranger,1941,,
+1294,Ranger V770,,Fleet & Consolidated Room,,Floor,,Ranger,1940,,
+1295,Reaction control thrusters,,Curtiss Room,Main Floor,Floor,,,,,
+1296,Reuben Hollis Fleet,,Fleet & Consolidated Room,,wall,,,1918,,
+1297,Rocket belt display,,Main Room,,Floor,,,,,
+1298,Rockets infographic poster,,Curtiss Room,Main Floor,Wall,,,,,
+1299,Rolling Diaphragm Tank,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1300,Rosie the riveter display ,,Main Room,Near P-39,Floor,,,,,
+1301,Rosie the Riveter in the Radioplane Factory,,Fleet & Consolidated Room,,Floor,,,,,
+1302,Rough and Ready early balloon flight panel display,,Hallway to Curtiss Room,,Wall,,,,,
+1303,Ryan Sprit of St Louis ,,Curtiss Room,,Wall,,,,,
+1304,Saturn blockhouse painting,,Curtiss Room,Main Floor,Wall,,,,,
+1305,Scott Aviation Display,,Curtiss Room,Display case,Floor,,,,,
+1306,Space Shuttle Orbiter Forward Thermal Windshield,,Curtiss Room,Main Floor,Floor,,,,,
+1307,T33A Ejection Seat,,Curtiss Room,Display,Floor,,,,,
+1308,T33A Ejection Seat Description,,Curtiss Room,Display,Floor,,,,,
+1309,The invisible wall: the sound barrier X-1 display,,Main Room,,Floor,,,,,
+1310,Trouble Ahead B-17 Painting,,Curtiss Room,Main Floor,Wall,,Boeing,1944,,
+1311,Unknown photograph of Hovercraft coming out of a ship,,Main Room,Back of display case,Wall,,,,,
+1312,US Flag,,Main Room,,Floor,,,,,
+1313,US Navy Dirigibles,,Fleet & Consolidated Room,,Floor,,,,,
+1314,w.2/700 jet aero engine by Frank Whittle,,Main Room,,Floor,,,,,
+1315,War Bird donation bomb,,Main Room,Near P-39,Floor,,,,,
+1316,Wendell Moore Rocket Belt inventor ,,Curtiss Room,Main Floor,Floor,,,,,
+1317,Western New York Aviation Timeline,,Curtiss Room,Display,Wall,,,,,
+1318,William G. Gisel Hall of Fame Plaque,,Main Room,Near front window,Wall,,,,,
+1319,WNY liquid rocket engine accessory display frame,,Curtiss Room,Main Floor,Wall,,Moog,,,
+1320,Women in the factory poster,,Main Room,Near P-39,Floor,,,,,
+1321,Wooden Propeller,,Curtiss Room,Main Floor,Wall,,,,,
+1322,Wright R 1300 engine,,Theater Room,,Floor,,,,,
+1323,XP-59A Bronze plaque,,Main Room,,Wall,,,,,
+1324,Zero Gravity Belt,,Curtiss Room,Main Floor,Floor,,Bell,,,
+1325,Zero Gravity Belt Display Board,,Curtiss Room,Main Floor,Floor,,,,,
+1541,B-24 Liberator dedication plaque,,Curtiss Room,Display,Wall,,,,,Plaque
+1544,hi,,,,,4601,,,,
+1545,chk,,,,,4602,,,,
+1546,hy,,,,,4603,,,,
+1548,hy,,,,,4604,,,,
+1550,hy,,,,,4605,,,,
+1551,hy,,,,,4606,,,,
+1552,y,,,,,4607,,,,
+1553,y,,,,,460,,,,
+1554,y,,,,,461,,,,
+1555,y,,,,,462,,,,
+1557,y,,,,,463,,,,
+1558,y,,,,,467,,,,
+1559,y,,,,,4608,,,,
+1560,y,,,,,4609,,,,
+1562,y,,,,,4610,,,,
+1564,y,,,,,46,,,,
+1572,test,,,,,4611,,,,

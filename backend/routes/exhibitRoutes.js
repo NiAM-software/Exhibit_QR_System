@@ -30,6 +30,7 @@ import {
 } from '../utils/attachmentUtils.js';
 import queries from '../sql_queries/queries.js';
 import drop_queries from '../sql_queries/drop_queries.js';
+import rollBackInsert from '../controllers/rollBackController.js';
 import {helperProcessData} from '../sql_queries/dataMassaging.js';
 import multer from 'multer';
 // const storage = multer.diskStorage({
@@ -146,9 +147,6 @@ router.get("/maintenance", getMaintenanceList);
 router.post("/maintenance/category", createCategory);
 router.put("/maintenance/category", updateCategory);
 router.delete("/maintenance/category", protect, deleteCategory);
-// router.post("/maintenance/location", createLocation);
-// router.put("/maintenance/location", updateLocation);
-// router.delete("/maintenance/location", protect, deleteLocation);
 router.post("/maintenance/location_type", createLocationType);
 router.put("/maintenance/location_type", updateLocationType);
 router.delete("/maintenance/location_type", protect, deleteLocationType);
@@ -258,5 +256,6 @@ router.post("/add-related-exhibits/:id", addRelatedExhibits);
 router.get("/preview-image/:id", previewImage);
 router.post("/rollback-attachment", rollbackAttachment);
 router.get("/get-attachments/:exhibit_id", getAttachments);
+router.delete("/rollback/:id", protect, rollBackInsert);
 
 export default router;

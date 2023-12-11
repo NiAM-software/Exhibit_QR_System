@@ -321,7 +321,7 @@ const EditExhibitScreen = () => {
             const data = await res.json();
             setIsLoading(false);
             console.error('Call to s3 failed :', data.message);
-            toast.error('Failed to update files');
+            toast.error(data.message);
           }
         }
         else {
