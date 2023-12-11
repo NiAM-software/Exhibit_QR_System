@@ -3,19 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetExhibitsQuery } from "../slices/exhibitApiSlice";
 import columns from "../utils/tableColumns";
-import {
-  Navbar,
-  Nav,
-  Container,
-  Badge,
-  NavDropdown,
-  InputGroup,
-  Form,
-  Row,
-  Col,
-  Modal,
-  Button,
-} from "react-bootstrap";
+import { Navbar, Nav, Container, InputGroup, Form, Modal, Spinner } from "react-bootstrap";
 import {
   IoCloudDownloadOutline,
   IoCloudUploadOutline,
@@ -42,10 +30,12 @@ const HomeScreen = () => {
   const [notificationMessage, setNotificationMessage] = useState();
   const [notificationMessage2, setNotificationMessage2] = useState();
   const [csvFile, setCsvFile] = useState();
+  const [Loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
+    e.preventDefault();
+    console.log(e.target.files[0]);
     setCsvFile(e.target.files[0]);
-    handleUpload();
   };
 
   const handleClose = () => {
@@ -134,23 +124,39 @@ const HomeScreen = () => {
     setShowNotification(false);
   };
 
-  const { data, isLoading, isError, error } = useQuery(
-    ["user-data"],
-    async () => {
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    if (csvFile) {
+      console.log(csvFile); // This will log the new state value after it's updated
+      handleUpload();
+
+      // You can also call handleUpload here if you want to upload as soon as the file is selected
+    }
+  }, [csvFile]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setIsError(false);
+
       try {
         const response = await axios.get("/api/admin/exhibits");
         console.log("Data fetched successfully:", response.data);
-        return response.data;
+        setData(response.data.exhibits); // Assuming the response has an 'exhibits' field
       } catch (error) {
         console.error("Error fetching data:", error);
-        throw error;
+        setIsError(true);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
       }
-    },
-    {
-      select: (data) => data.exhibits,
-    }
-  );
+    };
 
+    fetchData();
+  }, []); // Empty dependency array means this runs once when the component mounts
   const handleSelectedRowsChange = React.useCallback((state) => {
     console.log(state.selectedRows);
     setSelectedRows(state.selectedRows);
@@ -174,6 +180,8 @@ const HomeScreen = () => {
 
   //@import csv
   const handleUpload = () => {
+    setLoading(true);
+
     const formData = new FormData();
     formData.append("name", "FILENAME");
     formData.append("file", csvFile);
@@ -190,7 +198,7 @@ const HomeScreen = () => {
     })
       .then((res) => {
         console.log(res);
-        if (res.status == 201) {
+        if (res.status === 201) {
           toast.success('Data loaded Successfully');
           setTimeout(() => {
             window.location.reload();
@@ -209,8 +217,12 @@ const HomeScreen = () => {
         // setTimeout(() => {
         //   window.location.reload();
         // }, 1000);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
+
 
   // @export csv
   const generateCSV = async () => {
@@ -315,6 +327,15 @@ const HomeScreen = () => {
     <>
       <CustomModal show={show} handleClose={handleClose} data={selectedRows} />
 
+      {Loading && (
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+          <p>Uploading...</p>
+        </div>
+      )}
+
       <div className="exhibits-list-wrapper">
         <p className="page-heading">Exhibit inventory </p>
         <Navbar expand="sm" collapseOnSelect className="table-header-2">
@@ -333,7 +354,14 @@ const HomeScreen = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ms-auto">
-                <button className="csv-button" onClick={generateCSV}>
+                <button
+                  className="csv-button"
+                  onClick={(e) => {
+                    console.log("click");
+                    e.preventDefault();
+                    generateCSV();
+                  }}
+                >
                   <IoCloudDownloadOutline style={{ fontSize: "14px" }} />{" "}
                   Download CSV
                 </button>
@@ -348,7 +376,10 @@ const HomeScreen = () => {
                     type="file"
                     name="file"
                     style={{ display: "none" }}
-                    onChange={(event) => handleFileChange(event)}
+                    onChange={(event) => {
+                      event.preventDefault();
+                      handleFileChange(event);
+                    }}
                   />
                 </>
                 <Link to="/AddExhibitScreen">

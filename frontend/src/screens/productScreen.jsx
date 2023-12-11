@@ -11,15 +11,8 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import dummyImageUrl from '../assets/dummy-image-square.jpg';
 import LazyLoad from 'react-lazyload';
 
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
 
-// const dummyImageUrl = getBase64('../assets/dummy-image-square.jpg');
+
 
 const CarouselContainerRow = styled.div`
   width: 30%;
@@ -30,7 +23,6 @@ const CarouselContainerRow = styled.div`
   display: flex; // Added for vertical centering
   justify-content: center; // Center horizontally
   align-items: center;
-  
   `;
 
 // Define a styled component for the column layout
@@ -60,7 +52,6 @@ const ProductCarouselColumn = styled.div`
   margin: 20px;
 `;
 
-
 const DescriptionContainer = styled.div`
   flex: 1;
 `;
@@ -75,7 +66,6 @@ const ProductScreen = () => {
   // const audioRef = useRef(null);
   const audioRef = useRef({});
 
-  //const dummyImageUrl = "https://picsum.photos/200";
   const [exhibitData, setExhibitData] = useState({
     title: '',
     category: '',
@@ -225,16 +215,16 @@ const ProductScreen = () => {
   };
 
 
-useEffect(() => {
- 
-  const fetchData = async () => {
-    try {
-      // Fetch exhibit data
-      const exhibitResponse = await axios.get(`/api/admin/exhibits/${id}`);
-      setExhibitData(exhibitResponse.data);
+  useEffect(() => {
 
-      // Fetch exhibit media
-      const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${id}`);
+    const fetchData = async () => {
+      try {
+        // Fetch exhibit data
+        const exhibitResponse = await axios.get(`/api/admin/exhibits/${id}`);
+        setExhibitData(exhibitResponse.data);
+
+        // Fetch exhibit media
+        const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${id}`);
         const exhibitAttachmentsData = getExhibitAttachmentsResponse.data.data;
         console.log("exhibitAttachmentsData:", exhibitAttachmentsData)
         const exhibitPathsArray = exhibitAttachmentsData.map((item) => ({
@@ -265,8 +255,8 @@ useEffect(() => {
         // Set the imageUrls state
         setMediaUrls(exhibitMediaUrls);
 
-      // Fetch related exhibits
-      const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${id}`);
+        // Fetch related exhibits
+        const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${id}`);
 
         const relatedExhibitsData = getRelatedExhibitResponse.data.data;
 
@@ -303,30 +293,30 @@ useEffect(() => {
         console.log("relatedExhibits", relatedExhibits)
         setRelatedExhibits(relatedExhibits);
 
-      // Set loading to false when everything is fetched
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setIsLoading(false); // Set loading to false even if there's an error
-    }
-  };
+        // Set loading to false when everything is fetched
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsLoading(false); // Set loading to false even if there's an error
+      }
+    };
 
-  fetchData();
+    fetchData();
 
-  // Add event listener for window resize
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-    setShowArrows(window.innerWidth > 700);
-  };
+    // Add event listener for window resize
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      setShowArrows(window.innerWidth > 700);
+    };
 
-  window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize);
 
-  return () => {
-    window.removeEventListener('resize', handleResize);
-    setMediaUrls([]);
-    setRelatedExhibits([]);
-  };
-}, [id]);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      setMediaUrls([]);
+      setRelatedExhibits([]);
+    };
+  }, [id]);
 
   const handleRelatedExhibitClick = async (exhibitId) => {
     console.log("you have reached here.....")
@@ -335,7 +325,7 @@ useEffect(() => {
     window.scrollTo(0, 0);
     navigate(`/ProductScreen/${exhibitId}`);
   };
-  
+
   const handleFullScreen = (event) => {
     event.preventDefault();
     if (videoRef.current) {
@@ -349,245 +339,245 @@ useEffect(() => {
 
   const handleSlideChange = () => {
     console.log('Slide changed!');
-  
+
     console.log('Current audio refs:', audioRef.current);
     // Pause and reset the playback position for all audio elements
     Object.values(audioRef.current).forEach(audio => {
-    if (audio) {
-      console.log('Pausing audio:', audio);
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  });
+      if (audio) {
+        console.log('Pausing audio:', audio);
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
 
-  // Pause and reset the playback position for all video elements
-  Object.values(videoRef.current).forEach(video => {
-    if (video) {
-      console.log('Pausing video:', video);
-      video.pause();
-      video.currentTime = 0;
-    }
-  });
-};
-  
+    // Pause and reset the playback position for all video elements
+    Object.values(videoRef.current).forEach(video => {
+      if (video) {
+        console.log('Pausing video:', video);
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+  };
+
   const renderMedia = (media, index) => {
     const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
     const isAudio = /\.(mp3|audio|mpeg|wav|ogg)(\?|$)/i.test(media);
     const mediaKey = isVideo || isAudio ? media : `image_${index}`;
 
-    const containerStyle = isVideo || isAudio ? 
-      { ...mediaStyleRow, height: 'auto', display: 'flex',overflow: 'visible', justifyContent: 'center', alignItems: 'center' } : 
+    const containerStyle = isVideo || isAudio ?
+      { ...mediaStyleRow, height: 'auto', display: 'flex', overflow: 'visible', justifyContent: 'center', alignItems: 'center' } :
       (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
-  
-      if (isVideo) {
-        return (
-          <LazyLoad height={200} offset={100} key={mediaKey}>
+
+    if (isVideo) {
+      return (
+        <LazyLoad height={200} offset={100} key={mediaKey}>
           <div style={{ width: '100%', height: windowWidth <= 600 ? '60vw' : '18vw', overflow: 'hidden' }}>
             <video controls style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} ref={(element) => videoRef.current[mediaKey] = element}>
               <source src={media} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
-          </LazyLoad>
-        );
-  } else if (isAudio) {
-    return (
-      <LazyLoad height={200} offset={100} key={mediaKey}>
-      <div style={{ width: '100%' }}>
-        <audio
-          controls
-          style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
-          ref={(element) => {
-            audioRef.current[mediaKey] = element; // Store a ref for each audio element
-          }}
-        >
-          <source src={media} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
-      </div>
-      </LazyLoad>
-    );
-    
-  } else {
-    return (
-      <LazyLoad height={200} offset={100} key={mediaKey}>
-      <img src={media} alt={`Media Image ${index}`} style={containerStyle} />
-      </LazyLoad>
-    );
-  }
-};
+        </LazyLoad>
+      );
+    } else if (isAudio) {
+      return (
+        <LazyLoad height={200} offset={100} key={mediaKey}>
+          <div style={{ width: '100%' }}>
+            <audio
+              controls
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              ref={(element) => {
+                audioRef.current[mediaKey] = element; // Store a ref for each audio element
+              }}
+            >
+              <source src={media} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </LazyLoad>
+      );
 
-  
+    } else {
+      return (
+        <LazyLoad height={200} offset={100} key={mediaKey}>
+          <img src={media} alt={`Media Image ${index}`} style={containerStyle} />
+        </LazyLoad>
+      );
+    }
+  };
+
+
 
   return (
     <div>
-    {isLoading ? (
-      <p>Loading...</p>
-    ) : (
-    <div>
-      <div>
-        <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
-        <div style={{ textAlign: 'right', marginBottom: '10px', paddingRight: '20px' }}>
-          {exhibitData.era && (
-            <p><strong>Era:</strong> {exhibitData.era}</p>
-          )}
-          {exhibitData.manufacturer && (
-            <p><strong>Manufacturer:</strong> {exhibitData.manufacturer}</p>
-          )}
-        </div>
-      </div>
-      {windowWidth <= 600 ? (
-        <ProductCarouselColumn>
-          {mediaUrls.length > 0 && (
-          <CarouselContainerColumn>
-            <ResponsiveCarousel
-              showArrows={true}
-              dynamicHeight={true}
-              showThumbs={false}
-              onChange={handleSlideChange} // Add this prop
-              renderArrowPrev={(onClickHandler, hasPrev) =>
-                hasPrev && (
-                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                    <LeftOutlined />
-                  </button>
-                )
-              }
-              renderArrowNext={(onClickHandler, hasNext) =>
-                hasNext && (
-                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                    <RightOutlined />
-                  </button>
-                )
-              }
-            >
-              {mediaUrls.map((media, index) => renderMedia(media, index))}
-            </ResponsiveCarousel>
-          </CarouselContainerColumn>
-          )}
-          <DescriptionContainer>
-            <p style={descriptionStyle}>
-              {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
-            </p>
-          </DescriptionContainer>
-        </ProductCarouselColumn>
+      {isLoading ? (
+        <p>Loading...</p>
       ) : (
-        <ProductCarouselRow>
-          {mediaUrls.length > 0 && (
-          <CarouselContainerRow>
-            <ResponsiveCarousel
-              showArrows={true}
-              dynamicHeight={true}
-              showThumbs={false}
-              onChange={handleSlideChange}
-              renderArrowPrev={(onClickHandler, hasPrev) =>
-                hasPrev && (
-                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                    <LeftOutlined />
-                  </button>
-                )
-              }
-              renderArrowNext={(onClickHandler, hasNext) =>
-                hasNext && (
-                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                    <RightOutlined />
-                  </button>
-                )
-              }
-            >
-              {mediaUrls.map((media, index) => renderMedia(media, index))}
-            </ResponsiveCarousel>
-          </CarouselContainerRow>
-          )}
-          <DescriptionContainer>
-            <p style={descriptionStyle}>
-              {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
-            </p>
-          </DescriptionContainer>
-        </ProductCarouselRow>
-      )}
-
-
-
-      {relatedExhibits.length > 0 && (
         <div>
-          <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
-          <Carousel
-            responsive={responsive}
-            arrows={true}
-            showDots={true}
-            focusOnSelect={true}
-            infinite={false}
-            customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
-            customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
-          >
-            
-
-          {relatedExhibits.map((exhibit, index) => (
-            <div className="container" key={index}>
-              <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
-                {exhibit.imageUrl ? (
-                  // Use a conditional check to show dummy image for audio or video
-                  /\.(mp3|audio|mpeg|wav|ogg|mp4|webm)(\?|$)/i.test(exhibit.imageUrl) ? (
-                    <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
-                      <img
-                        src={dummyImageUrl}
-                        alt="Dummy Image"
-                        style={{
-                          maxWidth: '80%',
-                          maxHeight: '200px',
-                          height: 'auto',
-                          marginLeft: '10%',
-                          marginRight: '10%',
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
-                      <img
-                        src={exhibit.imageUrl}
-                        alt={exhibit.title}
-                        style={{
-                          maxWidth: '80%',
-                          maxHeight: '200px',
-                          height: 'auto',
-                          marginLeft: '10%',
-                          marginRight: '10%',
-                        }}
-                      />
-                    </div>
-                  )
-                ) : (
-                  <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
-                    <img
-                      src={dummyImageUrl}
-                      alt="Dummy Image"
-                      style={{
-                        maxWidth: '80%',
-                        maxHeight: '200px',
-                        height: 'auto',
-                        marginLeft: '10%',
-                        marginRight: '10%',
-                      }}
-                    />
-                  </div>
-                )}
-                <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
-                  {exhibit.title}
-                </div>
-              </Link>
+          <div>
+            <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
+            <div style={{ textAlign: 'right', marginBottom: '10px', paddingRight: '20px' }}>
+              {exhibitData.era && (
+                <p><strong>Era:</strong> {exhibitData.era}</p>
+              )}
+              {exhibitData.manufacturer && (
+                <p><strong>Manufacturer:</strong> {exhibitData.manufacturer}</p>
+              )}
             </div>
-          ))}
+          </div>
+          {windowWidth <= 600 ? (
+            <ProductCarouselColumn>
+              {mediaUrls.length > 0 && (
+                <CarouselContainerColumn>
+                  <ResponsiveCarousel
+                    showArrows={true}
+                    dynamicHeight={true}
+                    showThumbs={false}
+                    onChange={handleSlideChange} // Add this prop
+                    renderArrowPrev={(onClickHandler, hasPrev) =>
+                      hasPrev && (
+                        <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                          <LeftOutlined />
+                        </button>
+                      )
+                    }
+                    renderArrowNext={(onClickHandler, hasNext) =>
+                      hasNext && (
+                        <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                          <RightOutlined />
+                        </button>
+                      )
+                    }
+                  >
+                    {mediaUrls.map((media, index) => renderMedia(media, index))}
+                  </ResponsiveCarousel>
+                </CarouselContainerColumn>
+              )}
+              <DescriptionContainer>
+                <p style={descriptionStyle}>
+                  {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+                </p>
+              </DescriptionContainer>
+            </ProductCarouselColumn>
+          ) : (
+            <ProductCarouselRow>
+              {mediaUrls.length > 0 && (
+                <CarouselContainerRow>
+                  <ResponsiveCarousel
+                    showArrows={true}
+                    dynamicHeight={true}
+                    showThumbs={false}
+                    onChange={handleSlideChange}
+                    renderArrowPrev={(onClickHandler, hasPrev) =>
+                      hasPrev && (
+                        <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                          <LeftOutlined />
+                        </button>
+                      )
+                    }
+                    renderArrowNext={(onClickHandler, hasNext) =>
+                      hasNext && (
+                        <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                          <RightOutlined />
+                        </button>
+                      )
+                    }
+                  >
+                    {mediaUrls.map((media, index) => renderMedia(media, index))}
+                  </ResponsiveCarousel>
+                </CarouselContainerRow>
+              )}
+              <DescriptionContainer>
+                <p style={descriptionStyle}>
+                  {exhibitData ? exhibitData.exhibit_desc : 'Loading...'}
+                </p>
+              </DescriptionContainer>
+            </ProductCarouselRow>
+          )}
 
-          </Carousel>
-        </div>
-      )
-      }
+
+
+          {relatedExhibits.length > 0 && (
+            <div>
+              <h2 style={{ paddingLeft: '20px' }}>Related Exhibits</h2>
+              <Carousel
+                responsive={responsive}
+                arrows={true}
+                showDots={true}
+                focusOnSelect={true}
+                infinite={false}
+                customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
+                customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
+              >
+
+
+                {relatedExhibits.map((exhibit, index) => (
+                  <div className="container" key={index}>
+                    <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
+                      {exhibit.imageUrl ? (
+                        // Use a conditional check to show dummy image for audio or video
+                        /\.(mp3|audio|mpeg|wav|ogg|mp4|webm)(\?|$)/i.test(exhibit.imageUrl) ? (
+                          <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                            <img
+                              src={dummyImageUrl}
+                              alt="Dummy Image"
+                              style={{
+                                maxWidth: '80%',
+                                maxHeight: '200px',
+                                height: 'auto',
+                                marginLeft: '10%',
+                                marginRight: '10%',
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                            <img
+                              src={exhibit.imageUrl}
+                              alt={exhibit.title}
+                              style={{
+                                maxWidth: '80%',
+                                maxHeight: '200px',
+                                height: 'auto',
+                                marginLeft: '10%',
+                                marginRight: '10%',
+                              }}
+                            />
+                          </div>
+                        )
+                      ) : (
+                        <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                          <img
+                            src={dummyImageUrl}
+                            alt="Dummy Image"
+                            style={{
+                              maxWidth: '80%',
+                              maxHeight: '200px',
+                              height: 'auto',
+                              marginLeft: '10%',
+                              marginRight: '10%',
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
+                        {exhibit.title}
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+
+              </Carousel>
+            </div>
+          )
+          }
 
 
 
 
-    </div >
-    )}
+        </div >
+      )}
     </div>
   );
 };

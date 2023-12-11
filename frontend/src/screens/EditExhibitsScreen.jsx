@@ -41,14 +41,9 @@ const EditExhibitScreen = () => {
       console.error("Error while fetching maintenance fields:", error);
     }
   };
-
-
-
-
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
   };
-
   const handledeletefiles = (newList) => {
     setdeletefiles(newList);
   };
@@ -145,7 +140,6 @@ const EditExhibitScreen = () => {
     fetchData(); // Invoke the function
 
   }, [id]);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -391,6 +385,9 @@ const EditExhibitScreen = () => {
   };
   // Define a custom style for the form labels
   const formLabelStyle = {
+    color: "#111111",
+    fontWeight: "600",
+    letterSpacing: "0.8px",
     fontSize: "12px", // Adjust the font size as needed
     marginTop: "-20px",
   };
@@ -401,13 +398,15 @@ const EditExhibitScreen = () => {
   };
 
   const descriptionInputStyle = {
-    fontSize: '14px', // Adjust the font size as needed
-    height: '80px', // Adjust the height as needed
+    fontSize: "14px", // Adjust the font size as needed
+    height: "80px", // Adjust the height as needed
+    color: "#111",
   };
 
   const TextInputStyle = {
-    fontSize: '12px', // Adjust the font size as needed
-    height: '45px', // Adjust the height as needed
+    fontSize: "12px", // Adjust the font size as needed
+    height: "45px", // Adjust the height as needed
+    border: "2px solid #ccc",
   };
 
   const errorStyle = {
@@ -426,7 +425,7 @@ const EditExhibitScreen = () => {
   }
 
   return (
-    <Container className="EditExhibit">
+    <Container className="EditExhibit AddExhibit">
       {isLoading && (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <Spinner animation="border" role="status">
@@ -437,7 +436,7 @@ const EditExhibitScreen = () => {
       )}
       <Row>
         <Col>
-          <h1 style={h1Style}>Edit Exhibit</h1>
+          <p className="sub-heading">Edit Exhibit</p>
         </Col>
       </Row>
 
@@ -665,7 +664,7 @@ const EditExhibitScreen = () => {
         </Row>
         <Row>
           <Col md={12}>
-            <p>Attachments</p>
+            <p className="sub-heading-2">Attachments</p>
             <Modifyfiles
               files={fileList}
               setFiles={handleupdatedfiles}
@@ -681,7 +680,7 @@ const EditExhibitScreen = () => {
         </Row>
         <Row>
           <Col md={12}>
-            <p>Related Exhibits </p>
+            <p className="sub-heading-2">Related Exhibits </p>
             <Modifylinks
               links={linkList}
               setLinks={handleupdatedlinks}

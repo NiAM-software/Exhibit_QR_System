@@ -537,7 +537,7 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
     // const jsonData = JSON.parse(JSON.stringify(exhibits));
     const jsonData = exhibits.map((exhibit) => ({
       ...exhibit,
-      itemType: exhibit.category,
+      ItemType: exhibit.category,
     }));
 
     jsonData.forEach((exhibit) => delete exhibit.category);
