@@ -16,6 +16,8 @@ import {
   Col,
   Modal,
 } from "react-bootstrap";
+import { IoAdd,} from "react-icons/io5";
+import customStyles from "../utils/tableStyles";
 
 const TextInputStyle = {
   fontSize: '12px', // Adjust the font size as needed
@@ -30,47 +32,12 @@ const errorMessage = {
   color: 'red',
 };
 
-const customStyles = {
-  rows: {
-    style: {
-      minHeight: "50px", // override the row height
-      fontSize: "12px",
-      fontFamily: "arial",
-    },
-  },
-  headCells: {
-    style: {
-      paddingLeft: "8px", // override the cell padding for head cells
-      paddingRight: "8px",
-    },
-  },
-  cells: {
-    style: {
-      paddingLeft: "8px", // override the cell padding for data cells
-      paddingRight: "8px",
-    },
-  },
-  headRow: {
-    style: {
-      minHeight: "52px",
-      borderBottomWidth: "1px",
-      borderBottomStyle: "solid",
-      fontSize: "14px",
-      fontFamily: "arial",
-    },
-    denseStyle: {
-      minHeight: "32px",
-    },
-  },
-  tableWrapper: {
-    style: {
-      fontSize: "18px",
-      fontFamily: "arial",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Add box shadow here
-      margin: "auto",
-      marginBottom: "20px",
-    },
-  },
+const formLabelStyle = {
+  color: "#111111",
+  fontWeight: "600",
+  letterSpacing: "0.8px",
+  fontSize: "13px", // Adjust the font size as needed
+  marginTop: "-20px",
 };
 
 const Maintenancescreen = () => {
@@ -219,45 +186,7 @@ const Maintenancescreen = () => {
           setInputText("");
         }
 
-      }
-      // else if (activeTab === "Locations") {
-      //   const postresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
-      //     method: 'POST', // or 'PUT' or 'whatever is necessary'
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify({ location: inputText }),
-      //   });
-
-      //   if (postresponse.ok) {
-      //     const postdata = await postresponse.json();
-      //     console.log("Location is added successfully:", postdata.message);
-      //     toast.success('New Location is added successfully');
-      //     const newItem = {
-      //       id: postdata.id,
-      //       name: inputText,
-      //     };
-      //     setData([...tableData, newItem]);
-      //     setInputText("");
-      //   }
-      //   else {
-      //     const data = await postresponse.json();
-      //     console.error('new location addition failed:', data.message);
-      //     if (data.message.includes('Duplicate entry')) {
-      //       //const errors = {};
-      //       //const errors='Duplicate entries not allowed.';
-      //       setFormErrors(errors);
-      //       hasErrors = true;
-      //       //toast.error('Category already exists.', { duration: 1000 });
-      //     }
-      //     else {
-      //       toast.error('Failed to add new location');
-      //     }
-      //     setInputText("");
-      //   }
-
-      // } 
-      else if (activeTab === "LocationTypes") {
+      } else if (activeTab === "LocationTypes") {
         const postresponse = await fetch(`/api/admin/exhibits/maintenance/location_type`, {
           method: 'POST', // or 'PUT' or 'whatever is necessary'
           headers: {
@@ -389,53 +318,7 @@ const Maintenancescreen = () => {
           setFormErrors(errors);
           errorscheck = true;
         }
-      }
-      // else if (activeTab === "Locations") {
-      //   if (selecteddata && editText && (selecteddata != editText)) {
-      //     if (selectedId) {
-      //       // Send a PUT request to update the category
-      //       const putresponse = await fetch(`/api/admin/exhibits/maintenance/location`, {
-      //         method: 'PUT', // or 'PUT' or 'whatever is necessary'
-      //         headers: {
-      //           'Content-Type': 'application/json',
-      //         },
-      //         body: JSON.stringify({ location: editText, id: selectedId }),
-      //       });
-
-      //       if (putresponse.ok) {
-      //         const putdata = await putresponse.json();
-      //         toast.success('Successfully updated location');
-      //         //console.log("putdata",putdata);
-      //         const updatedtabledata = tableData.map((item) =>
-      //           item.id === selectedId
-      //             ? { ...item, name: editText }
-      //             : item
-      //         );
-      //         //setCategories(updatedtabledata);
-      //         setData(updatedtabledata);
-      //         console.log("updatedtabledata", updatedtabledata);
-      //         setSelectedRows([]);
-      //         setToggleCleared(!toggleCleared);
-      //         setEditText("");
-      //         setFormErrors("");
-      //       }
-      //       else {
-      //         const data = await putresponse.json();
-      //         console.error("Couldn't update the location", data.message);
-      //         toast.error('Failed to edit the location');
-      //         setSelectedRows([]);
-      //         setToggleCleared(!toggleCleared);
-      //         setEditText("");
-      //       }
-      //     }
-      //   }
-      //   else if (selecteddata === editText) {
-      //     errors = 'Data already exists';
-      //     setFormErrors(errors);
-      //     errorscheck = true;
-      //   }
-      // } 
-      else if (activeTab === "LocationTypes") {
+      } else if (activeTab === "LocationTypes") {
         if (selecteddata && editText && (selecteddata != editText)) {
           if (selectedId) {
             // Send a PUT request to update the category
@@ -544,9 +427,6 @@ const Maintenancescreen = () => {
           case "Categories":
             endpoint = '/api/admin/exhibits/maintenance/category';
             break;
-          // case "Locations":
-          //   endpoint = '/api/admin/exhibits/maintenance/location';
-          //   break;
           case "LocationTypes":
             endpoint = '/api/admin/exhibits/maintenance/location_type';
             break;
@@ -558,9 +438,6 @@ const Maintenancescreen = () => {
             break;
         }
 
-        // const deleteResponse = await axios.delete(endpoint, {
-        //   data: { ids: selectedIds },
-        // });
         const deleteResponse = await fetch(endpoint, {
           method: 'DELETE', // or 'PUT' or 'whatever is necessary'
           headers: {
@@ -591,7 +468,7 @@ const Maintenancescreen = () => {
 
   return (
     <div className="exhibits-list-wrapper">
-      <h1 className="text-center">Maintenance</h1>
+      <p className="page-heading">Maintenance </p>
       <div style={{ display: "flex" }}>
 
         <Nav variant="tabs">
@@ -625,14 +502,17 @@ const Maintenancescreen = () => {
         </Nav>
         {activeTab && (
           <div style={{ marginLeft: "auto" }}>
-            <button className="btn-primary-sm" onClick={handleModal}>Create</button>
+            <button className="add-exhibit-button" onClick={handleModal}>
+            <IoAdd style={{ fontSize: "14px" }} />
+              Create
+              </button>
             <Modal show={showModal} onHide={handleModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Create New Item</Modal.Title>
+                <StyledModalTitle>Create New Item</StyledModalTitle>
               </Modal.Header>
               <Modal.Body>
                 <div>
-                  <label>Enter Text:</label>
+                  <label style={formLabelStyle}>Enter Text:</label>
                   <div>
                     <input
                       type="text"
@@ -645,7 +525,7 @@ const Maintenancescreen = () => {
                 </div>
               </Modal.Body>
               <Modal.Footer>
-                <button className="float-end"
+                <button className="btn-primary btn-primary-md"
                   style={{
                     //backgroundColor: "white",
                     //color: "black",
@@ -687,21 +567,17 @@ const Maintenancescreen = () => {
       {activeTab && (
         <div>
           <Navbar expand="sm" className="table-header">
-            <Container>
-              <Nav className="w-100 justify-content-between">
-                {/* <h1>{activeTab}</h1> */}
-                <InputGroup style={{ marginLeft: "auto", width: "250px" }}>
+                <InputGroup style={{ marginLeft: "auto" }}>
                   <StyledFormControl
                     placeholder="Search.."
                     value={filterText}
                     onChange={(e) => setFilterText(e.target.value)}
+                    style={{ width: "150px",height:"36px" }}
                   />
                   <InputGroup.Text id="basic-addon1">
                     <FaSearch />
                   </InputGroup.Text>
                 </InputGroup>
-              </Nav>
-            </Container>
           </Navbar>
 
           <DataTable
@@ -713,17 +589,17 @@ const Maintenancescreen = () => {
             onSelectedRowsChange={handleSelectedRowsChange}
             clearSelectedRows={toggleCleared}
             fixedHeader
-            fixedHeaderScrollHeight="400px"
+            fixedHeaderScrollHeight="50%"
           />
           {selectedRows.length > 0 && (
             <div style={{ display: "flex", marginTop: "10px" }} className="btn-menu d-flex justify-content-end">
               <button className="btn-primary-sm" onClick={handleEditButtonClick}>Edit</button>
               <Modal show={showeditModal} onHide={() => setShowEditModal(false)}>
                 <Modal.Header closeButton>
-                  <Modal.Title>Edit Item</Modal.Title>
+                <StyledModalTitle>Edit Item</StyledModalTitle>
                 </Modal.Header>
                 <Modal.Body>
-                  <label>Edit Text:</label>
+                  <label style={formLabelStyle}>Edit Text:</label>
                   <div>
                     <input
                       type="text"
@@ -735,7 +611,7 @@ const Maintenancescreen = () => {
                   </div>
                 </Modal.Body>
                 <Modal.Footer>
-                  <button className="float-end"
+                  <button className="btn-primary btn-primary-md"
                     style={{
                       //backgroundColor: "white",
                       //color: "black",
@@ -792,5 +668,14 @@ const StyledFormControl = styled(Form.Control)`
   height: 32px;
   width: 80px;
   font-size: 13px;
+`;
+const StyledModalTitle = styled(Modal.Title)`
+  font-size: 18px;
+  font-family: "Poppins";
+  display:'flex', 
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-weight: 600;
 `;
 export default Maintenancescreen;
