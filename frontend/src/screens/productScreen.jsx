@@ -9,6 +9,7 @@ import 'react-multi-carousel/lib/styles.css';
 import axios from 'axios';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import dummyImageUrl from '../assets/dummy-image-square.jpg';
+import LazyLoad from 'react-lazyload';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -70,9 +71,9 @@ const ProductScreen = () => {
   const location = useLocation();
   const [mediaUrls, setMediaUrls] = useState([]);
   const [relatedExhibits, setRelatedExhibits] = useState([]);
-  const videoRef = useRef(null);
+  const videoRef = useRef({});
   // const audioRef = useRef(null);
-  const audioRef = useRef([]);
+  const audioRef = useRef({});
 
   //const dummyImageUrl = "https://picsum.photos/200";
   const [exhibitData, setExhibitData] = useState({
@@ -89,6 +90,7 @@ const ProductScreen = () => {
   });
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [showArrows, setShowArrows] = useState(window.innerWidth); // Initially set to true for larger screens
+  const [isLoading, setIsLoading] = useState(true);
 
   console.log('ProductScreen is rendering!'); // This will log on every render
 
@@ -165,12 +167,6 @@ const ProductScreen = () => {
   };
 
 
-
-
-
-
-
-
   const customButtonStyle = {
     position: 'absolute',
     top: '50%',
@@ -229,39 +225,22 @@ const ProductScreen = () => {
   };
 
 
+useEffect(() => {
+ 
+  const fetchData = async () => {
+    try {
+      // Fetch exhibit data
+      const exhibitResponse = await axios.get(`/api/admin/exhibits/${id}`);
+      setExhibitData(exhibitResponse.data);
 
-
-  useEffect(() => {
-    const fetchExhibitData = async () => {
-      await axios.get(`/api/admin/exhibits/${id}`)
-        .then(response => {
-          setExhibitData(response.data); // Store data in state for prepopulation
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
-
-
-      console.log('data for exhibitid: ${Id}', exhibitData)
-
-    };
-
-    const fetchExhibitMedia = async () => {
-      try {
-        // Fetch attachments data
-        const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${id}`);
+      // Fetch exhibit media
+      const getExhibitAttachmentsResponse = await axios.get(`/api/admin/exhibits/get-attachments/${id}`);
         const exhibitAttachmentsData = getExhibitAttachmentsResponse.data.data;
         console.log("exhibitAttachmentsData:", exhibitAttachmentsData)
         const exhibitPathsArray = exhibitAttachmentsData.map((item) => ({
           folderName: item.file_location,
           fileName: item.file_name,
         }));
-
-        // const at_data = {
-        //   objectKeys: exhibitPathsArray,
-        // }
-        // console.log("exhibitPathsArray", JSON.stringify(at_data))
-        // Get Presigned urls
 
         const generateExhibitPresignedUrlResponse = await fetch(
           "/api/admin/exhibits/generate-presigned-url",
@@ -285,18 +264,9 @@ const ProductScreen = () => {
         }
         // Set the imageUrls state
         setMediaUrls(exhibitMediaUrls);
-      } catch (error) {
-        console.error('horror fetching exhibit images:', error);
 
-        // If there's an error, you can set some default images or handle the error as needed
-        // const defaultImages = [dummyImageUrl];
-        // setMediaUrls(defaultImages);
-      }
-    };
-
-    const fetchRelatedExhibits = async () => {
-      try {
-        const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${id}`);
+      // Fetch related exhibits
+      const getRelatedExhibitResponse = await axios.get(`/api/admin/exhibits/related-exhibits/${id}`);
 
         const relatedExhibitsData = getRelatedExhibitResponse.data.data;
 
@@ -332,50 +302,40 @@ const ProductScreen = () => {
         }));
         console.log("relatedExhibits", relatedExhibits)
         setRelatedExhibits(relatedExhibits);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          // Handle the 404 error here, e.g., set relatedExhibits to an empty array
-          setRelatedExhibits([]);
-        } else {
-          console.error('Error fetching related exhibits:', error);
-        }
-      }
-    };
 
+      // Set loading to false when everything is fetched
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setIsLoading(false); // Set loading to false even if there's an error
+    }
+  };
 
-    fetchExhibitData();
-    fetchExhibitMedia();
-    fetchRelatedExhibits();
-    // Fetch image data for the exhibit using axios
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      setShowArrows(window.innerWidth > 700);
-    };
+  fetchData();
 
+  // Add event listener for window resize
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth);
+    setShowArrows(window.innerWidth > 700);
+  };
 
+  window.addEventListener('resize', handleResize);
 
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-
-  }, [id]);
-
-
-
+  return () => {
+    window.removeEventListener('resize', handleResize);
+    setMediaUrls([]);
+    setRelatedExhibits([]);
+  };
+}, [id]);
 
   const handleRelatedExhibitClick = async (exhibitId) => {
     console.log("you have reached here.....")
     console.log("exhibitId", exhibitId)
+    setRelatedExhibits([]);
     window.scrollTo(0, 0);
     navigate(`/ProductScreen/${exhibitId}`);
   };
-
-
-
-
+  
   const handleFullScreen = (event) => {
     event.preventDefault();
     if (videoRef.current) {
@@ -388,58 +348,82 @@ const ProductScreen = () => {
   };
 
   const handleSlideChange = () => {
-    audioRef.current.forEach(audio => {
-      if (audio && !audio.paused) {
-        audio.pause();
-      }
-    });
-
-    if (videoRef.current && !videoRef.current.paused) {
-      videoRef.current.pause();
+    console.log('Slide changed!');
+  
+    console.log('Current audio refs:', audioRef.current);
+    // Pause and reset the playback position for all audio elements
+    Object.values(audioRef.current).forEach(audio => {
+    if (audio) {
+      console.log('Pausing audio:', audio);
+      audio.pause();
+      audio.currentTime = 0;
     }
-  };
+  });
 
+  // Pause and reset the playback position for all video elements
+  Object.values(videoRef.current).forEach(video => {
+    if (video) {
+      console.log('Pausing video:', video);
+      video.pause();
+      video.currentTime = 0;
+    }
+  });
+};
+  
   const renderMedia = (media, index) => {
     const isVideo = /\.(mp4|webm)(\?|$)/i.test(media);
     const isAudio = /\.(mp3|audio|mpeg|wav|ogg)(\?|$)/i.test(media);
-    const containerStyle = isVideo || isAudio ?
-      { ...mediaStyleRow, height: 'auto', display: 'flex', overflow: 'visible', justifyContent: 'center', alignItems: 'center' } :
+    const mediaKey = isVideo || isAudio ? media : `image_${index}`;
+
+    const containerStyle = isVideo || isAudio ? 
+      { ...mediaStyleRow, height: 'auto', display: 'flex',overflow: 'visible', justifyContent: 'center', alignItems: 'center' } : 
       (windowWidth <= 600 ? ImageStyleColumn : ImageStyleRow);
+  
+      if (isVideo) {
+        return (
+          <LazyLoad height={200} offset={100} key={mediaKey}>
+          <div style={{ width: '100%', height: windowWidth <= 600 ? '60vw' : '18vw', overflow: 'hidden' }}>
+            <video controls style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} ref={(element) => videoRef.current[mediaKey] = element}>
+              <source src={media} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          </LazyLoad>
+        );
+  } else if (isAudio) {
+    return (
+      <LazyLoad height={200} offset={100} key={mediaKey}>
+      <div style={{ width: '100%' }}>
+        <audio
+          controls
+          style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+          ref={(element) => {
+            audioRef.current[mediaKey] = element; // Store a ref for each audio element
+          }}
+        >
+          <source src={media} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      </LazyLoad>
+    );
+    
+  } else {
+    return (
+      <LazyLoad height={200} offset={100} key={mediaKey}>
+      <img src={media} alt={`Media Image ${index}`} style={containerStyle} />
+      </LazyLoad>
+    );
+  }
+};
 
-    if (isVideo) {
-      return (
-        <div key={index} style={{ width: '100%', height: windowWidth <= 600 ? '60vw' : '18vw', overflow: 'hidden' }}>
-          <video controls style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} ref={videoRef}>
-            <source src={media} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      );
-    } else if (isAudio) {
-      return (
-        <div key={index} style={{ width: '100%' }}>
-          <audio
-            controls
-            ref={(element) => {
-              audioRef.current[index] = element; // Store a ref for each audio element
-            }}
-          >
-            <source src={media} type="audio/mpeg" />
-            Your browser does not support the audio element.
-          </audio>
-        </div>
-      );
-
-    } else {
-      return (
-        <img key={index} src={media} alt={`Media Image ${index}`} style={containerStyle} />
-      );
-    }
-  };
-
-
+  
 
   return (
+    <div>
+    {isLoading ? (
+      <p>Loading...</p>
+    ) : (
     <div>
       <div>
         <h1 style={titleStyle}>{exhibitData ? exhibitData.title : 'Loading...'}</h1>
@@ -455,30 +439,30 @@ const ProductScreen = () => {
       {windowWidth <= 600 ? (
         <ProductCarouselColumn>
           {mediaUrls.length > 0 && (
-            <CarouselContainerColumn>
-              <ResponsiveCarousel
-                showArrows={true}
-                dynamicHeight={true}
-                showThumbs={false}
-                onChange={handleSlideChange} // Add this prop
-                renderArrowPrev={(onClickHandler, hasPrev) =>
-                  hasPrev && (
-                    <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                      <LeftOutlined />
-                    </button>
-                  )
-                }
-                renderArrowNext={(onClickHandler, hasNext) =>
-                  hasNext && (
-                    <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                      <RightOutlined />
-                    </button>
-                  )
-                }
-              >
-                {mediaUrls.map((media, index) => renderMedia(media, index))}
-              </ResponsiveCarousel>
-            </CarouselContainerColumn>
+          <CarouselContainerColumn>
+            <ResponsiveCarousel
+              showArrows={true}
+              dynamicHeight={true}
+              showThumbs={false}
+              onChange={handleSlideChange} // Add this prop
+              renderArrowPrev={(onClickHandler, hasPrev) =>
+                hasPrev && (
+                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                    <LeftOutlined />
+                  </button>
+                )
+              }
+              renderArrowNext={(onClickHandler, hasNext) =>
+                hasNext && (
+                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                    <RightOutlined />
+                  </button>
+                )
+              }
+            >
+              {mediaUrls.map((media, index) => renderMedia(media, index))}
+            </ResponsiveCarousel>
+          </CarouselContainerColumn>
           )}
           <DescriptionContainer>
             <p style={descriptionStyle}>
@@ -489,30 +473,30 @@ const ProductScreen = () => {
       ) : (
         <ProductCarouselRow>
           {mediaUrls.length > 0 && (
-            <CarouselContainerRow>
-              <ResponsiveCarousel
-                showArrows={true}
-                dynamicHeight={true}
-                showThumbs={false}
-                onChange={handleSlideChange}
-                renderArrowPrev={(onClickHandler, hasPrev) =>
-                  hasPrev && (
-                    <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
-                      <LeftOutlined />
-                    </button>
-                  )
-                }
-                renderArrowNext={(onClickHandler, hasNext) =>
-                  hasNext && (
-                    <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
-                      <RightOutlined />
-                    </button>
-                  )
-                }
-              >
-                {mediaUrls.map((media, index) => renderMedia(media, index))}
-              </ResponsiveCarousel>
-            </CarouselContainerRow>
+          <CarouselContainerRow>
+            <ResponsiveCarousel
+              showArrows={true}
+              dynamicHeight={true}
+              showThumbs={false}
+              onChange={handleSlideChange}
+              renderArrowPrev={(onClickHandler, hasPrev) =>
+                hasPrev && (
+                  <button onClick={onClickHandler} style={leftButtonStyle} aria-label="Previous">
+                    <LeftOutlined />
+                  </button>
+                )
+              }
+              renderArrowNext={(onClickHandler, hasNext) =>
+                hasNext && (
+                  <button onClick={onClickHandler} style={rightButtonStyle} aria-label="Next">
+                    <RightOutlined />
+                  </button>
+                )
+              }
+            >
+              {mediaUrls.map((media, index) => renderMedia(media, index))}
+            </ResponsiveCarousel>
+          </CarouselContainerRow>
           )}
           <DescriptionContainer>
             <p style={descriptionStyle}>
@@ -536,10 +520,28 @@ const ProductScreen = () => {
             customLeftArrow={<button style={leftArrowButtonStyle}><LeftOutlined /></button>} // Use a button for better accessibility
             customRightArrow={<button style={rightArrowButtonStyle}><RightOutlined /></button>} // Use a button for better accessibility
           >
-            {
-              relatedExhibits.map((exhibit, index) => (
-                <div className="container" key={index}>
-                  <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
+            
+
+          {relatedExhibits.map((exhibit, index) => (
+            <div className="container" key={index}>
+              <Link onClick={() => handleRelatedExhibitClick(exhibit.relatedExhibit_id)}>
+                {exhibit.imageUrl ? (
+                  // Use a conditional check to show dummy image for audio or video
+                  /\.(mp3|audio|mpeg|wav|ogg|mp4|webm)(\?|$)/i.test(exhibit.imageUrl) ? (
+                    <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                      <img
+                        src={dummyImageUrl}
+                        alt="Dummy Image"
+                        style={{
+                          maxWidth: '80%',
+                          maxHeight: '200px',
+                          height: 'auto',
+                          marginLeft: '10%',
+                          marginRight: '10%',
+                        }}
+                      />
+                    </div>
+                  ) : (
                     <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
                       <img
                         src={exhibit.imageUrl}
@@ -553,13 +555,29 @@ const ProductScreen = () => {
                         }}
                       />
                     </div>
-                    <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
-                      {exhibit.title}
-                    </div>
-                  </Link>
+                  )
+                ) : (
+                  <div className="image-container" style={{ position: 'relative', textAlign: 'center' }}>
+                    <img
+                      src={dummyImageUrl}
+                      alt="Dummy Image"
+                      style={{
+                        maxWidth: '80%',
+                        maxHeight: '200px',
+                        height: 'auto',
+                        marginLeft: '10%',
+                        marginRight: '10%',
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="title-container" style={{ bottom: '10px', padding: '20px', textAlign: 'center', color: 'black' }}>
+                  {exhibit.title}
                 </div>
-              ))
-            }
+              </Link>
+            </div>
+          ))}
+
           </Carousel>
         </div>
       )
@@ -569,6 +587,8 @@ const ProductScreen = () => {
 
 
     </div >
+    )}
+    </div>
   );
 };
 
