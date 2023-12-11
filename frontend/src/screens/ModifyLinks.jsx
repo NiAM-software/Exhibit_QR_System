@@ -1,5 +1,5 @@
 import { Modal, Input, Button, Upload, message } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { PlusOutlined } from '@ant-design/icons';
 import { DeleteOutlined } from '@ant-design/icons';
@@ -35,9 +35,10 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
+    const [previewLinkType, setPreviewLinkType] = useState('');
     const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
+    const mediaRef = useRef(null);
 
-    const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
 
     const fetchrelatedexhibits = async () => {
         try {
@@ -96,6 +97,15 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
         //console.log("entering.......");
         fetchrelatedexhibits();
     }, [link_id]);
+
+    useEffect(() => {
+        // Clean up function to revoke object URLs
+        return () => {
+          if (previewLinkType === 'video') {
+            URL.revokeObjectURL(previewImage);
+          }
+        };
+      }, [previewImage, previewLinkType]);
 
     useEffect(() => {
         const fetchSearchResults = async () => {
@@ -203,7 +213,18 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
         setdeletelinks([]);
     };
 
-    const handleCancel = () => setPreviewOpen(false);
+    const handleCancel = () => {
+        // Stop the media playback if it's a video or audio
+        if (mediaRef.current) {
+          mediaRef.current.pause();
+          mediaRef.current.currentTime = 0;
+        }
+      
+        setPreviewOpen(false);
+        setPreviewImage('');
+        setPreviewLinkType('');
+        setPreviewTitle('');
+      };
 
     const handleSubmission = (link) => {
         // Collect the selected link data from the linkList
@@ -229,14 +250,49 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
     };
 
     const handlePreview = (link) => {
+        const isVideoLink = /\.(mp4|webm)(\?|$)/i.test(link.url);
+        const isAudioLink = /\.(mp3|mpeg|wav)(\?|$)/i.test(link.url);
+        console.log("isAudioLink,isVideoLink",isAudioLink,isVideoLink);
         setPreviewImage(link.url);
         setPreviewTitle(link.name);
+        setPreviewLinkType(isVideoLink ? 'video' : isAudioLink ? 'audio' : 'image');
         setPreviewOpen(true);
-    };
+      };
 
-    console.log("linklist", linkList);
-    console.log("newlyaddedlinklist", newlyaddedlinks);
-    console.log("deletedfiles", deletelinklist);
+      const PreviewModalContent = ({ fileType, source }) => {
+        console.log("filetype",fileType);
+        useEffect(() => {
+          // Ensure the media stops playing when the source changes
+          if (mediaRef.current) {
+            mediaRef.current.pause();
+          }
+        }, [source]);
+        
+        switch (fileType) {
+          case 'video':
+            return (
+              <video ref={mediaRef} style={{ width: '100%' }} controls>
+                <source src={source} type="video/mp4" />
+                Your browser does not support HTML video.
+              </video>
+            );
+          case 'audio':
+            return (
+              <audio ref={mediaRef} style={{ width: '100%' }} controls>
+                <source src={source} type="audio/mpeg" />
+                Your browser does not support HTML audio.
+              </audio>
+            );
+          case 'image':
+            return <img alt="example" style={{ width: '100%' }} src={source} />;
+          default:
+            return null;
+        }
+      };
+
+    // console.log("linklist", linkList);
+    // console.log("newlyaddedlinklist", newlyaddedlinks);
+    // console.log("deletedfiles", deletelinklist);
 
     const handleRemove = (link) => {
         const updatedLinkList = linkList.filter((item) => item.uid !== link.uid);
@@ -282,8 +338,10 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
             boxShadow: 'none', // Remove button shadow if any
         };
 
-        console.log('link', link);
+        //console.log('link', link);
         const isVideo = /\.(mp4|webm)(\?|$)/i.test(link.url);
+        const isAudio = /\.(mp3|mpeg|wav)(\?|$)/i.test(link.url);
+        //console.log("isAudio",isAudio);
         return (
             <div className="ant-upload-list-item">
                 <div style={thumbnailStyle}>
@@ -293,7 +351,12 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
                             controls
                             src={link.url}
                         />
-                    ) : (
+                    ) : isAudio ? (
+                        <audio 
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                        controls 
+                        src={link.url}/>
+                      ) : (
                         <img
                             src={link.url}
                             alt={link.name}
@@ -334,26 +397,6 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
             }}
             style={{ height: "100%", width: "100%", paddingTop: '8px' }}
             centered
-        // footer={[
-        //     <Button
-        //         key="cancel"
-        //         onClick={() => {
-        //             clearSearchQuery();
-        //             onCancel();
-        //         }}
-        //         style={{ ...buttonStyle, marginRight: 0 }}
-        //     >
-        //         Cancel
-        //     </Button>,
-        //     <Button
-        //         key="submit"
-        //         type="primary"
-        //         onClick={handleSubmission}
-        //         style={buttonStyle}
-        //     >
-        //         Submit
-        //     </Button>,
-        // ]}
         >
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input
@@ -404,18 +447,11 @@ const Modifylinks = ({ links, setLinks, link_id, deletelinks, setdeletelinks, vi
             )
             }
             {
-                previewOpen && (
-                    <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
-                        {isVideoLink(previewImage) ? (
-                            <video style={{ width: '100%' }} controls>
-                                <source src={previewImage} type="video/mp4" />
-                                Your browser does not support HTML video.
-                            </video>
-                        ) : (
-                            <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                        )}
+                //previewOpen && (
+                    <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+                        <PreviewModalContent fileType={previewLinkType} source={previewImage} />
                     </Modal>
-                )
+                //)
             }
         </div >
     );

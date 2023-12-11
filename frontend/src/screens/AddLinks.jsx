@@ -1,5 +1,5 @@
 import { Modal, Input, Button, Upload, message } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { PlusOutlined } from "@ant-design/icons";
 import Addfiles from "./AddFiles";
@@ -35,9 +35,7 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
-
-  const isVideoLink = (link) => /\.(mp4|webm)(\?|$)/i.test(link);
-
+  const mediaRef = useRef(null);
 
 
   useEffect(() => {
@@ -143,7 +141,18 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     setLinkList([]); // Clear the linkList
   };
 
-  const handleCancel = () => setPreviewOpen(false);
+  const handleCancel = () => {
+    // Stop the media playback if it's a video or audio
+    if (mediaRef.current) {
+      mediaRef.current.pause();
+      mediaRef.current.currentTime = 0;
+    }
+  
+    setPreviewOpen(false);
+    setPreviewImage('');
+    setPreviewLinkType('');
+    setPreviewTitle('');
+  };
 
   const handleSubmission = (link) => {
     // Collect the selected link data from the linkList
@@ -169,10 +178,42 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
     onSubmit(linkList);
   };
 
+  const PreviewModalContent = ({ fileType, source }) => {
+    useEffect(() => {
+      // Ensure the media stops playing when the source changes
+      if (mediaRef.current) {
+        mediaRef.current.pause();
+      }
+    }, [source]);
+    
+    switch (fileType) {
+      case 'video':
+        return (
+          <video ref={mediaRef} style={{ width: '100%' }} controls>
+            <source src={source} type="video/mp4" />
+            Your browser does not support HTML video.
+          </video>
+        );
+      case 'audio':
+        return (
+          <audio ref={mediaRef} style={{ width: '100%' }} controls>
+            <source src={source} type="audio/mpeg" />
+            Your browser does not support HTML audio.
+          </audio>
+        );
+      case 'image':
+        return <img alt="example" style={{ width: '100%' }} src={source} />;
+      default:
+        return null;
+    }
+  };
+
   const handlePreview = (link) => {
-    console.log('link', link);
+    const isVideoLink = /\.(mp4|webm)(\?|$)/i.test(link.url);
+    const isAudioLink = /\.(mp3|mpeg|wav)(\?|$)/i.test(link.url);
     setPreviewImage(link.url);
     setPreviewTitle(link.name);
+    setPreviewLinkType(isVideoLink ? 'video' : isAudioLink ? 'audio' : 'image');
     setPreviewOpen(true);
   };
 
@@ -205,9 +246,9 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
       boxShadow: 'none', // Remove button shadow if any
     };
 
-    console.log('link', link);
     const isVideo = /\.(mp4|webm)(\?|$)/i.test(link.url);
-    console.log('isVideooo', isVideo);
+    const isAudio = /\.(mp3|mpeg|wav)(\?|$)/i.test(link.url);
+
     return (
       <div className="ant-upload-list-item">
         <div style={thumbnailStyle}>
@@ -217,6 +258,11 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
               controls
               src={link.url}
             />
+          ) : isAudio ? (
+            <audio 
+            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+            controls 
+            src={link.url}/>
           ) : (
             <img
               src={link.url}
@@ -328,15 +374,8 @@ const AddLinks = ({ links, setLinks, visible, onSubmit, onCancel }) => {
         </div>
       )}
 
-      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
-        {isVideoLink(previewImage) ? (
-          <video style={{ width: '100%' }} controls>
-            <source src={previewImage} type="video/mp4" />
-            Your browser does not support HTML video.
-          </video>
-        ) : (
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
-        )}
+      <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
+        <PreviewModalContent fileType={previewLinkType} source={previewImage} />
       </Modal>
     </div>
   );
