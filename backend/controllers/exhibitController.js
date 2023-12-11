@@ -530,6 +530,8 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
       LEFT JOIN room r ON r.room_id = e.room_id AND r.active_ind='Y' ${keyword}`;
 
   try {
+
+
     const [exhibitsResults] = await db.promise().query(exhibitsQuery);
     const exhibits = exhibitsResults;
     // const jsonData = JSON.parse(JSON.stringify(exhibits));

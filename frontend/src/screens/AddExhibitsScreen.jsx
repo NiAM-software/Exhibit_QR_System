@@ -21,24 +21,23 @@ const AddExhibitScreen = () => {
   const [locationTypes, setLocationTypes] = useState([]);
   const [rooms, setrooms] = useState([]);
   const [formErrors, setFormErrors] = useState({});
-  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState('');
+  const [nextAvailableAssetNumber, setNextAvailableAssetNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    Axios.get('/api/admin/exhibits/next-asset-number')
+    Axios.get("/api/admin/exhibits/next-asset-number")
       .then((response) => {
         const maxAssetNumber = response.data.asset_number;
-        console.log(maxAssetNumber)
+        console.log(maxAssetNumber);
         const nextAssetNumber = maxAssetNumber + 1;
         //  setFormData({ ...formData, asset_number: nextAssetNumber.toString(), });
-        setFormData({ ...formData, asset_number: nextAssetNumber.toString(), });
+        setFormData({ ...formData, asset_number: nextAssetNumber.toString() });
       })
       .catch((error) => {
-        console.error('Error fetching next asset number:', error);
-        toast.error('Error fetching next asset number')
+        console.error("Error fetching next asset number:", error);
+        toast.error("Error fetching next asset number");
       });
   }, []);
-
 
   const handleupdatedfiles = (newList) => {
     setFileList(newList);
@@ -46,8 +45,8 @@ const AddExhibitScreen = () => {
 
   const handleupdatedlinks = (newList) => {
     setLinkList(newList);
-    console.log('exhibit', linkList)
-  }
+    console.log("exhibit", linkList);
+  };
 
   const showLinksModal = () => {
     setIsLinksModalVisible(true);
@@ -109,7 +108,6 @@ const AddExhibitScreen = () => {
       [name]: selectedCategoryId, // Update category_id
       category: value, // Update category
     }));
-
   };
 
   const handleChange_locationtype = (e) => {
@@ -126,9 +124,7 @@ const AddExhibitScreen = () => {
 
   const handleChange_room = (e) => {
     const { name, value } = e.target;
-    const selectedroomId = rooms.find(
-      (room) => room.name === value
-    )?.id;
+    const selectedroomId = rooms.find((room) => room.name === value)?.id;
     setFormData((prevData) => ({
       ...prevData,
       [name]: selectedroomId, // Update category_id
@@ -142,9 +138,7 @@ const AddExhibitScreen = () => {
 
   const fetch_maintenance_fields = async () => {
     try {
-      const response = await fetch(
-        "/api/admin/exhibits/maintenance"
-      );
+      const response = await fetch("/api/admin/exhibits/maintenance");
       if (response.ok) {
         const data = await response.json();
         //console.log("data",data);
@@ -167,14 +161,14 @@ const AddExhibitScreen = () => {
     const errors = {};
 
     if (!formData.title) {
-      errors.title = 'Title is required';
+      errors.title = "Title is required";
     }
     if (!formData.asset_number) {
-      errors.asset_number = 'Asset number is required';
+      errors.asset_number = "Asset number is required";
     } else if (isNaN(formData.asset_number)) {
-      errors.asset_number = 'Asset number must be an integer';
+      errors.asset_number = "Asset number must be an integer";
     } else if (formData.asset_number < 0) {
-      errors.asset_number = 'Asset number cannot be negative';
+      errors.asset_number = "Asset number cannot be negative";
     }
 
     return errors;
@@ -211,38 +205,39 @@ const AddExhibitScreen = () => {
 
       try {
         // First API call to your server
-        const response = await fetch('/api/admin/exhibits', {
-          method: 'POST',
+        const response = await fetch("/api/admin/exhibits", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         });
 
         if (response.ok) {
           const data = await response.json();
-          console.log('First API Call Successful:', data.message);
+          console.log("First API Call Successful:", data.message);
 
-          const new_exhibit_id = data.id
+          const new_exhibit_id = data.id;
           const formDataForFiles = new FormData(); // Use FormData instead of fileObjects
           fileList.forEach((file) => {
-            formDataForFiles.append('photos', file.originFileObj);
+            formDataForFiles.append("photos", file.originFileObj);
           });
-
 
           // Second API call to Amazon S3
-          const s3Response = await fetch(`api/admin/exhibits/upload/${new_exhibit_id}`, {
-            method: 'POST', // or 'PUT' or 'whatever is necessary'
-            body: formDataForFiles,
-          });
+          const s3Response = await fetch(
+            `api/admin/exhibits/upload/${new_exhibit_id}`,
+            {
+              method: "POST", // or 'PUT' or 'whatever is necessary'
+              body: formDataForFiles,
+            }
+          );
 
           if (s3Response.ok) {
             const s3Data = await s3Response.json();
-            console.log('Second API Call to S3 Successful:', s3Data);
-
+            console.log("Second API Call to S3 Successful:", s3Data);
 
             // console.log('linkList after submitting the modal:', linkList);
-            const parsedLinkList = linkList.map(link => ({
+            const parsedLinkList = linkList.map((link) => ({
               related_exhibit_id: link.uid,
               related_exhibit_title: link.name,
             }));
@@ -254,34 +249,35 @@ const AddExhibitScreen = () => {
             setParsedLinkList(parsedLinkList);
 
             const rdata = {
-              related_exhibits_ids: parsedLinkList
+              related_exhibits_ids: parsedLinkList,
             };
 
             // console.log(rdata)
 
-
-            // Third API call to DB  
-            const dbResponse = await fetch(`/api/admin/exhibits/add-related-exhibits/${new_exhibit_id}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(rdata),
-            });
+            // Third API call to DB
+            const dbResponse = await fetch(
+              `/api/admin/exhibits/add-related-exhibits/${new_exhibit_id}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(rdata),
+              }
+            );
 
             if (dbResponse.ok) {
               setIsLoading(false);
-              toast.success('Form data submitted successfully');
+              toast.success("Form data submitted successfully");
               setFormSubmitted(true);
               setTimeout(() => {
-                navigate('/');
+                navigate("/");
               }, 2000);
-            }
-            else {
+            } else {
               setIsLoading(false);
               const data = await dbResponse.json();
-              console.error('Third API Call to DB Failed:', data.message);
-              toast.error('Failed to insert related exhibits');
+              console.error("Third API Call to DB Failed:", data.message);
+              toast.error("Failed to insert related exhibits");
             }
           }
           else {
@@ -292,109 +288,90 @@ const AddExhibitScreen = () => {
               rollbackCall(new_exhibit_id);
             }, 2000);
           }
-        }
-
-        else {
+        } else {
           setIsLoading(false);
           const data = await response.json();
-          console.error('First API Call Failed:', data.message);
+          console.error("First API Call Failed:", data.message);
 
-          if (data.message.includes('Duplicate entry')) {
+          if (data.message.includes("Duplicate entry")) {
             const errors = {};
-            errors.asset_number = 'Duplicate entries not allowed.';
+            errors.asset_number = "Duplicate entries not allowed.";
             setFormErrors(errors);
             // toast.error('Duplicate entries in Asset Number.', { duration: 1000 });
-          }
-          else {
-            toast.error('Failed to submit form data.');
+          } else {
+            toast.error("Failed to submit form data.");
           }
         }
-      }
-
-      catch (error) {
-        console.error('Failed to submit form data', error);
-        toast.error('An error occurred while submitting form data.');
+      } catch (error) {
+        console.error("Failed to submit form data", error);
+        toast.error("An error occurred while submitting form data.");
         // Handle network or other errors here
       }
-
-
-    }
-
-    else {
+    } else {
       setFormErrors(errors);
     }
-
-  };
-
-  const h1Style = {
-    fontWeight: 'bold',
-    fontSize: '22px',
-    marginTop: '30px',
-    marginLeft: '-20px',
-    marginBottom: '20px',
-    textAlign: 'center'
   };
 
   const buttonContainerStyle = {
     // textAlign: "center", // Adjust this to align the labels and buttons
     // margin: "0 20px",    // Adjust the margin as needed
-    marginTop: "20px"
+    marginTop: "20px",
   };
   const rightButtonContainerStyle = {
     display: "flex",
     //justifyContent: "flex-end", // Right-align the buttons
     alignItems: "center", // Vertically align the buttons
-    marginTop: "38px"
-  };
-
-  const labelStyle = {
-    fontSize: "11px",
-    color: '#4B4B4B'
+    marginTop: "38px",
   };
 
   const buttonStyle = {
-    fontSize: '14px',
-    width: '125px',
-    height: '25px',
-    marginRight: '20px',
-    marginTop: '0px',
-    marginBottom: '50px'
-
+    fontSize: "14px",
+    width: "125px",
+    height: "25px",
+    marginRight: "20px",
+    marginTop: "0px",
+    marginBottom: "50px",
   };
   // Define a custom style for the form labels
   const formLabelStyle = {
-    fontSize: '14px', // Adjust the font size as needed
-    marginTop: '-20px',
+    color: "#111111",
+    fontWeight: "600",
+    letterSpacing: "0.8px",
+    fontSize: "13px", // Adjust the font size as needed
+    marginTop: "-20px",
   };
 
   // Define a custom style for the space between form elements
   const formElementSpacing = {
-    marginBottom: '-15px', // Adjust the margin-bottom as needed
+    marginBottom: "-15px", // Adjust the margin-bottom as needed
   };
 
   const descriptionInputStyle = {
-    fontSize: '14px', // Adjust the font size as needed
-    height: '80px', // Adjust the height as needed
+    fontSize: "14px", // Adjust the font size as needed
+    height: "80px", // Adjust the height as needed
+    color: "#111",
   };
 
   const TextInputStyle = {
-    fontSize: '12px', // Adjust the font size as needed
-    height: '45px', // Adjust the height as needed
+    fontSize: "12px", // Adjust the font size as needed
+    height: "45px", // Adjust the height as needed
+
+    border: "2px solid #ccc",
   };
 
   const errorStyle = {
-    borderColor: 'red',
+    borderColor: "red",
+    color: "red",
   };
 
   const errorMessage = {
-    color: 'red',
+    color: "red",
   };
-
 
   return (
     <Container className="AddExhibit">
       {isLoading && (
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
           <Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
@@ -403,7 +380,7 @@ const AddExhibitScreen = () => {
       )}
       <Row>
         <Col>
-          <h1 style={h1Style}>Create New Exhibit</h1>
+          <p className="sub-heading">Add Exhibit</p>
         </Col>
       </Row>
 
@@ -412,25 +389,37 @@ const AddExhibitScreen = () => {
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
               <Form.Group controlId="Title" className="mb-3">
-                <Form.Label style={formLabelStyle}>Title<span style={{ color: 'red' }}>*</span></Form.Label>
+                <Form.Label style={formLabelStyle}>
+                  Title<span style={{ color: "red" }}>*</span>
+                </Form.Label>
                 <Form.Control
                   type="text"
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
                   placeholder="Enter Title"
-                  style={formErrors.title ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  style={
+                    formErrors.title
+                      ? { ...TextInputStyle, ...errorStyle }
+                      : TextInputStyle
+                  }
                 />
-                {formErrors.title && <div style={errorMessage}>{formErrors.title}</div>}
+                {formErrors.title && (
+                  <div style={errorMessage}>{formErrors.title}</div>
+                )}
               </Form.Group>
             </Form>
           </Col>
 
           <Col md={4} className="offset-md-3 mb-3">
             <Form style={formElementSpacing}>
-              <Form.Group controlId="Asset Number" className="mb-3" style={{ position: 'relative' }}>
+              <Form.Group
+                controlId="Asset Number"
+                className="mb-3"
+                style={{ position: "relative" }}
+              >
                 <Form.Label style={formLabelStyle}>
-                  Asset Number<span style={{ color: 'red' }}>*</span>
+                  Asset Number<span style={{ color: "red" }}>*</span>
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -438,18 +427,19 @@ const AddExhibitScreen = () => {
                   value={formData.asset_number}
                   onChange={handleChange}
                   placeholder="Enter Asset number"
-                  style={formErrors.asset_number ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  style={
+                    formErrors.asset_number
+                      ? { ...TextInputStyle, ...errorStyle }
+                      : TextInputStyle
+                  }
                 />
-                {/* {nextAvailableAssetNumber && (
-                  <div style={{ position: 'absolute', top: '0', right: '0', color: 'green', fontSize: '14px' }}>
-                    Suggested: {nextAvailableAssetNumber}
-                  </div>
-                )} */}
-                {formErrors.asset_number && <div style={errorMessage}>{formErrors.asset_number}</div>}
+
+                {formErrors.asset_number && (
+                  <div style={errorMessage}>{formErrors.asset_number}</div>
+                )}
               </Form.Group>
             </Form>
           </Col>
-
         </Row>
 
         <Row>
@@ -464,12 +454,10 @@ const AddExhibitScreen = () => {
                   onChange={handleChange}
                   placeholder="Enter the location"
                   style={TextInputStyle}
-                >
-                </Form.Control>
+                ></Form.Control>
               </Form.Group>
             </Form>
           </Col>
-
 
           {/* Right Form */}
 
@@ -484,6 +472,7 @@ const AddExhibitScreen = () => {
                   list="rooms"
                   value={formData.room}
                   onChange={handleChange_room}
+                  className="__form-input"
                   style={TextInputStyle}
                 >
                   <option value="">Select a room</option>
@@ -502,7 +491,7 @@ const AddExhibitScreen = () => {
           <Col md={4} className="mb-3">
             <Form style={formElementSpacing}>
               <Form.Group controlId="locationType" className="mb-3">
-                <Form.Label style={formLabelStyle}>LocationType</Form.Label>
+                <Form.Label style={formLabelStyle}>Location Type</Form.Label>
                 <Form.Control
                   as="select"
                   type="text"
@@ -510,9 +499,12 @@ const AddExhibitScreen = () => {
                   list="locationTypes"
                   value={formData.location_type}
                   onChange={handleChange_locationtype}
+                  className="__form-input"
                   style={TextInputStyle}
                 >
-                  <option value="">Select a location_type</option>
+                  <option value="" className="default-option">
+                    Select a Location Type
+                  </option>
                   {locationTypes.map((location_type) => (
                     <option key={location_type.id} value={location_type.name}>
                       {location_type.name}
@@ -534,7 +526,7 @@ const AddExhibitScreen = () => {
                   value={formData.era}
                   onChange={handleChange}
                   placeholder="Enter the Era"
-                  //style={formErrors.era ? { ...TextInputStyle, ...errorStyle } : TextInputStyle}
+                  className="__form-input"
                   style={TextInputStyle}
                 />
               </Form.Group>
@@ -546,9 +538,7 @@ const AddExhibitScreen = () => {
           <Col md={4} className=" mb-3">
             <Form style={formElementSpacing}>
               <Form.Group controlId="category" className="mb-3">
-                <Form.Label style={formLabelStyle}>
-                  Item Type
-                </Form.Label>
+                <Form.Label style={formLabelStyle}>Item Type</Form.Label>
                 <Form.Control
                   as="select"
                   type="text"
@@ -556,6 +546,7 @@ const AddExhibitScreen = () => {
                   list="categories"
                   value={formData.category}
                   onChange={handleChange_category}
+                  className="__form-input"
                   style={TextInputStyle}
                 >
                   <option value="">Select a Item Type</option>
@@ -580,6 +571,7 @@ const AddExhibitScreen = () => {
                   value={formData.subcategory}
                   onChange={handleChange}
                   placeholder="Enter the Sub-Category"
+                  className="__form-input"
                   style={TextInputStyle}
                 />
               </Form.Group>
@@ -633,8 +625,7 @@ const AddExhibitScreen = () => {
           />
         </Row>
         <Row>
-
-          <p>Related Exhibits </p>
+          <p className="sub-heading-2">Related Exhibits </p>
           <AddLinks
             links={linkList}
             setLinks={handleupdatedlinks}
@@ -645,21 +636,32 @@ const AddExhibitScreen = () => {
         </Row>
         <Row>
           <Col md={12}>
-            <div className="d-flex justify-content-end" style={rightButtonContainerStyle}>
-              <button className="float-end" style={{
-                backgroundColor: 'white',
-                color: 'black',
-                padding: '8px 16px',
-                fontSize: '12px',
-                width: '100px',
-                height: '25px',
-                marginRight: '20px',
-                marginTop: '-1px',
-                marginBottom: '50px',
-                outline: '1px solid black',
-              }} onClick={handleCancelClick}>Cancel</button>
+            <div
+              className="d-flex justify-content-end"
+              style={rightButtonContainerStyle}
+            >
+              <button
+                className="float-end"
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  padding: "8px 16px",
+                  fontSize: "12px",
+                  width: "100px",
+                  height: "25px",
+                  marginRight: "20px",
+                  marginTop: "-1px",
+                  marginBottom: "50px",
+                  outline: "1px solid black",
+                }}
+                onClick={handleCancelClick}
+              >
+                Cancel
+              </button>
 
-              <button className="float-end" style={buttonStyle}>Submit</button>
+              <button className="float-end" style={buttonStyle}>
+                Submit
+              </button>
             </div>
           </Col>
         </Row>
@@ -667,8 +669,6 @@ const AddExhibitScreen = () => {
 
       <Toaster />
     </Container>
-
-
   );
 };
 

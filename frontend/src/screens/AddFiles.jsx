@@ -14,11 +14,18 @@ const getBase64 = (file) =>
     reader.onerror = (error) => reject(error);
   });
 
-const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCancel }) => {
+const Addfiles = ({
+  files,
+  setFiles,
+  formSubmitted,
+  resetFormSubmitted,
+  nOK,
+  nCancel,
+}) => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState('');
-  const [previewTitle, setPreviewTitle] = useState('');
-  const [previewFileType, setPreviewFileType] = useState('');
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [previewFileType, setPreviewFileType] = useState("");
   const [fileList, setFileList] = useState([]);
   const [unsupportedFiles, setUnsupportedFiles] = useState([]);
   const mediaRef = useRef(null);
@@ -47,13 +54,28 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     console.log("file preview", file.url);
     console.log('FILE', file);
     setPreviewImage(file.url || file.preview);
-    setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
-    setPreviewFileType(file.type.startsWith('video/') ? 'video' : file.type.startsWith('audio/') ? 'audio' : 'image');
+    setPreviewTitle(
+      file.name || file.url.substring(file.url.lastIndexOf("/") + 1)
+    );
+    setPreviewFileType(
+      file.type.startsWith("video/")
+        ? "video"
+        : file.type.startsWith("audio/")
+          ? "audio"
+          : "image"
+    );
     setPreviewOpen(true);
   };
 
   const beforeUpload = (file) => {
-    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime', 'audio/mpeg', 'audio/wav']; // Add audio formats
+    const allowedFormats = [
+      "image/jpeg",
+      "image/png",
+      "video/mp4",
+      "video/quicktime",
+      "audio/mpeg",
+      "audio/wav",
+    ]; // Add audio formats
     const isSupported = allowedFormats.includes(file.type);
 
     if (!isSupported) {
@@ -71,14 +93,19 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     return true;
   };
 
-
-
   const handleChange = ({ fileList: newFileList, file }) => {
-    const allowedFormats = ['image/jpeg', 'image/png', 'video/mp4', 'video/quicktime', 'audio/mpeg', 'audio/wav']; // Add more formats as needed
+    const allowedFormats = [
+      "image/jpeg",
+      "image/png",
+      "video/mp4",
+      "video/quicktime",
+      "audio/mpeg",
+      "audio/wav",
+    ]; // Add more formats as needed
 
     // Filter out unsupported files from the newFileList
     const filteredFileList = newFileList.filter((item) => {
-      if (item.status === 'error' || allowedFormats.includes(item.type)) {
+      if (item.status === "error" || allowedFormats.includes(item.type)) {
         return true; // Keep the file in the list if it's either an allowed format or has an error status
       }
       return false; // Exclude unsupported files from the list
@@ -90,14 +117,12 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
 
   const handleOKbutton = () => {
     if (fileList.length > 0) {
-      message.success('Files are uploaded successfully');
-    }
-    else {
-      message.info('Please select atleast one file to upload');
+      message.success("Files are uploaded successfully");
+    } else {
+      message.info("Please select atleast one file to upload");
     }
     //setFileList([]);
     nOK();
-
   };
 
   const PreviewModalContent = ({ fileType, source }) => {
@@ -141,14 +166,14 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
   const uploadButton = (
     <div>
       <PlusOutlined />
-      <div style={{ marginTop: 8, marginLeft: 16, marginRight: 8, }}>Upload</div>
+      <div style={{ marginTop: 8, marginLeft: 16, marginRight: 8 }}>Upload</div>
     </div>
   );
 
   useEffect(() => {
     // Clean up function to revoke object URLs
     return () => {
-      if (previewFileType === 'video') {
+      if (previewFileType === "video") {
         URL.revokeObjectURL(previewImage);
       }
     };
@@ -156,31 +181,35 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
 
   const renderItem = (originNode, file, fileList, actions) => {
     const thumbnailStyle = {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100%',
-      width: '100%',
-      overflow: 'hidden', // To handle videos that might exceed the container size
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "100%",
+      width: "100%",
+      overflow: "hidden", // To handle videos that might exceed the container size
     };
     const actionButtonStyle = {
-      background: 'transparent',
-      border: 'none', // Remove button border
-      boxShadow: 'none', // Remove button shadow if any
+      background: "transparent",
+      border: "none", // Remove button border
+      boxShadow: "none", // Remove button shadow if any
     };
 
     return (
       <div className="ant-upload-list-item">
         <div style={thumbnailStyle}>
-          {file.type.startsWith('video/') ? (
+          {file.type.startsWith("video/") ? (
             <video
-              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                objectFit: "contain",
+              }}
               controls
               src={file.url || URL.createObjectURL(file.originFileObj)}
             />
-          ) : file.type.startsWith('audio/') ? (
+          ) : file.type.startsWith("audio/") ? (
             <audio
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               controls
               src={file.url || URL.createObjectURL(file.originFileObj)}
             />
@@ -188,7 +217,7 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
             <img
               src={file.url || file.thumbUrl}
               alt={file.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           )}
         </div>
@@ -197,12 +226,16 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
             href={file.url || file.preview}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               handlePreview(file);
             }}
           >
-            <Button icon={<EyeOutlined />} size="small" style={actionButtonStyle} />
+            <Button
+              icon={<EyeOutlined />}
+              size="small"
+              style={actionButtonStyle}
+            />
           </a>
           <Button
             icon={<DeleteOutlined />}
@@ -215,12 +248,10 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
     );
   };
 
-
-
   return (
-    <div style={{ position: 'relative', marginBottom: '100px' }}>
-      <div style={{ paddingTop: '8px', paddingBottom: '4px' }}>
-        <p>Attachments</p>
+    <div style={{ position: "relative", marginBottom: "100px" }}>
+      <div style={{ paddingTop: "8px", paddingBottom: "4px" }}>
+        <p className="sub-heading-2">Attachments</p>
 
         <Upload
           beforeUpload={beforeUpload}
@@ -229,7 +260,9 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
           onPreview={handlePreview}
           onChange={handleChange}
           multiple={true}
-          itemRender={(originNode, file, fileList, actions) => renderItem(originNode, file, fileList, actions)} // Pass actions here
+          itemRender={(originNode, file, fileList, actions) =>
+            renderItem(originNode, file, fileList, actions)
+          } // Pass actions here
         >
           {uploadButton}
         </Upload>
@@ -237,9 +270,6 @@ const Addfiles = ({ files, setFiles, formSubmitted, resetFormSubmitted, nOK, nCa
       <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
         <PreviewModalContent fileType={previewFileType} source={previewImage} />
       </Modal>
-
-
-
     </div>
   );
 };

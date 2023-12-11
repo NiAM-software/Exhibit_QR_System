@@ -42,8 +42,8 @@ const router = createBrowserRouter(
         <Route path="/AddExhibitScreen" element={<AddExhibitScreen/>}></Route>
         <Route path="/EditExhibitScreen/:id" element={<EditExhibitScreen/>}></Route>
         <Route path="/ProductScreen/:id" element={<ProductScreen/>}></Route>
-        <Route path="/RecycleBin" element={<RecycleBin/>}></Route>
-        <Route path="/MaintenanceScreen" element={<MaintenanceScreen/>}></Route>
+        <Route path="/recycle-bin" element={<RecycleBin/>}></Route>
+        <Route path="/maintenance" element={<MaintenanceScreen/>}></Route>
       </Route>
 
       <Route path="/UserScreen/:id" element={<UserScreen/>}></Route>

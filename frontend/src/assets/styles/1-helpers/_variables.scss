@@ -1,11 +1,19 @@
 // Colors
-$darkBlue: #1F41BB;
-$darkBlue-hover:#183495;
+$darkBlue: rgb(0, 113, 206);
+$darkBlue-hover:darken($darkBlue, 10%);
 $grayishBlue: hsl(233, 8%, 62%);
 $lightGrayishBlue: hsl(220, 16%, 96%);
 $veryLightGray: hsl(0, 0%, 98%);
 $white: hsl(0, 0%, 100%);
-
+$lightBlack:#111111;
+$navbar-background: #ffffff; /* White background for navbar */
+$navbar-link-color: #333333; /* Dark grey color for better readability */
+$navbar-link-active-color: darken(white, 10%); /* Slightly lighter grey on hover */
+$navbar-link-hover-color: darken(white, 5%);
+$navbar-dropdown-background: #f8f9fa; /* Light grey background for dropdown */
+$navbar-dropdown-link-color: #666666; /* Grey color for dropdown links */
+$navbar-dropdown-hover-color: #444444; /* Darker grey for dropdown links on hover */
+$brand-primary: #0056b3; /* Example primary brand color */
 // Font Sizes
 $font-sm: 0.875rem; // 14px
 $font-med: 1.125rem; // 18px

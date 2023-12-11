@@ -8,31 +8,53 @@
 
 
   .input-group{
-    height: 32px;
-    width: 250px;
+    height: 36px!important;
+    width: 350px;
     margin-right: 10px;
+    &:focus {
+      z-index: 3;
+      border-color: #86b7fe;
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25); // Bootstrap's focus shadow style
+      outline: none; // Remove default outline to rely on the box-shadow
+    }
   }
 
   .input-group-text{
-    height: 32px;
+    height: 36px  !important;
     cursor: pointer;
+    &:hover{
+      background-color: darken(white, 10%);
+    }
   }
   .filter-icon{
-    width: 40px;
+    width: 45px;
   }
   
-  .table-header{
+  .table-header-2{
     margin-bottom: 20px;
+    border: 1px solid #ced4da; /* Adjust the color as needed */
+    border-radius: 15px; /* Rounded corners */
+    padding: 25px; /* Spacing inside the container */
+    margin: 15px 0; /* Add some margin if needed */
   }
 
   .btn-menu{
-    
     margin: 0;
     margin-bottom: 30px;
+
     button{
-      width: 103px;
-    height: 25px;
-    font-size: 12px;
+      font-size: 12px;
+      padding: 15px;
+      border: none;
+      background-color: $darkBlue;
+      color: white;
+      cursor: pointer;
+      outline: none;
+      transition: background-color 0.3s, color 0.3s;
+      border-radius: 20px;
+      &:hover{
+        background-color: $darkBlue-hover;
+      }
     }
     .row{
       align-items: center;
@@ -41,3 +63,51 @@
   }
 }
 
+
+.page-heading{
+  color: #111111;
+  font-size: 28px;
+  font-weight: 400 !important;
+  margin-bottom: 30px;
+  font-family:  'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; /* Modern font stack */  margin-bottom: 20px;
+  letter-spacing: 1.1px; 
+  line-height: 1.2; 
+}
+
+.confirm-delete-modal{
+  .modal-content{
+    color:$lightBlack;
+  }
+  button{
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 8px;
+    width: fit-content;
+    height: fit-content;
+    min-width: 150px;
+    padding: 8px;
+    font-size: 12px;
+  }
+  .confirm-delete-btn{
+    background-color: $darkBlue;
+    color: white;
+    &:hover{
+      transition: all 0.3s ease-out;
+      background-color: darken($darkBlue, 10%);
+      transition: 250ms;
+    }
+  }
+  .undo-delete-btn{
+    background-color: white;
+    color: $lightBlack;
+    border: 1px solid $lightBlack;
+    &:hover{
+      background-color: darken(white, 5%);; 
+      color: $lightBlack;
+      
+    }
+  }
+
+}

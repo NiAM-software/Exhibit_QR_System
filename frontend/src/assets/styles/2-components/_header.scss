@@ -1,20 +1,20 @@
 .__header{
     font-size: 14px;
-    color: #aaa;
+    color: black;
     font-family: Arial, Helvetica, sans-serif;
-    border-bottom: 1px solid #EAEAEA;
+    
     
     .container{
 
     }
      a{
         font-size: 14px;
-        color: #aaa;
+        color: black;
         font-family: Arial, Helvetica, sans-serif;
         padding: 0;
     }
     a:hover{
-        color:#888;
+        color:black;
     }
     a.dropdown-item{
         font-size: 14px;
@@ -37,4 +37,46 @@
         height: 40px;
         width: 120px;
     }
+
+    #username{
+        color: $lightBlack !important;
+        font-size: 10px∑;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 8px 12px; /* Padding for clickability */
+        text-decoration: none; /* Remove underline */
+        transition: color 0.2s ease-in-out;
+        &:hover {
+           
+          }
+    }
+
+    .primary-nav-menu{
+        display: flex;
+        a{
+            color: $lightBlack !important;
+            font-size: 10px∑;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 12px; /* Padding for clickability */
+            text-decoration: none; /* Remove underline */
+            transition: color 0.2s ease-in-out;
+            &:hover {
+               cursor: pointer;
+               background-color: lighten($navbar-link-hover-color, 10%);
+               background-color:$navbar-link-hover-color;
+              }
+        
+              &:focus {
+                
+              }
+            
+          
+        }
+        a.nav-link.active {
+            background-color: $navbar-link-active-color;
+          }
+       
+    }
+    
 }

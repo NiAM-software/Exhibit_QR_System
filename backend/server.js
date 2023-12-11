@@ -10,6 +10,7 @@ import authRoutes from './routes/authRoutes.js'
 import exhibitRoutes from './routes/exhibitRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import cors from 'cors';
+import timeout from 'connect-timeout'; // Import the timeout middleware
 
 var upload = multer()
 dotenv.config()
@@ -17,6 +18,7 @@ const port = process.env.PORT
 console.log("PORT" + port)
 console.log(port);
 const app = express();
+app.use(timeout('180s')); // Specify the timeout duration here
 
 app.use(cors({ origin : '*'}))
 app.use(express.json());

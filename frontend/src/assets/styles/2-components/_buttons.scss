@@ -1,9 +1,10 @@
 .btn-primary:hover {
     transition: all 0.3s ease-out;
-    background-color: $darkBlue-hover;
+    border: 2px solid rgb(0, 113, 206);
     transition: 250ms;
   }
   
+
   .btn-primary {
     padding: 8px 20px;
     background: $darkBlue;
@@ -39,3 +40,65 @@
 .btn-primary-md{
   width:200px;
 }
+
+button{
+  letter-spacing: 1px;
+}
+/* CSV Button */
+.csv-button {
+  margin:0;
+  margin-left: 10px;
+  font-size: 12px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; 
+  padding: 5px 10px;
+  border: 1px solid $lightBlack;
+  background-color: white;
+  color: $lightBlack;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+.csv-button:hover {
+  background-color: darken(white, 5%);; 
+  color: $lightBlack;
+}
+
+.add-exhibit-button{
+  margin:0;
+  margin-left: 10px;
+  font-size: 12px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; 
+  padding: 5px 10px;
+  border: none;
+  background-color: $darkBlue;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px;
+}
+
+.add-exhibit-button:hover{
+  transition: all 0.3s ease-out;
+  background-color: darken($darkBlue, 10%);
+  transition: 250ms;
+}
+// /* Style to visually hide the input while keeping it accessible */
+// #file-upload {
+//   width: 0.1px;
+//   height: 0.1px;
+//   opacity: 0;
+//   overflow: hidden;
+//   position: absolute;
+//   z-index: -1;
+// }
