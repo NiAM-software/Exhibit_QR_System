@@ -531,12 +531,11 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
   try {
     const ws = fs.createWriteStream('exhibits.csv');
 
-    // const [exhibitsResults] = await db.promise().query(exhibitsQuery);
-    // const exhibits = exhibitsResults;
-    db.promise().query(exhibitsQuery, function(error, data, fields) {
-      if (error) throw error;
+    const [exhibitsResults] = await db.promise().query(exhibitsQuery);
+    const exhibits = exhibitsResults;
+   
   
-      const jsonData = JSON.parse(JSON.stringify(data));
+      const jsonData = JSON.parse(JSON.stringify(exhibits));
       // console.log("jsonData", jsonData);
   
       fastcsv
@@ -544,14 +543,16 @@ const exportDataAsCSV = asyncHandler(async (req, res) => {
         .on("finish", function() {
           console.log("Write to bezkoder_mysql_fastcsv.csv successfully!");
         })
+        .on('end', function () {
+              console.log('Write to exhibits.csv successfully!');
+              // res.setHeader('Content-Type', 'text/csv');
+              // res.setHeader('Content-Disposition', 'attachment; filename=exhibits.csv');
+              fs.createReadStream('exhibits.csv').pipe(res);
+              ws.close();
+            })
         .pipe(ws);
-    });
-// CSV
-  //   fastcsv
-  //   .write(exhibits, { headers: true })
-  //   .on('data', function (data) {
-  //     console.log('Writing data:', data);
-  //   })
+    
+
   //   .on('error', function (error) {
   //     console.error('Error writing data:', error);
   //     // Handle the error, e.g., close the stream or send an error response

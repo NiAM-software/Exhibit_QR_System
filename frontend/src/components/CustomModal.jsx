@@ -36,7 +36,7 @@ const CustomModal = ({ show, handleClose, data }) => {
       {show && exhibit_id && (
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <StyledModalTitle>{`QR Code for ${title}`}</StyledModalTitle>
+            <StyledModalTitle>{`${title}`}</StyledModalTitle>
           </Modal.Header>
           <Modal.Body ref={qrCodeRef}>
             <Container>
@@ -68,7 +68,7 @@ const CustomModal = ({ show, handleClose, data }) => {
                       className="btn-primary btn-primary-md"
                       onClick={downloadQR}
                     >
-                      Download
+                      Download QR
                     </button>
                   </div>
                 </Col>
@@ -83,6 +83,11 @@ const CustomModal = ({ show, handleClose, data }) => {
 const StyledModalTitle = styled(Modal.Title)`
   font-size: 18px;
   font-family: "Poppins";
+  display:'flex', 
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-weight: 600;
 `;
 
 export default CustomModal;

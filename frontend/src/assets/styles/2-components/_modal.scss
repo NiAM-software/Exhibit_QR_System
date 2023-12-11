@@ -3,9 +3,33 @@
     color: #aaa;
     font-weight: 400;
     font-family: Arial, Helvetica, sans-serif;
-
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
      
 }
+
+.modal-header,
+.modal-footer {
+  border-bottom: none;
+  padding: 10px 20px;
+}
+
+.btn-download {
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: #007bff; // Use your brand blue color
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: darken(#007bff, 10%);
+    }
+  }
+
 .modal-body, .modal-footer{
     display: 'flex' !important; 
     justify-content: 'center' !important;
@@ -17,4 +41,10 @@
 }
 .modal-body{
     border-bottom: 'none'
+}
+
+.modal-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

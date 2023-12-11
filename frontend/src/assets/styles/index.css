@@ -39,7 +39,7 @@
   transition: 250ms;
 }
 
-.btn-primary {
+.btn-primary-1 {
   padding: 8px 20px;
   background: #1F41BB;
   color: hsl(0, 0%, 100%);
@@ -68,9 +68,10 @@
   width: 200px;
 }
 
+/* header */
 .__header {
   font-size: 14px;
-  color: #aaa;
+  color: black;
   font-family: Arial, Helvetica, sans-serif;
   border-bottom: 1px solid #EAEAEA;
 }

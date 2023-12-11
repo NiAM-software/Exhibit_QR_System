@@ -2,6 +2,7 @@ import { useMutation, useQueryClient, useQuery } from "react-query";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetExhibitsQuery } from "../slices/exhibitApiSlice";
+import columns from "../utils/tableColumns";
 import {
   Navbar,
   Nav,
@@ -13,10 +14,13 @@ import {
   Row,
   Col,
   Modal,
+  Button,
 } from "react-bootstrap";
-// import Button from "@material-ui/core/Button";
-// import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-// import TextField from "@material-ui/core/TextField";
+import {
+  IoCloudDownloadOutline,
+  IoCloudUploadOutline,
+  IoAdd,
+} from "react-icons/io5";
 
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -25,50 +29,7 @@ import { FaSearch, FaFilter } from "react-icons/fa";
 import styled from "styled-components";
 import CustomModal from "../components/CustomModal";
 import ButtonsContainer from "../components/ButtonsContainer";
-// import { duration } from "html2canvas/dist/types/css/property-descriptors/duration";
-
-const customStyles = {
-  rows: {
-    style: {
-      minHeight: "50px", // override the row height
-      fontSize: "12px",
-      fontFamily: "arial",
-    },
-  },
-  headCells: {
-    style: {
-      paddingLeft: "8px", // override the cell padding for head cells
-      paddingRight: "8px",
-    },
-  },
-  cells: {
-    style: {
-      paddingLeft: "8px", // override the cell padding for data cells
-      paddingRight: "8px",
-    },
-  },
-  headRow: {
-    style: {
-      minHeight: "52px",
-      borderBottomWidth: "1px",
-      borderBottomStyle: "solid",
-      fontSize: "14px",
-      fontFamily: "arial",
-    },
-    denseStyle: {
-      minHeight: "32px",
-    },
-  },
-  tableWrapper: {
-    style: {
-      fontSize: "18px",
-      fontFamily: "arial",
-      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Add box shadow here
-      margin: "auto",
-      marginBottom: "20px",
-    },
-  },
-};
+import customStyles from "../utils/tableStyles";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -84,7 +45,9 @@ const HomeScreen = () => {
 
   const handleFileChange = (e) => {
     setCsvFile(e.target.files[0]);
+    handleUpload();
   };
+
   const handleClose = () => {
     setShow(false);
     console.log("click");
@@ -94,9 +57,7 @@ const HomeScreen = () => {
     closeNotification();
     setNotificationMessage();
   };
-  // const { data, isLoading, error2 } = useGetExhibitsQuery();
-  // console.log("DATA");
-  // console.log(data2+ " " + error2)
+
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation(
@@ -235,10 +196,8 @@ const HomeScreen = () => {
       .catch((err) => console.log(err));
   };
 
-  // export csv
+  // @export csv
   const generateCSV = async () => {
-    console.log("Generate CSV button clicked");
-
     try {
       const response = await fetch("/api/admin/exhibits/export", {
         method: "GET",
@@ -271,7 +230,6 @@ const HomeScreen = () => {
     } else if (selectedRowId) {
       const selectedRow = selectedRows[0];
       const exhibitId = selectedRow.exhibit_id;
-      console.log("exhibitId:", exhibitId);
       navigate(`/ProductScreen/${exhibitId}`);
     } else {
       console.error("No valid ID provided for editing.");
@@ -290,50 +248,8 @@ const HomeScreen = () => {
 
   // if (isLoading) return <h1>Loading...</h1>;
 
-  const columns = [
-    {
-      name: "Title",
-      selector: (row) => row.title,
-      sortable: true,
-      sortField: "Title",
-      id: 2,
-    },
-    {
-      name: "Item Type",
-      selector: (row) => row.category,
-      sortable: true,
-      // sortFunction: customSortFunction,
-      id: 1,
-    },
-    {
-      name: "Subcategory",
-      selector: (row) => row.subcategory,
-      id: 3,
-    },
-    {
-      name: "Asset Number",
-      selector: (row) => row.asset_number,
-      id: 4,
-    },
-    {
-      name: "Room",
-      selector: (row) => row.room,
-      id: 5,
-    },
-    {
-      name: "Era",
-      selector: (row) => row.era,
-      id: 6,
-    },
-  ];
-
   const tableData = data
     ? data
-        // .filter(
-        //   (exhibit) =>
-        //     exhibit.title &&
-        //     exhibit.title.toLowerCase().includes(filterText.toLowerCase())
-        // )
         .filter((exhibit) => {
           const valuesToSearch = [
             exhibit.title,
@@ -382,14 +298,15 @@ const HomeScreen = () => {
       <CustomModal show={show} handleClose={handleClose} data={selectedRows} />
 
       <div className="exhibits-list-wrapper">
-        <h1 className="text-center">Exhibit inventory </h1>
-        <Navbar expand="sm" collapseOnSelect className="table-header">
+        <p className="page-heading">Exhibit inventory </p>
+        <Navbar expand="sm" collapseOnSelect className="table-header-2">
           <Container>
             <InputGroup>
               <StyledFormControl
                 placeholder="Search.."
                 value={filterText}
                 onChange={(e) => setFilterText(e.target.value)}
+                style={{ width: "150px" }}
               />
               <InputGroup.Text id="basic-addon1">
                 <FaSearch />
@@ -398,51 +315,35 @@ const HomeScreen = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ms-auto">
+                <button className="csv-button" onClick={generateCSV}>
+                  <IoCloudDownloadOutline style={{ fontSize: "14px" }} />{" "}
+                  Download CSV
+                </button>
+
+                <>
+                  <label for="file-upload" class="csv-button">
+                    <IoCloudUploadOutline style={{ fontSize: "14px" }} /> Import
+                    CSV
+                  </label>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    name="file"
+                    style={{ display: "none" }}
+                    // onchange="handleFileChange(event)"
+                  />
+                </>
                 <Link to="/AddExhibitScreen">
-                  <button className="btn-primary-sm add-exhibit-btn">
-                    Add New Exhibit{" "}
+                  <button className="add-exhibit-button">
+                    <IoAdd style={{ fontSize: "14px" }} />
+                    New Exhibit
                   </button>
                 </Link>
-                <button
-                  className="btn-primary-sm"
-                  onClick={generateCSV}
-                  style={{ marginLeft: "10px" }}
-                >
-                  Generate CSV
-                </button>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
-        <Navbar expand="sm" collapseOnSelect className="table-header">
-          <Container>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto">
-                <input
-                  type="file"
-                  name="file"
-                  onChange={handleFileChange}
-                  style={{ marginRight: "0px" }} // Adjust margin as needed
-                />
-                <button
-                  className="btn-primary-sm"
-                  style={{ margin: "0px" }}
-                  onClick={handleUpload}
-                >
-                  Upload
-                </button>
               </Nav>
             </Navbar.Collapse>
           </Container>
         </Navbar>
 
-        {/* <form>
-          <TextField type="file" />
-          <Button variant="contained" color="primary" component="span">
-            Upload
-          </Button>
-        </form> */}
         <DataTable
           columns={columns}
           data={tableData}
@@ -468,37 +369,25 @@ const HomeScreen = () => {
         )}
         {/* {console.log(notificationMessage)} */}
         {showNotification && (
-          <Modal show={showNotification} onHide={closeNotification}>
-            <Modal.Body>
+          <Modal
+            show={showNotification}
+            onHide={closeNotification}
+            centered
+            className="confirm-delete-modal"
+          >
+            <Modal.Body style={{ textAlign: "center" }}>
               {`Exhibits ${notificationMessage2.join(", ")} have been deleted`}
             </Modal.Body>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "20px",
-              }}
+            <Modal.Footer
+              style={{ borderTop: "none", justifyContent: "center" }}
             >
-              <button
-                className="btn-primary-sm"
-                style={{ marginRight: "10px" }}
-                onClick={closeModal}
-              >
+              <button className="confirm-delete-btn" onClick={closeModal}>
                 Confirm
               </button>
-              <button
-                className="btn-primary-sm"
-                style={{ marginLeft: "10px" }}
-                onClick={handleUndoDelete}
-              >
+              <button className="undo-delete-btn" onClick={handleUndoDelete}>
                 Undo
               </button>
-            </div>
-            <div style={{ marginTop: "20px" }}>
-              {" "}
-              {/* Add margin below the buttons */}
-              {/* You can add additional content or spacing here */}
-            </div>
+            </Modal.Footer>
           </Modal>
         )}
       </div>
@@ -507,7 +396,7 @@ const HomeScreen = () => {
 };
 const StyledFormControl = styled(Form.Control)`
   margin: 0px 0;
-  height: 32px;
+  height: 36px !important;
   width: 80px;
   font-size: 13px;
 `;
