@@ -198,17 +198,17 @@ const HomeScreen = () => {
         } else {
           console.log(res);
           toast.error('Error uploading data. Please check the guidelines.');
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 1000);
         }
       })
       .catch((err) => {
         console.log(err.response);
         toast.error('Error uploading data: ' + err.response.data.error);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1000);
       });
   };
 
@@ -348,7 +348,7 @@ const HomeScreen = () => {
                     type="file"
                     name="file"
                     style={{ display: "none" }}
-                  // onchange="handleFileChange(event)"
+                    onChange={(event) => handleFileChange(event)}
                   />
                 </>
                 <Link to="/AddExhibitScreen">

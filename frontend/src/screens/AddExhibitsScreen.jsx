@@ -283,7 +283,7 @@ const AddExhibitScreen = () => {
           else {
             setIsLoading(false);
             console.error('Second API Call to S3 Failed:', s3Response.statusText);
-            toast.error("Second API Call to S3 Failed");
+            toast.error("Second API Call to S3 Failed: " + s3Response.statusText);
             setTimeout(() => {
               rollbackCall(new_exhibit_id);
             }, 2000);
