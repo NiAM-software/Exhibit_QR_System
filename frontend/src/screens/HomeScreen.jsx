@@ -124,10 +124,24 @@ const HomeScreen = () => {
     setShowNotification(false);
   };
 
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [error, setError] = useState("");
+  const { data, isLoading, isError, error } = useQuery(
+    ["user-data"],
+    async () => {
+      try {
+        const response = await axios.get("/api/admin/exhibits");
+        console.log("Data fetched successfully:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
+    },
+    {
+      select: (data) => data.exhibits,
+    }
+  );
+
+
   useEffect(() => {
     if (csvFile) {
       console.log(csvFile); // This will log the new state value after it's updated
@@ -137,26 +151,27 @@ const HomeScreen = () => {
     }
   }, [csvFile]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setIsError(false);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     setIsError(false);
 
-      try {
-        const response = await axios.get("/api/admin/exhibits");
-        console.log("Data fetched successfully:", response.data);
-        setData(response.data.exhibits); // Assuming the response has an 'exhibits' field
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setIsError(true);
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //     try {
+  //       const response = await axios.get("/api/admin/exhibits");
+  //       console.log("Data fetched successfully:", response.data);
+  //       setData(response.data.exhibits); // Assuming the response has an 'exhibits' field
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       setIsError(true);
+  //       setError(error.message);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchData();
-  }, []); // Empty dependency array means this runs once when the component mounts
+  //   fetchData();
+  // }, []); // Empty dependency array means this runs once when the component mounts
+
   const handleSelectedRowsChange = React.useCallback((state) => {
     console.log(state.selectedRows);
     setSelectedRows(state.selectedRows);
@@ -200,6 +215,7 @@ const HomeScreen = () => {
         console.log(res);
         if (res.status === 201) {
           toast.success('Data loaded Successfully');
+          // queryClient.invalidateQueries("user-data");
           setTimeout(() => {
             window.location.reload();
           }, 2000);
@@ -219,7 +235,9 @@ const HomeScreen = () => {
         // }, 1000);
       })
       .finally(() => {
+        // if (!Loading) {
         setLoading(false);
+        // }
       });
   };
 
