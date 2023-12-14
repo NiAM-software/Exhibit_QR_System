@@ -12,24 +12,24 @@ import cors from 'cors';
 import nodemailer from 'nodemailer'
 dotenv.config()
 
-// var transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.MY_EMAIL,
-//     pass: process.env.MY_PASSWORD,
-//   },
-// });
-const transporter = nodemailer.createTransport({
-      //service :"Outlook365",
-        //pool:true,
-    host: 'SMTP.office365.com',
-    port: '587',
-    secure:false,
-    auth: { user: process.env.OUTLOOK_EMAIL, pass:  process.env.OUTLOOK_PASSWORD },
-    //secureConnection: false,
-    //requireTLS:true,
-    tls: { ciphers: 'SSLv3' }
+var transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MY_EMAIL,
+    pass: process.env.MY_PASSWORD,
+  },
 });
+// const transporter = nodemailer.createTransport({
+//       //service :"Outlook365",
+//         //pool:true,
+//     host: 'SMTP.office365.com',
+//     port: '587',
+//     secure:false,
+//     auth: { user: process.env.OUTLOOK_EMAIL, pass:  process.env.OUTLOOK_PASSWORD },
+//     //secureConnection: false,
+//     //requireTLS:true,
+//     tls: { ciphers: 'SSLv3' }
+// });
 
 const keysecret = process.env.JWT_SECRET
 console.log(keysecret);
@@ -158,32 +158,11 @@ const sendPasswordLink = asyncHandler(async (req, res) => {
      
 
     if (updateResults) {
-      // nodeoutlook.sendEmail({
-      //   auth: {
-      //       user: "saijanha@buffalo.edu",
-      //       pass: "babyloony23@SJ"
-      //   },
-      //   from: 'saijanha@buffalo.edu',
-      //   to: 'sguntur@buffalo.edu',
-      //   subject: 'Password',
-      //   html: '<b>This is bold text</b>',
-      //   text: 'This is text version!',
-      //   replyTo: 'receiverXXX@gmail.com',
-      // })
-    
       const mailOptions = {
         from: process.env.MY_EMAIL,
         to: email,
         subject: "Sending Email For password Reset",
-        //  text: `Hi ${userName},\n
-        //  There was a request to change your password!\n
-        //  If you did not make this request then please ignore this email.Otherwise, please click this link to change your password:This Link Valid For 2 MINUTES.\n
-        //  ${baseUrl}/reset-password/${userId}/${token}`,
-        html: `<p>Hi ${userName},</p>
-        <p>There was a request to change your password!</p>
-        <p>If you did not make this request then please ignore this email. Otherwise, please click the link below to change your password. This link is valid for 2 minutes.</p>
-        <a href="${resetPasswordUrl}">Reset Password</a>`
-            
+         text: `This Link Valid For 2 MINUTES.  ${baseUrl}/reset-password/${userId}/${token}`,
   
       };
 
@@ -191,7 +170,7 @@ const sendPasswordLink = asyncHandler(async (req, res) => {
         if (error) {
           res
             .status(401)
-            .json({ status: 401, message: error.message });
+            .json({ status: 401, message: "Email not sent" });
         } else {
           console.log("Email sent", info.response);
           res
