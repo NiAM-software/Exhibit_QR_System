@@ -19,17 +19,6 @@ var transporter = nodemailer.createTransport({
     pass: process.env.MY_PASSWORD,
   },
 });
-// const transporter = nodemailer.createTransport({
-//       //service :"Outlook365",
-//         //pool:true,
-//     host: 'SMTP.office365.com',
-//     port: '587',
-//     secure:false,
-//     auth: { user: process.env.OUTLOOK_EMAIL, pass:  process.env.OUTLOOK_PASSWORD },
-//     //secureConnection: false,
-//     //requireTLS:true,
-//     tls: { ciphers: 'SSLv3' }
-// });
 
 const keysecret = process.env.JWT_SECRET
 console.log(keysecret);
