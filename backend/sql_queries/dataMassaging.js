@@ -3,7 +3,6 @@ import csv from "csv-parser";
 import fastcsv from 'fast-csv';
 import xlsx from  "xlsx";
 import path from 'path';
-import ExcelJS from 'exceljs';
 import { fileURLToPath } from 'url';
 
 function readCSVFile(filePath) {
@@ -18,50 +17,19 @@ function readCSVFile(filePath) {
   });
 }
 
-// function readExcelFile(filePath) {
-//     // console.log(filePath);
-//     const workbook = xlsx.readFile(filePath);
-//     const sheetName = 'Museum,Shop, and HVR Inventory';
-//     if (!workbook.SheetNames.includes(sheetName)) {
-//         throw new Error(`No sheet named "${sheetName}" found`);
-//       }
-//     // const sheetName = workbook.SheetNames[0]; 
-//     const worksheet = workbook.Sheets[sheetName];
-//     const data = xlsx.utils.sheet_to_json(worksheet, {raw:true,defval: "" });
-//     //   console.log(data); // Debugging line to print the raw data
-//     return data;
-// }
-
-const readExcelFile = (filePath) => {
-    return new Promise((resolve, reject) => {
-        const readStream = fs.createReadStream(filePath);
-        let buffers = [];
-
-        readStream.on('data', (chunk) => {
-            buffers.push(chunk);
-        });
-
-        readStream.on('end', () => {
-            const buffer = Buffer.concat(buffers);
-            const workbook = xlsx.read(buffer, { type: 'buffer' });
-
-            const sheetName = 'Museum,Shop, and HVR Inventory';
-            if (!workbook.SheetNames.includes(sheetName)) {
-                reject(new Error(`No sheet named "${sheetName}" found`));
-                return;
-            }
-
-            const worksheet = workbook.Sheets[sheetName];
-            const data = xlsx.utils.sheet_to_json(worksheet, { raw: true, defval: "" });
-            resolve(data);
-        });
-
-        readStream.on('error', (error) => {
-            reject(error);
-        });
-    });
-};
-
+function readExcelFile(filePath) {
+    // console.log(filePath);
+    const workbook = xlsx.readFile(filePath);
+    const sheetName = 'Museum,Shop, and HVR Inventory';
+    if (!workbook.SheetNames.includes(sheetName)) {
+        throw new Error(`No sheet named "${sheetName}" found`);
+      }
+    // const sheetName = workbook.SheetNames[0]; 
+    const worksheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(worksheet, {raw:true,defval: "" });
+    //   console.log(data); // Debugging line to print the raw data
+    return data;
+}
 
 function getFileType(filePath) {
     const extension = path.extname(filePath).toLowerCase();
@@ -165,7 +133,7 @@ async function helperProcessData(filePath, file_name) {
     let data;
 
     if (fileType === 'excel') {
-        data = await readExcelFile(filePath);
+        data = readExcelFile(filePath);
     } else if (fileType === 'csv') {
         data = await readCSVFile(filePath);
     }

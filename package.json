@@ -39,7 +39,8 @@
     "nodemailer": "^6.9.7",
     "nodemailer-ses-transport": "^1.5.1",
     "react-lazyload": "^3.2.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.1",
