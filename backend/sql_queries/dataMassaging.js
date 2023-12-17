@@ -65,6 +65,7 @@ function getFileType(filePath) {
 
 function processData(data) {
     // Filter where Building is 'Museum'
+    //console.log(data)
 
     if (data.some(row => 'Building' in row)) {
         // Handle the case where 'Building' column is not found
