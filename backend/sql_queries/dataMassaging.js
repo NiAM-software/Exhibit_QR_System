@@ -18,38 +18,38 @@ function readCSVFile(filePath) {
   });
 }
 
-// function readExcelFile(filePath) {
-//     // console.log(filePath);
-//     const workbook = xlsx.readFile(filePath);
-//     const sheetName = 'Museum,Shop, and HVR Inventory';
-//     if (!workbook.SheetNames.includes(sheetName)) {
-//         throw new Error(`No sheet named "${sheetName}" found`);
-//       }
-//     // const sheetName = workbook.SheetNames[0]; 
-//     const worksheet = workbook.Sheets[sheetName];
-//     const data = xlsx.utils.sheet_to_json(worksheet, {raw:true,defval: "" });
-//     //   console.log(data); // Debugging line to print the raw data
-//     return data;
-// }
-
-const readExcelFile = async (filePath) => {
-    const workbook = new ExcelJS.Workbook();
-    const stream = fs.createReadStream(filePath);
-  
-    await workbook.xlsx.read(stream);
-  
-    // Assuming you want to read the first worksheet
-    const worksheet = workbook.worksheets[0];
-    console.log(worksheet)
-  
-    const data = [];
-    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-      console.log(`Row ${rowNumber} = ${JSON.stringify(row.values)}`);
-      data.push(row.values);
-    });
-  
+function readExcelFile(filePath) {
+    // console.log(filePath);
+    const workbook = xlsx.readFile(filePath);
+    const sheetName = 'Museum,Shop, and HVR Inventory';
+    if (!workbook.SheetNames.includes(sheetName)) {
+        throw new Error(`No sheet named "${sheetName}" found`);
+      }
+    // const sheetName = workbook.SheetNames[0]; 
+    const worksheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(worksheet, {raw:true,defval: "" });
+    //   console.log(data); // Debugging line to print the raw data
     return data;
-  };
+}
+
+// const readExcelFile = async (filePath) => {
+//     const workbook = new ExcelJS.Workbook();
+//     const stream = fs.createReadStream(filePath);
+  
+//     await workbook.xlsx.read(stream);
+  
+//     // Assuming you want to read the first worksheet
+//     const worksheet = workbook.worksheets[0];
+//     console.log(worksheet)
+  
+//     const data = [];
+//     worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+//       console.log(`Row ${rowNumber} = ${JSON.stringify(row.values)}`);
+//       data.push(row.values);
+//     });
+  
+//     return data;
+//   };
 
 
 function getFileType(filePath) {
