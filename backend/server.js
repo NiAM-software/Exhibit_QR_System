@@ -18,7 +18,6 @@ const port = process.env.PORT
 console.log("PORT" + port)
 console.log(port);
 const app = express();
-app.use(timeout('180s')); // Specify the timeout duration here
 
 app.use(cors({ origin : '*'}))
 app.use(express.json());

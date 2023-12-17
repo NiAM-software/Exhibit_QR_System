@@ -3,7 +3,15 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useGetExhibitsQuery } from "../slices/exhibitApiSlice";
 import columns from "../utils/tableColumns";
-import { Navbar, Nav, Container, InputGroup, Form, Modal, Spinner } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  InputGroup,
+  Form,
+  Modal,
+  Spinner,
+} from "react-bootstrap";
 import {
   IoCloudDownloadOutline,
   IoCloudUploadOutline,
@@ -31,7 +39,10 @@ const HomeScreen = () => {
   const [notificationMessage2, setNotificationMessage2] = useState();
   const [csvFile, setCsvFile] = useState();
   const [Loading, setLoading] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState();
   const handleFileChange = (e) => {
     e.preventDefault();
     console.log(e.target.files[0]);
@@ -124,23 +135,22 @@ const HomeScreen = () => {
     setShowNotification(false);
   };
 
-  const { data, isLoading, isError, error } = useQuery(
-    ["user-data"],
-    async () => {
-      try {
-        const response = await axios.get("/api/admin/exhibits");
-        console.log("Data fetched successfully:", response.data);
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        throw error;
-      }
-    },
-    {
-      select: (data) => data.exhibits,
-    }
-  );
-
+  // const { data, isLoading, isError, error } = useQuery(
+  //   ["user-data"],
+  //   async () => {
+  //     try {
+  //       const response = await axios.get("/api/admin/exhibits");
+  //       console.log("Data fetched successfully:", response.data);
+  //       return response.data;
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //       throw error;
+  //     }
+  //   },
+  //   {
+  //     select: (data) => data.exhibits,
+  //   }
+  // );
 
   useEffect(() => {
     if (csvFile) {
@@ -151,26 +161,26 @@ const HomeScreen = () => {
     }
   }, [csvFile]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     setIsError(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setIsError(false);
 
-  //     try {
-  //       const response = await axios.get("/api/admin/exhibits");
-  //       console.log("Data fetched successfully:", response.data);
-  //       setData(response.data.exhibits); // Assuming the response has an 'exhibits' field
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setIsError(true);
-  //       setError(error.message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+      try {
+        const response = await axios.get("/api/admin/exhibits");
+        console.log("Data fetched successfully:", response.data);
+        setData(response.data.exhibits); // Assuming the response has an 'exhibits' field
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setIsError(true);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   fetchData();
-  // }, []); // Empty dependency array means this runs once when the component mounts
+    fetchData();
+  }, []); // Empty dependency array means this runs once when the component mounts
 
   const handleSelectedRowsChange = React.useCallback((state) => {
     console.log(state.selectedRows);
@@ -214,14 +224,14 @@ const HomeScreen = () => {
       .then((res) => {
         console.log(res);
         if (res.status === 201) {
-          toast.success('Data loaded Successfully');
+          toast.success("Data loaded Successfully");
           // queryClient.invalidateQueries("user-data");
           setTimeout(() => {
             window.location.reload();
           }, 2000);
         } else {
           console.log(res);
-          toast.error('Error uploading data. Please check the guidelines.');
+          toast.error("Error uploading data. Please check the guidelines.");
           // setTimeout(() => {
           //   window.location.reload();
           // }, 1000);
@@ -229,7 +239,7 @@ const HomeScreen = () => {
       })
       .catch((err) => {
         console.log(err.response);
-        toast.error('Error uploading data: ' + err.response.data.error);
+        toast.error("Error uploading data: " + err.response.data.error);
         // setTimeout(() => {
         //   window.location.reload();
         // }, 1000);
@@ -240,7 +250,6 @@ const HomeScreen = () => {
         // }
       });
   };
-
 
   // @export csv
   const generateCSV = async () => {
@@ -264,7 +273,7 @@ const HomeScreen = () => {
       console.log("in catch block");
       console.error(error.message);
       console.error("Error exporting CSV:", error.message);
-      toast.error("Error exporting CSV")
+      toast.error("Error exporting CSV");
     }
   };
 
@@ -298,45 +307,45 @@ const HomeScreen = () => {
 
   const tableData = data
     ? data
-      .filter((exhibit) => {
-        const valuesToSearch = [
-          exhibit.title,
-          exhibit.room,
-          exhibit.asset_number,
-          exhibit.category,
-          exhibit.subcategory,
-          exhibit.era,
-          exhibit.exhibit_id,
-        ];
+        .filter((exhibit) => {
+          const valuesToSearch = [
+            exhibit.title,
+            exhibit.room,
+            exhibit.asset_number,
+            exhibit.category,
+            exhibit.subcategory,
+            exhibit.era,
+            exhibit.exhibit_id,
+          ];
 
-        return valuesToSearch
-          .map((value) => String(value)) // Convert each value to a string
-          .filter(Boolean) // Filter out undefined or falsy values
-          .some((value) =>
-            value.toLowerCase().includes(filterText.toLowerCase())
-          );
-      })
-      .map((exhibit) => {
-        const {
-          title,
-          room,
-          asset_number,
-          category,
-          subcategory,
-          era,
-          exhibit_id,
-        } = exhibit;
+          return valuesToSearch
+            .map((value) => String(value)) // Convert each value to a string
+            .filter(Boolean) // Filter out undefined or falsy values
+            .some((value) =>
+              value.toLowerCase().includes(filterText.toLowerCase())
+            );
+        })
+        .map((exhibit) => {
+          const {
+            title,
+            room,
+            asset_number,
+            category,
+            subcategory,
+            era,
+            exhibit_id,
+          } = exhibit;
 
-        return {
-          title,
-          room,
-          asset_number,
-          category,
-          subcategory,
-          era,
-          exhibit_id,
-        };
-      })
+          return {
+            title,
+            room,
+            asset_number,
+            category,
+            subcategory,
+            era,
+            exhibit_id,
+          };
+        })
     : [];
 
   //console.log(tableData);
