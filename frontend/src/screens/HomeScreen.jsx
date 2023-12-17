@@ -1,3 +1,4 @@
+// register button on login
 import { useMutation, useQueryClient, useQuery } from "react-query";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -39,10 +40,7 @@ const HomeScreen = () => {
   const [notificationMessage2, setNotificationMessage2] = useState();
   const [csvFile, setCsvFile] = useState();
   const [Loading, setLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [isError, setIsError] = useState(false);
-  const [error, setError] = useState();
+
   const handleFileChange = (e) => {
     e.preventDefault();
     console.log(e.target.files[0]);
@@ -135,23 +133,10 @@ const HomeScreen = () => {
     setShowNotification(false);
   };
 
-  // const { data, isLoading, isError, error } = useQuery(
-  //   ["user-data"],
-  //   async () => {
-  //     try {
-  //       const response = await axios.get("/api/admin/exhibits");
-  //       console.log("Data fetched successfully:", response.data);
-  //       return response.data;
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       throw error;
-  //     }
-  //   },
-  //   {
-  //     select: (data) => data.exhibits,
-  //   }
-  // );
-
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState("");
   useEffect(() => {
     if (csvFile) {
       console.log(csvFile); // This will log the new state value after it's updated
@@ -181,7 +166,6 @@ const HomeScreen = () => {
 
     fetchData();
   }, []); // Empty dependency array means this runs once when the component mounts
-
   const handleSelectedRowsChange = React.useCallback((state) => {
     console.log(state.selectedRows);
     setSelectedRows(state.selectedRows);
@@ -225,10 +209,9 @@ const HomeScreen = () => {
         console.log(res);
         if (res.status === 201) {
           toast.success("Data loaded Successfully");
-          // queryClient.invalidateQueries("user-data");
-          // setTimeout(() => {
-          //   window.location.reload();
-          // }, 2000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         } else {
           console.log(res);
           toast.error("Error uploading data. Please check the guidelines.");
@@ -245,9 +228,7 @@ const HomeScreen = () => {
         // }, 1000);
       })
       .finally(() => {
-        // if (!Loading) {
         setLoading(false);
-        // }
       });
   };
 
