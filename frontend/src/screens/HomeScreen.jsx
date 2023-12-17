@@ -209,9 +209,6 @@ const HomeScreen = () => {
         console.log(res);
         if (res.status === 201) {
           toast.success("Data loaded Successfully");
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
         } else {
           console.log(res);
           toast.error("Error uploading data. Please check the guidelines.");
