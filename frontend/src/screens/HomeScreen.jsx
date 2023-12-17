@@ -226,9 +226,9 @@ const HomeScreen = () => {
         if (res.status === 201) {
           toast.success("Data loaded Successfully");
           // queryClient.invalidateQueries("user-data");
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 2000);
         } else {
           console.log(res);
           toast.error("Error uploading data. Please check the guidelines.");
