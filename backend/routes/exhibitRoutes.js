@@ -76,8 +76,6 @@ router.post("/import-csv", localUpload.single("file"), async (req, res) => {
         connection.release();
         return res.status(400).json({ message: "No file uploaded" });
       }
-
-
       const result = await helperProcessData(file.path, req.file.originalname);
       const columnList = result.headers.map(header => `\`${header}\``).join(', ');
       const filePath = result.filePath;
