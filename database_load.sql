@@ -146,7 +146,6 @@ Create table related_exhibits (
 	FOREIGN KEY (exhibit_id) REFERENCES exhibits (exhibit_id)
 );
 
-select * from exhibit_dummy;
 Insert into category(category_name,active_ind)
 VALUES
 ('Extra Item type 1','Y'),
